@@ -14,9 +14,17 @@
     b.addEventListener('click', function () {
       var text = b.getAttribute('data-copy');
       var done = function () { var o = b.textContent; b.textContent = 'Copied'; setTimeout(function () { b.textContent = o; }, 1600); };
-      try {
-        navigator.clipboard.writeText(text).then(done, function () {});
-      } catch (e) {}
+      // Older method, which also works on pages not yet served over HTTPS
+      var fallback = function () {
+        var t = document.createElement('textarea');
+        t.value = text; t.setAttribute('readonly', ''); t.style.position = 'fixed'; t.style.opacity = '0';
+        document.body.appendChild(t); t.select();
+        var ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(t);
+        if (ok) done(); else window.prompt('Copy this address:', text);
+      };
+      if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done, fallback);
+      else fallback();
     });
   });
 
