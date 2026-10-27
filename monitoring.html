@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Colony Monitoring · The Hive Atlas</title>
+<meta name="description" content="Seasonal colony inspection data by U.S. climate region, with a personal report comparing your colonies to similar operations. Demonstration data.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&amp;family=Public+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="The Hive Atlas home">
+      <svg width="34" height="38" viewBox="0 0 34 38" aria-hidden="true">
+        <polygon points="17,1 33,10 33,28 17,37 1,28 1,10" fill="none" stroke="var(--honey)" stroke-width="2"/>
+        <polygon points="17,10 25,14.5 25,23.5 17,28 9,23.5 9,14.5" fill="var(--honey)"/>
+      </svg>
+      <span>
+        <span class="brand-name">The Hive Atlas</span>
+        <span class="brand-sub">U.S. Honey Bee Health Data</span>
+      </span>
+    </a>
+    <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav id="site-nav" aria-label="Main">
+      <ul><li><a href="disease.html">Disease</a></li><li><a href="genetics.html">Genetics</a></li><li><a href="losses.html">Colony Losses</a></li><li><a href="monitoring.html" aria-current="page">Monitoring</a></li><li><a href="methods.html">Methods</a></li><li><a href="contribute.html">Contribute</a></li><li><a href="publications.html">Publications</a></li><li><a href="about.html">About</a></li></ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="page-head lx-head">
+    <div class="wrap">
+      <div class="mx-demo" role="note">
+        <span class="mx-demotag">Demonstration data</span>
+        <p>Everything on this page uses <span id="mx-demo-count">simulated records</span> to show how it will work. These are not real measurements, so please don&rsquo;t cite them.</p>
+      </div>
+      <h1>Colony monitoring</h1>
+      <p class="lede">Repeated inspections of the same colonies show how colony strength, brood, queens, Varroa, and disease signs change through the season. See the patterns for each climate region, or open your own inspection records to see how your colonies compare with similar operations.</p>
+      <div class="lx-tabs" role="tablist" aria-label="Colony monitoring">
+        <button type="button" role="tab" id="tab-regional" aria-selected="true" aria-controls="mx-regional">Regional view</button>
+        <button type="button" role="tab" id="tab-report" aria-selected="false" aria-controls="mx-reportpanel">Your report</button>
+        <button type="button" role="tab" id="tab-about" aria-selected="false" aria-controls="about">About this data</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="mx-regional" role="tabpanel" aria-labelledby="tab-regional">
+    <div class="wrap lx-wrap">
+      <div class="lx-controls">
+        <div class="lx-ctl lx-grow">
+          <label class="lx-lab" for="mx-metric">Color the map by</label>
+          <select id="mx-metric"></select>
+        </div>
+        <div class="lx-ctl">
+          <label class="lx-lab" for="mx-period">Season or month</label>
+          <select id="mx-period"></select>
+        </div>
+        <div class="lx-ctl">
+          <label class="lx-lab" for="mx-year">Year</label>
+          <select id="mx-year"></select>
+        </div>
+        <div class="lx-ctl">
+          <label class="lx-lab" for="mx-type">Operation type</label>
+          <select id="mx-type"></select>
+        </div>
+        <div class="lx-ctl">
+          <span class="lx-lab" id="lab-mxstyle">Map style</span>
+          <div class="seg" data-seg="mx-style" role="group" aria-labelledby="lab-mxstyle">
+            <button type="button" data-v="hex" aria-pressed="true">Hexagons</button>
+            <button type="button" data-v="shapes" aria-pressed="false">State shapes</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="lx-main">
+        <div class="lx-card lx-mapcard" id="mx-mapcard">
+          <h2 class="lx-cardtitle" id="mx-maptitle">Varroa mites per 100 bees</h2>
+          <p class="lx-small">States are colored by their climate region. Click a state to see its region.</p>
+          <p class="lx-callout" id="mx-callout" hidden></p>
+          <svg id="mx-map" class="lx-map" role="group" aria-label="Map of U.S. states colored by climate region"></svg>
+          <div class="lx-legend" id="mx-legend"></div>
+          <div class="lx-tip" id="mx-tip" hidden></div>
+        </div>
+        <aside class="lx-card lx-panel" id="mx-panel" aria-live="polite"></aside>
+      </div>
+
+      <div class="mx-two">
+        <div class="lx-card mx-chartcard">
+          <h2 class="lx-cardtitle" id="mx-season-title">By month</h2>
+          <div class="lx-trend mx-chart" id="mx-season"></div>
+          <p class="lx-small" id="mx-season-read"></p>
+        </div>
+        <div class="lx-card">
+          <h2 class="lx-cardtitle" id="mx-rank-title">Regions compared</h2>
+          <p class="lx-small" id="mx-rank-note"></p>
+          <ul class="lx-stress mx-rank" id="mx-rank"></ul>
+          <p class="lx-small mx-ncap">The last column is the number of inspections.</p>
+        </div>
+      </div>
+      <p class="lx-small">Want the definitions and how regions are drawn? <button type="button" class="lx-link" data-open-tab="about">Read about this data</button></p>
+    </div>
+  </section>
+
+  <section id="mx-reportpanel" role="tabpanel" aria-labelledby="tab-report" hidden>
+    <div class="wrap lx-wrap">
+      <div id="mx-upload" class="mx-uploadgrid">
+        <div class="lx-card mx-uploadcard">
+          <h2 class="lx-cardtitle">See how your colonies compare</h2>
+          <p>Open your inspection records as a CSV or Excel file. Your report compares your colonies with operations in the same climate region and of the same type.</p>
+          <label class="mx-drop" id="mx-drop" for="mx-file">
+            <svg width="34" height="38" viewBox="0 0 34 38" aria-hidden="true"><polygon points="17,1 33,10 33,28 17,37 1,28 1,10" fill="none" stroke="var(--honey)" stroke-width="2" stroke-dasharray="4 3"/><path d="M17 26V13M11 18l6-6 6 6" fill="none" stroke="var(--honey-strong)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span><strong>Choose a CSV or Excel file</strong> or drag it here</span>
+            <input type="file" id="mx-file" accept=".csv,.xlsx,.xls,text/csv">
+          </label>
+          <p class="mx-error" id="mx-upload-error" role="alert" hidden></p>
+          <div class="mx-or"><span>or</span></div>
+          <button type="button" class="btn" id="mx-example">Try it with an example file</button>
+          <p class="lx-small">The example is a made-up sideline operation in Georgia.</p>
+          <p class="mx-private"><svg width="14" height="16" viewBox="0 0 34 38" aria-hidden="true"><polygon points="17,1 33,10 33,28 17,37 1,28 1,10" fill="var(--honey)"/></svg> Your file stays on your computer. It&rsquo;s read by your browser and isn&rsquo;t uploaded or saved.</p>
+        </div>
+        <div class="lx-card">
+          <h2 class="lx-cardtitle">Preparing your file</h2>
+          <div class="mx-dl">
+            <a class="btn primary" href="data/colony-inspection-template.xlsx" download>Excel template</a>
+            <a class="btn" href="data/colony-inspection-template.csv" download>CSV template</a>
+          </div>
+          <p class="lx-small">The Excel template has dropdown lists, a field guide, and step-by-step methods for alcohol washes, frames of bees, and brood scoring. Fill in its Inspections tab and open the workbook here as is.</p>
+          <p class="lx-small">Or build your own file: one row per colony per inspection. Only <b>inspection_date</b>, <b>state</b>, and <b>colony_id</b> are required; include whatever else you record. Start from this header row:</p>
+          <pre class="mx-template" id="mx-template"></pre>
+          <button type="button" class="copy-btn" id="mx-copy-template">Copy header row</button>
+          <ul class="mx-tips">
+            <li>Dates as YYYY-MM-DD, for example 2025-08-14.</li>
+            <li>Varroa as mites counted and bees sampled (300 if blank), from an alcohol wash or sugar roll.</li>
+            <li>Yes or no for disease signs, colony alive, and requeened.</li>
+          </ul>
+          <p class="lx-small"><button type="button" class="lx-link" data-open-tab="about">See every column</button></p>
+        </div>
+      </div>
+
+      <div id="mx-report" hidden>
+        <div class="mx-reporthead">
+          <div class="lx-card mx-mecard" id="mx-me"></div>
+          <div class="lx-controls mx-rcontrols">
+            <div class="lx-ctl" id="mx-op-wrap" hidden>
+              <label class="lx-lab" for="mx-op">Operation in file</label>
+              <select id="mx-op"></select>
+            </div>
+            <div class="lx-ctl" id="mx-type-wrap" hidden>
+              <label class="lx-lab" for="mx-mytype">Your operation type</label>
+              <select id="mx-mytype"></select>
+            </div>
+            <div class="lx-ctl">
+              <label class="lx-lab" for="mx-compare">Compare with</label>
+              <select id="mx-compare">
+                <option value="auto">Closest match (automatic)</option>
+                <option value="region_type">Same region and type</option>
+                <option value="region">Same region, any type</option>
+                <option value="type">Same type, any region</option>
+                <option value="all">All operations</option>
+              </select>
+            </div>
+            <div class="lx-ctl">
+              <label class="lx-lab" for="mx-ryear">Year</label>
+              <select id="mx-ryear"></select>
+            </div>
+            <div class="lx-ctl">
+              <span class="lx-lab">&nbsp;</span>
+              <button type="button" class="btn" id="mx-upload-again" hidden>Open a different file</button>
+            </div>
+          </div>
+        </div>
+        <p class="lx-callout" id="mx-fewpeers" hidden></p>
+
+        <h2 class="mx-h2">How you compare</h2>
+        <div class="mx-cards" id="mx-cards"></div>
+
+        <div class="lx-card mx-chartcard">
+          <div class="mx-charthead">
+            <h2 class="lx-cardtitle" id="mx-mychart-title">By month</h2>
+            <select id="mx-mymetric" aria-label="Measure to chart"></select>
+          </div>
+          <div class="lx-trend mx-chart" id="mx-mychart"></div>
+          <p class="lx-small" id="mx-mychart-read"></p>
+        </div>
+
+        <div class="mx-two">
+          <div class="lx-card">
+            <h2 class="lx-cardtitle">Colonies to check</h2>
+            <p class="lx-small" id="mx-check-note"></p>
+            <div class="table-scroll mx-checkwrap" id="mx-check"></div>
+          </div>
+          <div class="mx-stackcol">
+            <div class="lx-card">
+              <h2 class="lx-cardtitle">Varroa treatments</h2>
+              <div class="mx-treat" id="mx-treat"></div>
+            </div>
+            <div class="lx-card">
+              <h2 class="lx-cardtitle">Data check</h2>
+              <div id="mx-datacheck"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="lx-aboutpanel" role="tabpanel" aria-labelledby="tab-about" hidden>
+    <div class="wrap" style="padding-block:40px 24px">
+      <div class="doc-layout">
+        <aside class="toc" aria-label="On this tab">
+          <p>On this tab</p>
+          <ul>
+            <li><a href="#ab-what">What this page does</a></li>
+            <li><a href="#ab-demo">Demonstration data</a></li>
+            <li><a href="#ab-regions">Climate regions</a></li>
+            <li><a href="#ab-measures">The measures</a></li>
+            <li><a href="#ab-report">Your report</a></li>
+            <li><a href="#ab-upload">Preparing a file</a></li>
+            <li><a href="#ab-privacy">Privacy</a></li>
+            <li><a href="#ab-limits">Limits</a></li>
+          </ul>
+        </aside>
+        <div>
+          <section class="doc-section prose" id="ab-what">
+            <h2>What this page does</h2>
+            <p>Colony monitoring programs inspect the same colonies again and again through the season, recording colony strength, brood, queens, Varroa, disease signs, and management. This page pools those inspections in two ways:</p>
+            <ul>
+              <li><strong>Regional view</strong> combines every inspection by climate region, so you can see how colonies typically develop through the year where you are and how regions differ.</li>
+              <li><strong>Your report</strong> takes a file of your own inspections and places your numbers among comparable operations: the same region, the same type of operation, or both.</li>
+            </ul>
+          </section>
+
+          <section class="doc-section prose" id="ab-demo">
+            <h2>Demonstration data</h2>
+            <p><strong>Every number on this page is currently simulated.</strong> The records were generated by a script to show how the page will work, following broad seasonal patterns: colonies build up in spring and shrink in fall, earlier in warmer regions, Varroa counts rise through summer unless treated, and colonies with high fall mite loads are more likely to die over winter. They are not estimates of real colony health and should not be cited. They will be replaced with real monitoring data contributed by inspectors, researchers, and beekeepers.</p>
+          </section>
+
+          <section class="doc-section" id="ab-regions">
+            <h2>Climate regions</h2>
+            <p class="section-intro" style="margin-bottom:20px">States are grouped into the nine U.S. climate regions defined by NOAA&rsquo;s National Centers for Environmental Information. Alaska and Hawaii are outside those regions and are shown on their own. The District of Columbia is grouped with the Northeast.</p>
+            <div class="table-scroll">
+              <table class="defs">
+                <thead><tr><th>Region</th><th>States</th></tr></thead>
+                <tbody>
+                  <tr><td>Northeast</td><td>CT, DE, ME, MD, MA, NH, NJ, NY, PA, RI, VT, and DC</td></tr>
+                  <tr><td>Upper Midwest</td><td>IA, MI, MN, WI</td></tr>
+                  <tr><td>Ohio Valley</td><td>IL, IN, KY, MO, OH, TN, WV</td></tr>
+                  <tr><td>Southeast</td><td>AL, FL, GA, NC, SC, VA</td></tr>
+                  <tr><td>Northern Rockies and Plains</td><td>MT, NE, ND, SD, WY</td></tr>
+                  <tr><td>South</td><td>AR, KS, LA, MS, OK, TX</td></tr>
+                  <tr><td>Southwest</td><td>AZ, CO, NM, UT</td></tr>
+                  <tr><td>Northwest</td><td>ID, OR, WA</td></tr>
+                  <tr><td>West</td><td>CA, NV</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="doc-section" id="ab-measures">
+            <h2>The measures</h2>
+            <p class="section-intro" style="margin-bottom:20px">Each inspection of a living colony counts once. Regional values need at least 20 inspections; fewer are striped on the map.</p>
+            <div class="table-scroll">
+              <table class="defs">
+                <thead><tr><th>Measure</th><th>How it&rsquo;s calculated</th><th>Unit</th></tr></thead>
+                <tbody>
+                  <tr><td>Varroa mites per 100 bees</td><td>Mites counted in an alcohol wash (or sugar roll) divided by bees sampled, times 100. A half cup of bees is about 300. Sticky-board counts are left out because they aren&rsquo;t comparable.</td><td class="unit">mites / 100 bees</td></tr>
+                  <tr><td>Washes at or above 3</td><td>Share of washes at or above 3 mites per 100 bees, a commonly used treatment threshold.</td><td class="unit">% of washes</td></tr>
+                  <tr><td>Frames of bees</td><td>Deep-frame equivalents covered with bees.</td><td class="unit">frames</td></tr>
+                  <tr><td>Frames of brood</td><td>Deep-frame equivalents with brood.</td><td class="unit">frames</td></tr>
+                  <tr><td>Solid brood pattern</td><td>Share of inspections scoring the brood pattern 4 or 5 on a 1 (very spotty) to 5 (solid) scale.</td><td class="unit">% of inspections</td></tr>
+                  <tr><td>Queenright</td><td>Queen seen, eggs present, or a virgin queen present.</td><td class="unit">% of inspections</td></tr>
+                  <tr><td>Disease signs</td><td>Share of inspections where signs of American or European foulbrood, chalkbrood, or sacbrood were noted, plus deformed wings and small hive beetles separately. These are field observations, not lab-confirmed diagnoses.</td><td class="unit">% of inspections</td></tr>
+                  <tr><td>Treated, fed</td><td>Share of inspections where a Varroa treatment or feeding was recorded.</td><td class="unit">% of inspections</td></tr>
+                  <tr><td>Winter colony loss</td><td>Colonies alive at an inspection between September and December that were found dead at their first inspection the next January to May. Colonies not inspected again are left out.</td><td class="unit">% of colonies</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="doc-section prose" id="ab-report">
+            <h2>Your report</h2>
+            <p>Your numbers are compared operation to operation. For each comparable operation, the page works out the same value you see for yourself, for example its average fall mite count, and then shows where you fall among them:</p>
+            <ul>
+              <li><strong>Typical peer</strong> is the median operation.</li>
+              <li>The shaded band is the <strong>middle half</strong> of operations, from the 25th to the 75th percentile, and each dot is one operation.</li>
+              <li><strong>Better than most</strong> means you&rsquo;re better than at least 75% of them, <strong>Worse than most</strong> means fewer than 25%, and anything between is <strong>Typical</strong>. Whether higher or lower is better is noted on each measure.</li>
+            </ul>
+            <p>An operation needs at least 5 inspections in the period (3 colonies for winter loss) to be counted, and a comparison needs at least 5 operations. If your group is too small, choose a broader one under <strong>Compare with</strong>.</p>
+            <p><strong>Colonies to check</strong> lists colonies with something flagged at their latest inspection, such as mites at or above 3 per 100 bees, a missing queen, or disease signs. Signs of American foulbrood should be reported to your state apiarist.</p>
+          </section>
+
+          <section class="doc-section" id="ab-upload">
+            <h2>Preparing a file</h2>
+            <p class="section-intro" style="margin-bottom:20px">The easiest way to start is the <a href="data/colony-inspection-template.xlsx">Excel template</a>, which has dropdown lists for every coded column, a field guide, and standard methods for alcohol washes, counting frames, and scoring brood. A <a href="data/colony-inspection-template.csv">CSV template</a> with just the header row is also available. Either way, save your records with one row per colony per inspection. Only the first three columns below are required; use whatever else you record. Column names are matched loosely, so &ldquo;Date&rdquo; or &ldquo;Hive&rdquo; work too.</p>
+            <div class="table-scroll">
+              <table class="defs">
+                <thead><tr><th>Column</th><th>What to enter</th><th>Example</th></tr></thead>
+                <tbody>
+                  <tr><td>inspection_date</td><td>Required. Date of the inspection.</td><td class="unit">2025-08-14</td></tr>
+                  <tr><td>state</td><td>Required. Two-letter code or full name.</td><td class="unit">MD</td></tr>
+                  <tr><td>colony_id</td><td>Required. Your label for the colony.</td><td class="unit">C01</td></tr>
+                  <tr><td>operation_id</td><td>A name or code for the operation. Inspectors can include several operations in one file.</td><td class="unit">MY-APIARY</td></tr>
+                  <tr><td>operation_type</td><td>Hobbyist (under 25 colonies), Sideline (25 to 299), or Commercial (300 or more).</td><td class="unit">Sideline</td></tr>
+                  <tr><td>submitted_by</td><td>Beekeeper, Apiary inspector, Researcher, or Tech-transfer team.</td><td class="unit">Beekeeper</td></tr>
+                  <tr><td>apiary_id</td><td>Yard or apiary label.</td><td class="unit">A1</td></tr>
+                  <tr><td>colony_alive</td><td>yes, or no for a dead out.</td><td class="unit">yes</td></tr>
+                  <tr><td>frames_of_bees, brood_frames</td><td>Deep-frame equivalents.</td><td class="unit">12, 5</td></tr>
+                  <tr><td>brood_pattern</td><td>1 (very spotty) to 5 (solid).</td><td class="unit">4</td></tr>
+                  <tr><td>queen_status</td><td>seen, eggs_only, virgin, queenless, or drone_layer.</td><td class="unit">seen</td></tr>
+                  <tr><td>varroa_mites, bees_sampled, varroa_method</td><td>Mites counted, bees in the sample (300 if blank), and alcohol_wash or sugar_roll. You can give varroa_per_100 instead.</td><td class="unit">7, 300, alcohol_wash</td></tr>
+                  <tr><td>afb, efb, chalkbrood, sacbrood, deformed_wings, small_hive_beetle</td><td>yes or no.</td><td class="unit">no</td></tr>
+                  <tr><td>treatment</td><td>none, oxalic, amitraz, formic, thymol, hop_acids, or other. Brand names like Apivar or Apiguard are recognized.</td><td class="unit">oxalic</td></tr>
+                  <tr><td>fed, requeened</td><td>Feeding type (none, syrup, pollen_patty, fondant) and yes or no.</td><td class="unit">syrup, no</td></tr>
+                  <tr><td>notes</td><td>Anything else. Not used in the charts.</td><td class="unit"></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="doc-section prose" id="ab-privacy">
+            <h2>Privacy</h2>
+            <p>Files you open in <strong>Your report</strong> are read by your own browser. They are not uploaded, stored, or shared, and they disappear when you close or reload the page. To add your records to the regional data that others see, use the <a href="contribute.html">Contribute</a> page, where location privacy and credit are agreed first.</p>
+          </section>
+
+          <section class="doc-section prose" id="ab-limits">
+            <h2>Limits to keep in mind</h2>
+            <ul>
+              <li><strong>Who contributes shapes the picture.</strong> Monitored colonies are not a random sample. Programs that track colonies closely may manage them better than average.</li>
+              <li><strong>Methods vary.</strong> Frames of bees and brood patterns are judged by eye, and different inspectors score them differently.</li>
+              <li><strong>Regions are broad.</strong> Climate regions group states with similar climates, but forage, elevation, and local weather vary a lot within them.</li>
+              <li><strong>Treatment response is a rough check.</strong> The drop in mites after treatment depends on the product, timing, and how much brood was present. It isn&rsquo;t an efficacy test.</li>
+            </ul>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div style="height:56px"></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>The Hive Atlas · Open honey bee health data for the United States</span>
+    <ul>
+      <li><a href="methods.html">Data &amp; Methods</a></li>
+      <li><a href="publications.html">Publications</a></li>
+      <li><a href="about.html">About &amp; Contact</a></li>
+    </ul>
+  </div>
+</footer>
+<script src="js/site.js"></script>
+<script src="data/state-shapes.js"></script>
+<script src="data/monitoring-demo.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="js/monitoring.js"></script>
+</body>
+</html>

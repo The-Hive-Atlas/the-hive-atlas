@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Genetic Diversity · The Hive Atlas</title>
+<meta name="description" content="Interactive map of honey bee genetic diversity across the United States. Coming soon.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&amp;family=Public+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="The Hive Atlas home">
+      <svg width="34" height="38" viewBox="0 0 34 38" aria-hidden="true">
+        <polygon points="17,1 33,10 33,28 17,37 1,28 1,10" fill="none" stroke="var(--honey)" stroke-width="2"/>
+        <polygon points="17,10 25,14.5 25,23.5 17,28 9,23.5 9,14.5" fill="var(--honey)"/>
+      </svg>
+      <span>
+        <span class="brand-name">The Hive Atlas</span>
+        <span class="brand-sub">U.S. Honey Bee Health Data</span>
+      </span>
+    </a>
+    <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav id="site-nav" aria-label="Main">
+      <ul><li><a href="disease.html">Disease</a></li><li><a href="genetics.html" aria-current="page">Genetics</a></li><li><a href="losses.html">Colony Losses</a></li><li><a href="monitoring.html">Monitoring</a></li><li><a href="methods.html">Methods</a></li><li><a href="contribute.html">Contribute</a></li><li><a href="publications.html">Publications</a></li><li><a href="about.html">About</a></li></ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="page-head">
+    <div class="wrap">
+      <span class="badge">Coming soon</span>
+      <h1>Genetic Diversity</h1>
+      <p class="lede">An interactive map of the ancestry of U.S. honey bee populations, built from mitochondrial haplotype and lineage data in published studies and public sequence databases.</p>
+    </div>
+  </section>
+
+  <section class="section-pad">
+    <div class="wrap split">
+      <figure class="preview" style="margin:0">
+        <div class="preview-bar" aria-hidden="true">
+          <span class="chip">Lens <b>Dominant lineage</b></span>
+          <span class="chip">Year <b>All years</b></span>
+          <span class="chip">Level <b>State</b></span>
+        </div>
+        <svg class="hexmap" data-mode="lineage" data-seed="3" role="img" aria-label="Illustration of the genetics map colored by example lineages"></svg>
+        <div class="preview-foot">
+          <div class="lineage-legend" aria-hidden="true">
+            <span><i style="background:var(--lin-c)"></i>C</span>
+            <span><i style="background:var(--lin-m)"></i>M</span>
+            <span><i style="background:var(--lin-a)"></i>A</span>
+            <span><i style="background:var(--lin-o)"></i>O</span>
+          </div>
+          <figcaption class="example-note">Illustration with example values, not real data</figcaption>
+        </div>
+      </figure>
+
+      <div>
+        <h2>What you'll be able to do</h2>
+        <ul class="checklist">
+          <li><div><strong>See lineage makeup by region</strong><span>Map the share of colonies from each major evolutionary lineage: C (eastern European), M (western and northern European), A (African), and O (Middle Eastern).</span></div></li>
+          <li><div><strong>Explore haplotypes</strong><span>View how often specific mitochondrial haplotypes appear in each state or county.</span></div></li>
+          <li><div><strong>Compare diversity</strong><span>Shade the map by a diversity index to see where populations are more or less varied.</span></div></li>
+          <li><div><strong>Track change over time</strong><span>Compare survey years to follow shifts in ancestry and diversity.</span></div></li>
+          <li><div><strong>Download what you see</strong><span>Export the summarized frequencies behind any view as a CSV file.</span></div></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad">
+    <div class="wrap">
+      <h2>Until the map launches</h2>
+      <p class="section-intro">Read how lineages and diversity measures will be defined, or get in touch if you'd like to be notified when the map goes live.</p>
+      <div class="actions" style="margin-bottom:20px">
+        <a class="btn primary" href="methods.html#genetics">Read the methods</a>
+        <a class="btn" href="contribute.html">Contribute data</a>
+      </div>
+      <div class="contact-card">
+  <span class="label">Notify me</span>
+  <span class="email">hello@thehiveatlas.com</span>
+  <button class="copy-btn" type="button" data-copy="hello@thehiveatlas.com">Copy</button>
+</div>
+    </div>
+  </section>
+  <div style="height:72px"></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>The Hive Atlas · Open honey bee health data for the United States</span>
+    <ul>
+      <li><a href="methods.html">Data &amp; Methods</a></li>
+      <li><a href="publications.html">Publications</a></li>
+      <li><a href="about.html">About &amp; Contact</a></li>
+    </ul>
+  </div>
+</footer>
+<script src="js/site.js"></script>
+</body>
+</html>

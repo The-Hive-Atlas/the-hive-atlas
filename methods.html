@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Data &amp; Methods · The Hive Atlas</title>
+<meta name="description" content="Sources, definitions, and processing methods behind the maps on The Hive Atlas.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&amp;family=Public+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="The Hive Atlas home">
+      <svg width="34" height="38" viewBox="0 0 34 38" aria-hidden="true">
+        <polygon points="17,1 33,10 33,28 17,37 1,28 1,10" fill="none" stroke="var(--honey)" stroke-width="2"/>
+        <polygon points="17,10 25,14.5 25,23.5 17,28 9,23.5 9,14.5" fill="var(--honey)"/>
+      </svg>
+      <span>
+        <span class="brand-name">The Hive Atlas</span>
+        <span class="brand-sub">U.S. Honey Bee Health Data</span>
+      </span>
+    </a>
+    <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav id="site-nav" aria-label="Main">
+      <ul><li><a href="disease.html">Disease</a></li><li><a href="genetics.html">Genetics</a></li><li><a href="losses.html">Colony Losses</a></li><li><a href="monitoring.html">Monitoring</a></li><li><a href="methods.html" aria-current="page">Methods</a></li><li><a href="contribute.html">Contribute</a></li><li><a href="publications.html">Publications</a></li><li><a href="about.html">About</a></li></ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="page-head">
+    <div class="wrap">
+      <p class="eyebrow">Documentation</p>
+      <h1>Data &amp; Methods</h1>
+      <p class="lede">Where the data comes from, how each measure is calculated, and the rules that keep estimates reliable and apiary locations private.</p>
+    </div>
+  </section>
+
+  <div class="wrap" style="padding-block:56px 24px">
+    <div class="doc-layout">
+      <aside class="toc" aria-label="On this page">
+        <p>On this page</p>
+        <ul>
+          <li><a href="#sources">Data sources</a></li>
+          <li><a href="#disease">Disease measures</a></li>
+          <li><a href="#genetics">Genetic measures</a></li>
+          <li><a href="#losses">Colony losses</a></li>
+          <li><a href="#monitoring">Colony monitoring</a></li>
+          <li><a href="#geography">Geography &amp; years</a></li>
+          <li><a href="#reliability">Small samples</a></li>
+          <li><a href="#privacy">Privacy</a></li>
+          <li><a href="#downloads">Downloads &amp; license</a></li>
+        </ul>
+      </aside>
+
+      <div>
+        <section class="doc-section prose" id="sources">
+          <h2>Data sources</h2>
+          <p>The Hive Atlas compiles data that has already been published or released openly. Each dataset is listed with its original source, collection years, and citation, and every map view notes which datasets it draws on.</p>
+          <ul>
+            <li><strong>Disease diagnostics:</strong> adult bee sample results from the USDA ARS Bee Disease Diagnostic Laboratory, 1984 to now.</li>
+            <li><strong>Colony and loss surveys:</strong> USDA NASS colony counts and published colony loss surveys.</li>
+            <li><strong>Sequence repositories:</strong> mitochondrial and genomic sequence records from public databases such as NCBI.</li>
+            <li><strong>Peer-reviewed studies:</strong> datasets released with published research on pathogens and population genetics.</li>
+            <li><strong>Contributed data:</strong> datasets shared directly by researchers, state programs, and beekeepers under a data agreement.</li>
+          </ul>
+        </section>
+
+        <section class="doc-section" id="disease">
+          <h2>Disease measures</h2>
+          <p class="section-intro" style="margin-bottom:20px">From adult honey bee samples tested by the USDA ARS Bee Disease Diagnostic Laboratory, 1984 to now. Samples come from colonies that looked sick or weak, so these are diagnostic results, not a random survey.</p>
+          <div class="table-scroll">
+            <table class="defs">
+              <thead><tr><th>Measure</th><th>What it shows</th><th>Unit</th></tr></thead>
+              <tbody>
+                <tr><td>Percent positive</td><td>Samples in which Varroa, Nosema, or tracheal mites were found, divided by samples tested for it.</td><td class="unit">% of samples</td></tr>
+                <tr><td>Mites per 100 bees</td><td>Mites from an alcohol wash divided by the number of bees, times 100, averaged over samples with a count (2015 on).</td><td class="unit">mites / 100 bees</td></tr>
+                <tr><td>Million spores per bee</td><td>Nosema spores counted with a hemocytometer, averaged over samples with a count (2015 on).</td><td class="unit">million spores / bee</td></tr>
+                <tr><td>Samples tested</td><td>Number of samples behind the estimate. Values from fewer than 10 samples are flagged.</td><td class="unit">samples</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="prose" style="margin-top:20px">
+            <p>The <a href="disease.html#about">About tab on the Disease Surveillance page</a> covers the lab methods, which years each test covers, climate regions, and data cleaning.</p>
+          </div>
+        </section>
+
+        <section class="doc-section" id="genetics">
+          <h2>Genetic measures</h2>
+          <p class="section-intro" style="margin-bottom:20px">Genetic lenses summarize mitochondrial DNA results within the selected area and year.</p>
+          <div class="table-scroll">
+            <table class="defs">
+              <thead><tr><th>Lens</th><th>What it shows</th><th>Unit</th></tr></thead>
+              <tbody>
+                <tr><td>Lineage makeup</td><td>Share of colonies assigned to each major evolutionary lineage: A (African), M (western and northern European), C (eastern European), O (Middle Eastern).</td><td class="unit">% of colonies</td></tr>
+                <tr><td>Dominant lineage</td><td>The lineage with the largest share in the area.</td><td class="unit">category</td></tr>
+                <tr><td>Haplotype frequency</td><td>How often a selected mitochondrial haplotype appears among sampled colonies.</td><td class="unit">% of colonies</td></tr>
+                <tr><td>Haplotype diversity</td><td>The probability that two randomly chosen colonies carry different haplotypes. Higher values mean a more varied population.</td><td class="unit">0 to 1</td></tr>
+                <tr><td>Samples</td><td>Number of genotyped colonies behind the estimate.</td><td class="unit">count</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="doc-section" id="losses">
+          <h2>Colony losses</h2>
+          <p class="section-intro" style="margin-bottom:20px">From the USDA NASS quarterly Colony Loss Survey of operations with five or more colonies that qualify as farms, published by state since January–March 2015.</p>
+          <div class="table-scroll">
+            <table class="defs">
+              <thead><tr><th>Measure</th><th>What it shows</th><th>Unit</th></tr></thead>
+              <tbody>
+                <tr><td>Colonies at start</td><td>Colonies on the first day of the quarter. In the year view, colonies on January 1.</td><td class="unit">colonies</td></tr>
+                <tr><td>Colonies lost</td><td>Colonies that died or were otherwise lost during the quarter. In the year view, the total for the year.</td><td class="unit">colonies</td></tr>
+                <tr><td>Percent lost</td><td>For states, colonies lost divided by the state&rsquo;s peak colonies in the quarter. For the U.S., colonies lost divided by colonies at the start of the quarter. In the year view, the average of the quarters, not an annual rate.</td><td class="unit">% of colonies</td></tr>
+                <tr><td>Percent renovated</td><td>Share of colonies requeened or given a nuc or package during the quarter, with the same denominators.</td><td class="unit">% of colonies</td></tr>
+                <tr><td>Stressors</td><td>Share of colonies beekeepers reported as affected by Varroa mites, other pests and parasites, diseases, pesticides, other causes, or unknown causes. Self-reported, not lab-confirmed. A colony can have several.</td><td class="unit">% of colonies</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="prose" style="margin-top:20px">
+            <p>States with too few reporting operations are combined into <strong>Other States</strong>. Starting with July–September 2024, NASS publishes 20 states individually. No data was published for April–June 2019. Values below half a percent appear as “&lt;0.5%”.</p>
+            <p>Map colors use five ranges based on all state values across every period, so a color means the same thing in 2016 and in 2025. The <a href="losses.html#about">About tab on the Colony Losses page</a> covers the year view, Other States, and limits in more detail.</p>
+          </div>
+        </section>
+
+        <section class="doc-section prose" id="monitoring">
+          <h2>Colony monitoring</h2>
+          <p>Repeated inspections of the same colonies, grouped by NOAA climate region and by operation type. The page currently runs on <strong>simulated demonstration data</strong>. Definitions, the climate region list, how personal comparisons work, and the upload format are on the <a href="monitoring.html#about">About tab of the Colony Monitoring page</a>.</p>
+        </section>
+
+        <section class="doc-section prose" id="geography">
+          <h2>Geography &amp; years</h2>
+          <p>Results are summarized for the whole United States, individual states (including the District of Columbia), and NOAA climate regions. State outlines come from U.S. Census Bureau boundary files.</p>
+          <p>Each sample is assigned to the year in which it was collected. Choosing a <strong>range of years</strong> pools every sample in those years, which gives steadier estimates where yearly samples are few.</p>
+        </section>
+
+        <section class="doc-section prose" id="reliability">
+          <h2>Small samples</h2>
+          <p>A percentage based on a handful of samples can swing widely by chance. To keep the maps honest:</p>
+          <ul>
+            <li>Every estimate is shown together with the number of samples behind it.</li>
+            <li>On the disease map, values from fewer than 10 samples are still shown but are marked on the map, in the state panel, and in the table, and they are left out of ranks.</li>
+            <li>On the colony loss map, states where fewer than 20 operations responded to the NASS survey are flagged.</li>
+            <li>Where an area has too few samples in one year, a range of years or a climate region gives a steadier picture.</li>
+          </ul>
+        </section>
+
+        <section class="doc-section prose" id="privacy">
+          <h2>Privacy</h2>
+          <p>The Hive Atlas never shows the location of an individual apiary or the identity of a beekeeper. The most detailed level is the state. Zip codes, sample numbers, and submitter details from lab records are never published.</p>
+        </section>
+
+        <section class="doc-section prose" id="downloads">
+          <h2>Downloads &amp; license</h2>
+          <p>Summarized data behind each map view will be downloadable as CSV files. Each download includes the source datasets and a suggested citation. Data compiled from public sources keeps its original license, and the summaries from The Hive Atlas are intended to be shared under an open license that requires attribution.</p>
+        </section>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>The Hive Atlas · Open honey bee health data for the United States</span>
+    <ul>
+      <li><a href="methods.html">Data &amp; Methods</a></li>
+      <li><a href="publications.html">Publications</a></li>
+      <li><a href="about.html">About &amp; Contact</a></li>
+    </ul>
+  </div>
+</footer>
+<script src="js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Colony Losses · The Hive Atlas</title>
+<meta name="description" content="Quarterly honey bee colony losses and stressors by state, from USDA NASS surveys since 2015.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&amp;family=Public+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="The Hive Atlas home">
+      <svg width="34" height="38" viewBox="0 0 34 38" aria-hidden="true">
+        <polygon points="17,1 33,10 33,28 17,37 1,28 1,10" fill="none" stroke="var(--honey)" stroke-width="2"/>
+        <polygon points="17,10 25,14.5 25,23.5 17,28 9,23.5 9,14.5" fill="var(--honey)"/>
+      </svg>
+      <span>
+        <span class="brand-name">The Hive Atlas</span>
+        <span class="brand-sub">U.S. Honey Bee Health Data</span>
+      </span>
+    </a>
+    <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav id="site-nav" aria-label="Main">
+      <ul><li><a href="disease.html">Disease</a></li><li><a href="genetics.html">Genetics</a></li><li><a href="losses.html" aria-current="page">Colony Losses</a></li><li><a href="monitoring.html">Monitoring</a></li><li><a href="methods.html">Methods</a></li><li><a href="contribute.html">Contribute</a></li><li><a href="publications.html">Publications</a></li><li><a href="about.html">About</a></li></ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="page-head lx-head">
+    <div class="wrap">
+      <p class="lx-note" id="lx-note">NASS honey bee colony data.</p>
+      <h1>Honey bee colony losses</h1>
+      <p class="lede" id="lx-summary">Quarterly colony losses and stressors reported by U.S. beekeeping operations, by state.</p>
+      <div class="lx-tabs" role="tablist" aria-label="Colony losses">
+        <button type="button" role="tab" id="tab-map" aria-selected="true" aria-controls="lx-view">Map</button>
+        <button type="button" role="tab" id="tab-about" aria-selected="false" aria-controls="about">About this map</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="lx-view" role="tabpanel" aria-labelledby="tab-map">
+    <div class="wrap lx-wrap">
+      <div class="lx-controls">
+        <div class="lx-ctl">
+          <span class="lx-lab" id="lab-style">Map style</span>
+          <div class="seg" data-seg="style" role="group" aria-labelledby="lab-style">
+            <button type="button" data-v="hex" aria-pressed="true">Hexagons</button>
+            <button type="button" data-v="shapes" aria-pressed="false">State shapes</button>
+          </div>
+        </div>
+        <div class="lx-ctl lx-grow">
+          <label class="lx-lab" for="lx-measure">Color the map by</label>
+          <select id="lx-measure"></select>
+        </div>
+        <div class="lx-ctl">
+          <span class="lx-lab" id="lab-mode">Time period</span>
+          <div class="lx-time">
+            <div class="seg" data-seg="mode" role="group" aria-labelledby="lab-mode">
+              <button type="button" data-v="quarter" aria-pressed="true">Quarter</button>
+              <button type="button" data-v="year" aria-pressed="false">Year</button>
+              <button type="button" data-v="survey" aria-pressed="false">Whole survey</button>
+            </div>
+            <div class="lx-period">
+              <button type="button" class="step" id="lx-prev" aria-label="Previous period">‹</button>
+              <select id="lx-period" aria-label="Period"></select>
+              <button type="button" class="step" id="lx-next" aria-label="Next period">›</button>
+            </div>
+          </div>
+        </div>
+        <div class="lx-ctl">
+          <label class="lx-lab" for="lx-goto">Go to a state</label>
+          <input id="lx-goto" type="text" list="lx-statelist" placeholder="e.g. Maryland or MD" autocomplete="off">
+          <datalist id="lx-statelist"></datalist>
+        </div>
+      </div>
+
+      <div class="lx-main">
+        <div class="lx-card lx-mapcard" id="lx-mapcard">
+          <h2 class="lx-cardtitle" id="lx-maptitle">Percent of colonies lost</h2>
+          <div class="lx-maptools">
+            <p class="lx-small">Click a state to see its numbers, or the button to go back to the whole country.</p>
+            <button type="button" class="lx-usbtn" id="lx-us" aria-pressed="true">United States</button>
+          </div>
+          <p class="lx-callout" id="lx-callout" hidden></p>
+          <svg id="lx-map" class="lx-map" role="group" aria-label="Map of U.S. states"></svg>
+          <div class="lx-legend" id="lx-legend"></div>
+          <p class="lx-small">Color ranges stay the same for every period, so you can compare across years.</p>
+          <div class="lx-tip" id="lx-tip" hidden></div>
+        </div>
+        <aside class="lx-card lx-panel" id="lx-panel" aria-live="polite"></aside>
+      </div>
+
+      <div class="lx-card lx-tablecard">
+        <div class="lx-tablehead">
+          <div>
+            <h2 class="lx-cardtitle" id="lx-tabletitle">All published states</h2>
+            <p class="lx-small" id="lx-tablenote"></p>
+          </div>
+          <input id="lx-filter" type="search" placeholder="Filter states" aria-label="Filter states" autocomplete="off">
+        </div>
+        <div class="table-scroll lx-tablescroll">
+          <table class="lx-table" id="lx-table"></table>
+        </div>
+      </div>
+
+      <p class="lx-small">Want the definitions, the year formula, and why some states are grouped? <button type="button" class="lx-link" data-open-about>Read about this map</button></p>
+    </div>
+  </section>
+
+  <section id="about" class="lx-aboutpanel" role="tabpanel" aria-labelledby="tab-about" hidden>
+    <div class="wrap" style="padding-block:40px 24px">
+      <div class="doc-layout">
+        <aside class="toc" aria-label="On this tab">
+          <p>On this tab</p>
+          <ul>
+            <li><a href="#ab-what">What the map shows</a></li>
+            <li><a href="#ab-use">How to use it</a></li>
+            <li><a href="#ab-measures">The measures</a></li>
+            <li><a href="#ab-year">The year view</a></li>
+            <li><a href="#ab-survey">The whole-survey view</a></li>
+            <li><a href="#ab-other">Other States</a></li>
+            <li><a href="#ab-migratory">Migratory beekeeping</a></li>
+            <li><a href="#ab-samples">Sample sizes</a></li>
+            <li><a href="#ab-corrections">Corrections</a></li>
+            <li><a href="#ab-colors">Colors and ranks</a></li>
+            <li><a href="#ab-limits">Limits</a></li>
+            <li><a href="#ab-sources">Sources</a></li>
+          </ul>
+        </aside>
+        <div>
+          <section class="doc-section prose" id="ab-what">
+            <h2>What the map shows</h2>
+            <p>How many honey bee colonies U.S. beekeepers lost each quarter, state by state, and which stressors affected their colonies. The numbers come from the quarterly Colony Loss Survey run by the USDA National Agricultural Statistics Service (NASS), which has surveyed beekeeping operations since January 2015. To be in the survey, an operation needs five or more colonies and has to qualify as a farm, meaning it sold, or would normally sell, at least $1,000 of agricultural products a year.</p>
+            <p>Each quarter covers three months: January&ndash;March, April&ndash;June, July&ndash;September, and October&ndash;December. Losses follow the seasons, so winter quarters usually run higher than summer ones. Compare a quarter with the same quarter in other years rather than with the quarter before it.</p>
+          </section>
+
+          <section class="doc-section prose" id="ab-use">
+            <h2>How to use it</h2>
+            <ul>
+              <li><strong>Map style</strong> switches between hexagons, where every state is the same size and easy to click, and real state shapes. The data is identical in both.</li>
+              <li><strong>Color the map by</strong> picks the measure. Losses and renovations come first, then the six stressors.</li>
+              <li><strong>Time period</strong> shows a single quarter, a full year, or the whole survey. Use the arrows to step through periods one at a time.</li>
+              <li><strong>Go to a state</strong> opens a state by name or two-letter code.</li>
+              <li><strong>Click a state</strong> to see its numbers, its rank, how it compares with the U.S., its stressors, and its trend. Click a bar in the trend chart to jump the map to that period.</li>
+              <li><strong>The table</strong> lists every published state for the period. Click a heading to sort, or a row to open that state.</li>
+            </ul>
+          </section>
+
+          <section class="doc-section" id="ab-measures">
+            <h2>The measures</h2>
+            <p class="section-intro" style="margin-bottom:20px">These follow NASS&rsquo;s own definitions.</p>
+            <div class="table-scroll">
+              <table class="defs">
+                <thead><tr><th>Measure</th><th>What it shows</th><th>Unit</th></tr></thead>
+                <tbody>
+                  <tr><td>Colonies at start</td><td>Colonies on the first day of the quarter (January 1, April 1, July 1, or October 1).</td><td class="unit">colonies</td></tr>
+                  <tr><td>Colonies lost</td><td>Colonies that died or were otherwise lost during the quarter.</td><td class="unit">colonies</td></tr>
+                  <tr><td>Percent lost</td><td><strong>States:</strong> colonies lost divided by the state&rsquo;s peak, its colonies at the start of the quarter plus any moved in during it. <strong>U.S.:</strong> colonies lost divided by colonies at the start of the quarter. NASS uses the start count nationally because a colony that moves is counted in every state it visits, so a national peak would double-count.</td><td class="unit">% of colonies</td></tr>
+                  <tr><td>Percent renovated</td><td>Share of colonies requeened or given a nuc or package during the quarter. Same denominators as percent lost.</td><td class="unit">% of colonies</td></tr>
+                  <tr><td>Stressors</td><td>Share of colonies that beekeepers reported as affected by Varroa mites, other pests and parasites, diseases, pesticides, other causes, or unknown causes. Self-reported on the survey, not lab-confirmed. Affected doesn&rsquo;t mean lost, and a colony can have more than one stressor, so these don&rsquo;t add up to 100%. Same denominators as percent lost.</td><td class="unit">% of colonies</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="doc-section prose" id="ab-year">
+            <h2>The year view</h2>
+            <p>NASS publishes quarterly numbers only, so the year view combines the quarters:</p>
+            <ul>
+              <li><strong>Percents</strong> (lost, renovated, and stressors) are the average of the year&rsquo;s quarters: (Q1 + Q2 + Q3 + Q4) &divide; 4.</li>
+              <li><strong>Colonies lost</strong> is the year&rsquo;s total: Q1 + Q2 + Q3 + Q4.</li>
+              <li><strong>Colonies</strong> is the count on January 1.</li>
+            </ul>
+            <p>For example, U.S. losses in 2024 were 15%, 9%, 10%, and 14%, so the average quarterly loss is <strong>12.0%</strong>.</p>
+            <p>This is <strong>not an annual loss rate</strong>, and the page labels it &ldquo;average quarterly loss&rdquo; for that reason. Beekeepers replace and split colonies all year, and each quarter&rsquo;s percent uses its own count of colonies, so there is no single exact way to turn quarterly rates into a yearly one. Other common methods give much higher numbers for the same 2024 data:</p>
+            <div class="table-scroll" style="margin-bottom:16px">
+              <table class="defs">
+                <thead><tr><th>Method</th><th>Formula</th><th>U.S. 2024</th></tr></thead>
+                <tbody>
+                  <tr><td>Average quarterly loss (used here)</td><td>Average of the four quarterly percents</td><td class="unit">12.0%</td></tr>
+                  <tr><td>Compounded loss</td><td>1 &minus; (1 &minus; Q1)(1 &minus; Q2)(1 &minus; Q3)(1 &minus; Q4), the chance a colony doesn&rsquo;t survive all four quarters if none were replaced</td><td class="unit">40.1%</td></tr>
+                  <tr><td>Total lost &divide; January 1 colonies</td><td>1,353,350 &divide; 2,669,350</td><td class="unit">50.7%</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>A state gets a yearly value only when NASS published it for every quarter of that year. 2019 averages three quarters, because no data was published for April&ndash;June 2019, and the latest year averages only the quarters released so far. Both are labeled in the period menu.</p>
+          </section>
+
+          <section class="doc-section prose" id="ab-survey">
+            <h2>The whole-survey view</h2>
+            <p>A single quarter is noisy, especially for smaller states, where losses can swing 10 points from one quarter to the next. The whole-survey view averages many quarters to show how each state typically fares.</p>
+            <p><strong>How it&rsquo;s calculated.</strong> Losses are much higher in some seasons than others, so a plain average would favor states with missing winter quarters. Instead, each season is averaged on its own (every January&ndash;March quarter, every April&ndash;June quarter, and so on), and the result is the average of those four season values. A state needs at least 3 published quarters in every season to get a value. Percents are averages of quarterly percents, and colony counts are averages per quarter.</p>
+            <p><strong>Two windows.</strong> States were not all published for the same years, which would mix good and bad years unevenly. So there are two options:</p>
+            <ul>
+              <li><strong>Common window</strong> (the default) uses the same quarters for every state: from the first survey quarter through the last quarter when most states were still published separately (<span class="ab-window">mid-2024</span>). Use this one to compare and rank states.</li>
+              <li><strong>Each state&rsquo;s full record</strong> uses every quarter a state was published. It includes more recent data for the 20 states still published, but those states then cover different years from the rest.</li>
+            </ul>
+            <p>Like the year view, this is <strong>an average quarterly loss, not an annual loss rate</strong>.</p>
+            <p><strong>By season.</strong> Every state panel shows the typical value for each quarter of the year over the common window, so you can see when a state&rsquo;s losses tend to happen as well as how large they are.</p>
+            <p><strong>Trends and precision.</strong> The quarterly chart in each panel shows whether a state has done better or worse over time. We don&rsquo;t run a formal trend test: roughly ten years of noisy survey estimates can rarely show a real change with confidence. NASS doesn&rsquo;t publish a margin of error for loss rates. Each state panel shows how many operations the estimate rests on (see <a href="#ab-samples">Sample sizes</a>); even with that, treat states a point or two apart in a whole-survey ranking as effectively tied.</p>
+          </section>
+
+          <section class="doc-section prose" id="ab-other">
+            <h2>Why so many states are in Other States</h2>
+            <p>NASS combines states with too few reporting operations into a single <strong>Other States</strong> group. From 2015 through April&ndash;June 2024, it published 44 or 45 states individually. Starting with July&ndash;September 2024, it publishes 20.</p>
+            <p>NASS&rsquo;s data quality report for the August 2025 release says estimates are published for 20 states and for Other States, &ldquo;which includes thirty States with low levels of inventory.&rdquo; We have not found a published explanation for the change.</p>
+            <p>The 20 states still published hold most of the country&rsquo;s colonies, about 89% in April&ndash;June 2025. They are California, Florida, Georgia, Idaho, Iowa, Louisiana, Michigan, Minnesota, Mississippi, Montana, New York, North Carolina, North Dakota, Ohio, Oregon, Pennsylvania, South Dakota, Texas, Washington, and Wisconsin.</p>
+            <p>On the map, a state in Other States is gray. Clicking it shows the Other States numbers, which describe the group as a whole and not that state alone.</p>
+          </section>
+
+          <section class="doc-section prose" id="ab-migratory">
+            <h2>Migratory beekeeping</h2>
+            <p>Many commercial colonies travel across the country during the year, to pollinate almonds in California, to overwinter in the South, and back to summer honey ranges in the Northern Plains. The survey handles this in a specific way, and it changes what a state&rsquo;s numbers mean.</p>
+            <p><strong>Colonies count in every state they visit.</strong> Operations report their colonies separately for each state where they were during the quarter, so a colony moved from North Dakota to California counts in both states&rsquo; peak colonies that quarter. That&rsquo;s why state peaks add up to more than the national total, and why NASS doesn&rsquo;t publish a national peak.</p>
+            <p><strong>Each lost colony counts once, in the state where it was.</strong> For each state, the survey asks how many of the colonies located there were lost during the quarter. A colony from North Dakota that dies in California in February is a California loss. Lost colonies in every state add up exactly to the U.S. total, so losses are not double-counted.</p>
+            <p><strong>So a state&rsquo;s loss rate describes colonies while they were in that state</strong>, not how that state&rsquo;s beekeepers fared over a year. North Dakota shows this clearly. Averages for the first day of each quarter, 2015 to mid-2024:</p>
+            <div class="table-scroll" style="margin-bottom:16px">
+              <table class="defs">
+                <thead><tr><th>Quarter</th><th>North Dakota colonies</th><th>North Dakota loss</th><th>California colonies</th><th>California loss</th></tr></thead>
+                <tbody>
+                  <tr><td>Jan&ndash;Mar</td><td class="unit">68,000</td><td class="unit">4%</td><td class="unit">1,158,000</td><td class="unit">15%</td></tr>
+                  <tr><td>Apr&ndash;Jun</td><td class="unit">80,000</td><td class="unit">4%</td><td class="unit">1,040,000</td><td class="unit">10%</td></tr>
+                  <tr><td>Jul&ndash;Sep</td><td class="unit">478,000</td><td class="unit">13%</td><td class="unit">639,000</td><td class="unit">8%</td></tr>
+                  <tr><td>Oct&ndash;Dec</td><td class="unit">394,000</td><td class="unit">8%</td><td class="unit">683,000</td><td class="unit">10%</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>North Dakota has about seven times as many colonies in summer as in winter. Most of its colonies spend winter and almond season in other states, so losses during the riskiest part of the year are counted there, and North Dakota&rsquo;s low overall rate partly reflects that. California&rsquo;s winter losses, in turn, include colonies trucked in from across the country.</p>
+            <p>When comparing states, keep in mind that summer honey states and winter destination states see different parts of the same colonies&rsquo; year. The <strong>By season</strong> breakdown in each state panel shows when a state&rsquo;s losses happen.</p>
+          </section>
+
+          <section class="doc-section prose" id="ab-samples">
+            <h2>Sample sizes</h2>
+            <p>NASS surveys a sample of operations in each state, not every beekeeper. Its yearly data quality reports, available from 2019 on, give the number of operations sampled in each state every quarter and the share that responded. Each state panel shows these as &ldquo;Based on X operations sampled; about Y responded,&rdquo; and the table has a <strong>Sampled</strong> column. For a year or the whole survey, the typical (median) quarter is shown.</p>
+            <p><strong>Small samples are flagged.</strong> When fewer than 20 operations responded, the panel shows a <span class="lx-smallchip">Small sample</span> flag and the table marks the state. With so few operations, one or two large ones can drive the whole state&rsquo;s loss rate, and the number can swing a lot from quarter to quarter. NASS samples every large or multi-state operation and a random selection of smaller ones, so large operations are always included.</p>
+            <p><strong>What isn&rsquo;t shown.</strong> NASS doesn&rsquo;t report how colonies are spread across operations, so the page can&rsquo;t show whether one operation holds most of a state&rsquo;s colonies. The quality reports also include a coefficient of variation, but it measures the precision of the colony counts, not the loss rates, so it isn&rsquo;t shown here. Sample sizes before 2019 were not published.</p>
+            <p><strong>Matching quarters.</strong> NASS labels each quality table by the survey date (January 1, April 1, July 1, October 1). Each is matched to the quarter that begins on that date. NASS notes the July 2019 survey wasn&rsquo;t conducted, while the loss data is missing April&ndash;June 2019 instead, so sample sizes for that part of 2019 may be shifted by one quarter. Sample sizes change little from quarter to quarter, so this has almost no effect.</p>
+          </section>
+
+          <section class="doc-section prose" id="ab-corrections">
+            <h2>Corrections</h2>
+            <p>Values are shown as NASS published them, with one exception. Every published percent is checked against NASS&rsquo;s own colony counts, and in two cases they contradict each other:</p>
+            <div class="table-scroll" style="margin-bottom:16px">
+              <table class="defs">
+                <thead><tr><th>State and quarter</th><th>NASS counts</th><th>Published percent lost</th><th>Shown here</th></tr></thead>
+                <tbody>
+                  <tr><td>Wyoming, Jul&ndash;Sep 2023</td><td>860 lost of 23,000 peak colonies</td><td class="unit">under 0.5%</td><td class="unit">3.7%&dagger;</td></tr>
+                  <tr><td>Wyoming, Oct&ndash;Dec 2023</td><td>1,700 lost of 18,500 peak colonies</td><td class="unit">under 0.5%</td><td class="unit">9.2%&dagger;</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>The counts appear to be right: together with every other state they add up exactly to NASS&rsquo;s U.S. total, and they fit Wyoming&rsquo;s losses in other years. So the published percents appear to be the error, and the page shows the percent calculated from the counts, marked with &dagger;. These corrected values are also used in the year and whole-survey averages. The downloadable data keeps NASS&rsquo;s values as published. If NASS corrects its table, the correction here will be removed.</p>
+          </section>
+
+          <section class="doc-section prose" id="ab-colors">
+            <h2>Colors and ranks</h2>
+            <p>Each measure has five color ranges, set from every state&rsquo;s values across all periods. The ranges stay the same as you change periods, so a color means the same thing in 2016 and in 2025. The quarter and year views each have their own ranges.</p>
+            <p>When a state is compared with the U.S., keep the denominators in mind: state percents use each state&rsquo;s peak colony count, which is larger than its start count, while the U.S. uses the start count. State percents therefore tend to read a little lower than the national figure. Comparing states with each other is like for like.</p>
+            <p>Ranks compare a state with the other states published for the same period, and 1 is the highest value. Since only 20 states are published from July&ndash;September 2024 on, ranks from those periods are out of 20 instead of about 45.</p>
+            <p>Gray means the state is counted in Other States. Striped means NASS did not publish that number, for example in April&ndash;June 2019, or for a year when the state was not published every quarter.</p>
+          </section>
+
+          <section class="doc-section prose" id="ab-limits">
+            <h2>Limits to keep in mind</h2>
+            <ul>
+              <li><strong>Commercial and sideline operations only.</strong> The survey covers operations with five or more colonies that qualify as farms. Backyard beekeepers are not included.</li>
+              <li><strong>Colonies move.</strong> Many commercial colonies travel between states for pollination, so a state&rsquo;s numbers describe the colonies there that quarter, not the colonies owned by its beekeepers. See <a href="#ab-migratory">Migratory beekeeping</a>.</li>
+              <li><strong>Survey estimates.</strong> These are statistical estimates from a sample of operations, and NASS revises the previous year&rsquo;s numbers when it publishes a new report. Smaller states rest on fewer sampled operations; in January 2024, for example, NASS sampled 252 operations in California but 14 in Maine, so small-state estimates are less precise. See <a href="#ab-samples">Sample sizes</a>.</li>
+              <li><strong>Stressors are self-reported.</strong> Beekeepers report how many colonies were affected by, but not necessarily lost to, each stressor. They reflect what beekeepers observed, not lab diagnoses, and they don&rsquo;t say what caused a colony&rsquo;s death.</li>
+              <li><strong>Small values.</strong> Values below half a percent appear as &ldquo;&lt;0.5%&rdquo;.</li>
+            </ul>
+          </section>
+
+          <section class="doc-section prose" id="ab-sources">
+            <h2>Sources</h2>
+            <ul>
+              <li>USDA National Agricultural Statistics Service, <a href="https://esmis.nal.usda.gov/publication/honey-bee-colonies" target="_blank" rel="noopener">Honey Bee Colonies reports</a>, 2016 to present.</li>
+              <li>USDA NASS, <a href="https://www.nass.usda.gov/surveys/Guide_to_NASS_Surveys/Bee_and_Honey/index.php" target="_blank" rel="noopener">Guide to Bee and Honey Surveys</a>.</li>
+              <li>USDA NASS, <a href="https://www.nass.usda.gov/Publications/Methodology_and_Data_Quality/Honey_Bee_Colonies/index.php" target="_blank" rel="noopener">Honey Bee Colonies Methodology and Quality Measures</a>, October 2021 through August 2026.</li>
+              <li>State outlines: U.S. Census Bureau cartographic boundary files, via the us-atlas project.</li>
+            </ul>
+            <p id="lx-built"></p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div style="height:56px"></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>The Hive Atlas · Open honey bee health data for the United States</span>
+    <ul>
+      <li><a href="methods.html">Data &amp; Methods</a></li>
+      <li><a href="publications.html">Publications</a></li>
+      <li><a href="about.html">About &amp; Contact</a></li>
+    </ul>
+  </div>
+</footer>
+<script src="js/site.js"></script>
+<script src="data/state-shapes.js"></script>
+<script src="data/colony-losses.js"></script>
+<script src="data/colony-quality.js"></script>
+<script src="js/losses.js"></script>
+</body>
+</html>
