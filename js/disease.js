@@ -48,7 +48,8 @@
   });
   function testedIn(mid, y0, y1) { return M[mid].years.some(function (y) { return y >= y0 && y <= y1; }); }
 
-  var st = { style: 'hex', geo: 'state', measure: 'vd', mode: 'year', year: LATEST_FULL, from: Math.max(FIRST, 2015), to: LATEST_FULL, season: 'all', sel: 'US', sortKey: null, sortDir: -1, filter: '' };
+  // Opening view: climate regions, Varroa positive, the last three complete years pooled, so the map is filled in
+  var st = { style: 'hex', geo: 'region', measure: 'vd', mode: 'range', year: LATEST_FULL, from: Math.max(FIRST, LATEST_FULL - 2), to: LATEST_FULL, season: 'all', sel: 'US', sortKey: null, sortDir: -1, filter: '' };
   try { var saved = localStorage.getItem('hive-map-style'); if (saved === 'hex' || saved === 'shapes') st.style = saved; } catch (e) {}
   var $ = function (id) { return document.getElementById(id); };
 
@@ -497,12 +498,19 @@
 
   /* ---------- Summary for the latest complete year ---------- */
   (function summary() {
-    var y = LATEST_FULL, g = function (m) { return valAt('US', m, y, y); };
-    var nStates = D.states.filter(function (s) { return valAt(s, 'samples', y, y).v; }).length;
+    // Describes the opening view: the last three complete years, pooled
+    var y0 = st.from, y1 = st.to, g = function (m) { return valAt('US', m, y0, y1); };
+    var nStates = D.states.filter(function (s) { return valAt(s, 'samples', y0, y1).v; }).length;
     var total = valAt('US', 'samples', FIRST, LAST).v;
-    $('dx-summary').innerHTML = 'In ' + y + ', the Bee Disease Diagnostic Laboratory tested <strong>' + fmt('samples', g('samples')) + '</strong> adult bee samples from ' + nStates + ' states and territories. <strong>' +
-      fmt('vd', g('vd')) + '</strong> carried Varroa mites, averaging ' + fmt('vil', g('vil')) + ' mites per 100 bees, and <strong>' + fmt('nos', g('nos')) + '</strong> carried Nosema. ' +
-      'Samples come from colonies that looked sick or weak, so these rates are higher than in the average colony. Click any state to see its numbers.';
+    var regs = REGION_KEYS.map(function (k) { return { k: k, r: valAt('R:' + k, 'vd', y0, y1) }; })
+      .filter(function (x) { return x.r.status === 'ok' && x.r.n >= SMALL_N; })
+      .sort(function (a, b) { return b.r.v - a.r.v; });
+    var hi = regs[0], lo = regs[regs.length - 1];
+    var rn = function (x) { return D.regions[x.k].name; };
+    $('dx-summary').innerHTML = 'From ' + y0 + ' to ' + y1 + ', the Bee Disease Diagnostic Laboratory tested <strong>' + fmt('samples', g('samples')) + '</strong> adult bee samples from ' + nStates + ' states and territories. <strong>' +
+      fmt('vd', g('vd')) + '</strong> carried Varroa mites, averaging ' + fmt('vil', g('vil')) + ' mites per 100 bees, and <strong>' + fmt('nos', g('nos')) + '</strong> carried Nosema.' +
+      (hi && lo && hi !== lo ? ' Varroa turned up most often in the <strong>' + rn(hi) + '</strong> (' + fmt('vd', hi.r) + ') and least often in the <strong>' + rn(lo) + '</strong> (' + fmt('vd', lo.r) + ').' : '') +
+      ' Samples come from colonies that looked sick or weak, so these rates are higher than in the average colony. Click any region or state to see its numbers.';
     $('dx-note').textContent = total.toLocaleString('en-US') + ' samples from ' + FIRST + ' through ' + MONTHS[LAST_MONTH[LAST]] + ' ' + LAST + '.';
   })();
 
