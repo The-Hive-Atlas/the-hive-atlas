@@ -3,7 +3,8 @@ the Disease Surveillance map reads.
 
 Usage:
     python3 pipeline/clean_bddl.py Adult_BDDL_1984Present.xlsx Adult_BDDL_cleaned.xlsx   # once per new spreadsheet
-    python3 pipeline/build_disease.py Adult_BDDL_cleaned.xlsx data/disease.js data/bddl-adult-state-year.csv
+    python3 pipeline/clean_brood.py Brood.xlsx Brood_cleaned.xlsx
+    python3 pipeline/build_disease.py Adult_BDDL_cleaned.xlsx data/disease.js data/bddl-state-year.csv Brood_cleaned.xlsx
 
 Keep the spreadsheet itself OUT of the site folder: it has zip codes and sample numbers.
 This script publishes only counts per state, year and month, never single samples.
@@ -12,7 +13,8 @@ Output: data/disease.js defines window.HIVE_DISEASE with one row per state, year
     [state, year, month (0 = not recorded), samples,
      varroa tested, varroa positive, nosema tested, nosema positive,
      tracheal tested, tracheal positive,
-     varroa counts, sum of mites per 100 bees, nosema counts, sum of million spores per bee]
+     varroa counts, sum of mites per 100 bees, nosema counts, sum of million spores per bee,
+     brood samples, American foulbrood positive, European foulbrood positive]
 and a CSV of the same counts by state and year for download.
 
 What counts as tested:
@@ -70,23 +72,29 @@ def number(v):
     return float(v) if isinstance(v, (int, float)) and not isinstance(v, bool) else None
 
 
-def main(src, dst_js, dst_csv):
+def state_month(r, col, unknown):
+    stc = str(r[col['State']] or '').strip().upper()
+    stc = FIX_STATE.get(stc, stc)
+    if stc not in NAMES or stc == 'US':
+        unknown[stc] += 1
+        return None
+    return stc, int(r[col['Year']]), MONTHS.get(str(r[col['Month']] or '').strip()[:3].title(), 0)
+
+
+def main(src, dst_js, dst_csv, brood_src=None):
     ws = openpyxl.load_workbook(src, read_only=True).active
     rows = ws.iter_rows(values_only=True)
     head = list(next(rows))
     col = {k: head.index(k) for k in ('Month', 'Year', 'State', 'VD', 'VIL', 'NOS', 'MSPB', 'TM')}
-    cube = defaultdict(lambda: [0] * 11)
+    cube = defaultdict(lambda: [0] * 14)
     unknown = defaultdict(int)
     for r in rows:
         if r[col['Year']] is None:
             continue
-        stc = str(r[col['State']] or '').strip().upper()
-        stc = FIX_STATE.get(stc, stc)
-        if stc not in NAMES or stc == 'US':
-            unknown[stc] += 1
+        k = state_month(r, col, unknown)
+        if not k:
             continue
-        y = int(r[col['Year']])
-        m = MONTHS.get(str(r[col['Month']] or '').strip()[:3].title(), 0)
+        stc, y, m = k
         c = cube[(stc, y, m)]
         c[0] += 1
         vd, nos, tm = flag(r[col['VD']]), flag(r[col['NOS']]), flag(r[col['TM']])
@@ -101,6 +109,23 @@ def main(src, dst_js, dst_csv):
             c[7] += 1; c[8] += vil
         if ms is not None:
             c[9] += 1; c[10] += ms
+    # Brood samples: American and European foulbrood, 1 = found, 0 = not found
+    if brood_src:
+        wb2 = openpyxl.load_workbook(brood_src, read_only=True).worksheets[0]
+        rows2 = wb2.iter_rows(values_only=True)
+        head2 = list(next(rows2))
+        col2 = {k: head2.index(k) for k in ('Month', 'Year', 'State', 'AFB', 'EFB')}
+        for r in rows2:
+            if r[col2['Year']] is None:
+                continue
+            k = state_month(r, col2, unknown)
+            if not k:
+                continue
+            afb, efb = flag(r[col2['AFB']]), flag(r[col2['EFB']])
+            if afb is None or efb is None:
+                continue
+            c = cube[k]
+            c[11] += 1; c[12] += afb; c[13] += efb
     if unknown:
         print('skipped rows with unknown state codes:', dict(unknown))
 
@@ -108,41 +133,43 @@ def main(src, dst_js, dst_csv):
     sidx = {s: i for i, s in enumerate(states)}
     out = []
     for (s, y, m), c in sorted(cube.items(), key=lambda kv: (kv[0][1], sidx[kv[0][0]], kv[0][2])):
-        out.append([sidx[s], y, m] + c[:8] + [round(c[8], 2), c[9], round(c[10], 3)])
+        out.append([sidx[s], y, m] + c[:8] + [round(c[8], 2), c[9], round(c[10], 3)] + c[11:14])
     years = sorted({k[1] for k in cube})
     data = {
         'source': {'name': 'USDA ARS Bee Research Laboratory, Bee Disease Diagnostic Laboratory', 'built': date.today().isoformat(),
                    'first': years[0], 'last': years[-1], 'varroaFrom': VARROA_FROM},
         'states': states, 'names': NAMES,
         'regions': {k: {'name': v[0], 'states': v[1]} for k, v in REGIONS.items()},
-        'cols': ['state', 'year', 'month', 'samples', 'vd_n', 'vd_pos', 'nos_n', 'nos_pos', 'tm_n', 'tm_pos', 'vil_n', 'vil_sum', 'ms_n', 'ms_sum'],
+        'cols': ['state', 'year', 'month', 'samples', 'vd_n', 'vd_pos', 'nos_n', 'nos_pos', 'tm_n', 'tm_pos', 'vil_n', 'vil_sum', 'ms_n', 'ms_sum', 'brood_n', 'afb_pos', 'efb_pos'],
         'rows': out,
     }
     with open(dst_js, 'w', encoding='utf-8') as f:
-        f.write('/* BDDL adult honey bee samples, counted by state, year and month. Generated by pipeline/build_disease.py. */\n')
+        f.write('/* BDDL adult and brood honey bee samples, counted by state, year and month. Generated by pipeline/build_disease.py. */\n')
         f.write('window.HIVE_DISEASE = ')
         json.dump(data, f, separators=(',', ':'))
         f.write(';\n')
 
     # Download: state by year
-    sy = defaultdict(lambda: [0] * 11)
+    sy = defaultdict(lambda: [0] * 14)
     for (s, y, m), c in cube.items():
         t = sy[(s, y)]
         for i, v in enumerate(c):
             t[i] += v
     with open(dst_csv, 'w', newline='') as f:
         w = csv.writer(f)
-        w.writerow(['year', 'state', 'state_name', 'samples', 'varroa_tested', 'varroa_positive', 'varroa_pct_positive',
+        w.writerow(['year', 'state', 'state_name', 'adult_samples', 'varroa_tested', 'varroa_positive', 'varroa_pct_positive',
                     'nosema_tested', 'nosema_positive', 'nosema_pct_positive', 'tracheal_tested', 'tracheal_positive', 'tracheal_pct_positive',
-                    'varroa_counted', 'avg_mites_per_100_bees', 'nosema_counted', 'avg_million_spores_per_bee'])
+                    'varroa_counted', 'avg_mites_per_100_bees', 'nosema_counted', 'avg_million_spores_per_bee',
+                    'brood_samples', 'afb_positive', 'afb_pct_positive', 'efb_positive', 'efb_pct_positive'])
         pct = lambda p, n: round(100 * p / n, 1) if n else ''
         avg = lambda s, n, d: round(s / n, d) if n else ''
         for (s, y) in sorted(sy, key=lambda k: (k[1], NAMES[k[0]])):
             c = sy[(s, y)]
             w.writerow([y, s, NAMES[s], c[0], c[1], c[2], pct(c[2], c[1]), c[3], c[4], pct(c[4], c[3]), c[5], c[6], pct(c[6], c[5]),
-                        c[7], avg(c[8], c[7], 2), c[9], avg(c[10], c[9], 2)])
+                        c[7], avg(c[8], c[7], 2), c[9], avg(c[10], c[9], 2), c[11], c[12], pct(c[12], c[11]), c[13], pct(c[13], c[11])])
     total = sum(c[0] for c in cube.values())
-    print('wrote %d samples as %d state-year-month rows, %d states, %d to %d' % (total, len(out), len(states), years[0], years[-1]))
+    print('brood samples: %d' % sum(c[11] for c in cube.values()))
+    print('wrote %d adult samples as %d state-year-month rows, %d states, %d to %d' % (total, len(out), len(states), years[0], years[-1]))
 
 
 if __name__ == '__main__':

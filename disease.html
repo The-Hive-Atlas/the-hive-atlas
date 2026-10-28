@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Disease Surveillance · The Hive Atlas</title>
-<meta name="description" content="Varroa, Nosema, and tracheal mite results from adult honey bee samples tested by the USDA Bee Disease Diagnostic Laboratory, by state and year since 1984.">
+<meta name="description" content="Varroa, Nosema, tracheal mite, and foulbrood results from honey bee samples tested by the USDA Bee Disease Diagnostic Laboratory, by state and year since 1984.">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,7 +36,7 @@
     <div class="wrap">
       <p class="lx-note" id="dx-note">Bee Disease Diagnostic Laboratory data.</p>
       <h1>Honey bee disease surveillance</h1>
-      <p class="lede" id="dx-summary">Varroa, Nosema, and tracheal mite results from adult honey bee samples sent to the USDA Bee Disease Diagnostic Laboratory, by state and year.</p>
+      <p class="lede" id="dx-summary">Varroa, Nosema, tracheal mite, and foulbrood results from honey bee samples sent to the USDA Bee Disease Diagnostic Laboratory, by state and year.</p>
       <div class="lx-tabs" role="tablist" aria-label="Disease surveillance">
         <button type="button" role="tab" id="tab-map" aria-selected="true" aria-controls="dx-view">Map</button>
         <button type="button" role="tab" id="tab-about" aria-selected="false" aria-controls="about">About this map</button>
@@ -125,7 +125,7 @@
         </div>
       </div>
 
-      <p class="lx-small">Want the lab methods, which years each test covers, and how to read these rates? <button type="button" class="lx-link" data-open-about>Read about this map</button> &middot; <a href="data/bddl-adult-state-year.csv" download>Download counts by state and year (CSV)</a></p>
+      <p class="lx-small">Want the lab methods, which years each test covers, and how to read these rates? <button type="button" class="lx-link" data-open-about>Read about this map</button> &middot; <a href="data/bddl-state-year.csv" download>Download counts by state and year (CSV)</a></p>
     </div>
   </section>
 
@@ -152,13 +152,19 @@
         <div>
           <section class="doc-section prose" id="ab-what">
             <h2>What the map shows</h2>
-            <p>Results from adult honey bee samples tested by the <strong>Bee Disease Diagnostic Laboratory</strong> (BDDL) at the USDA Agricultural Research Service Bee Research Laboratory in Beltsville, Maryland. The lab has diagnosed honey bee samples from across the country free of charge for decades. This map covers nearly 49,000 adult bee samples received from 1984 to 2026, tested for three parasites:</p>
+            <p>Results from adult honey bee samples tested by the <strong>Bee Disease Diagnostic Laboratory</strong> (BDDL) at the USDA Agricultural Research Service Bee Research Laboratory in Beltsville, Maryland. The lab has diagnosed honey bee samples from across the country free of charge for decades. This map covers about 100,000 samples received from 1984 to 2026: nearly 49,000 samples of adult bees and about 51,000 samples of brood (comb or larvae).</p>
+            <p><strong>Adult bee samples</strong> are tested for three parasites:</p>
             <ul>
               <li><strong>Varroa mites</strong> (<em>Varroa destructor</em>), the external parasite most closely tied to colony losses, which also spreads viruses.</li>
               <li><strong>Nosema</strong> (<em>Nosema apis</em> and <em>Nosema ceranae</em>, also called <em>Vairimorpha</em>), a microsporidian gut parasite of adult bees.</li>
               <li><strong>Tracheal mites</strong> (<em>Acarapis woodi</em>), which live in the breathing tubes of adult bees.</li>
             </ul>
-            <p>The lab also tests brood samples for American and European foulbrood. Those results aren&rsquo;t on this map yet.</p>
+            <p><strong>Brood samples</strong> are tested for two bacterial diseases of developing bees:</p>
+            <ul>
+              <li><strong>American foulbrood</strong> (AFB), caused by <em>Paenibacillus larvae</em>. Its spores survive for decades, it is highly contagious, and many states require infected colonies to be burned.</li>
+              <li><strong>European foulbrood</strong> (EFB), caused by <em>Melissococcus plutonius</em>. It is usually less severe than AFB but has become much more common in recent years.</li>
+            </ul>
+            <p>Adult and brood samples are separate submissions, so the two sets of results come from different samples and are counted separately.</p>
           </section>
 
           <section class="doc-section prose" id="ab-samples">
@@ -166,8 +172,8 @@
             <p>State apiary inspectors and beekeepers send samples to the lab when a colony shows signs of disease, weakness, or decline. That makes this a <strong>diagnostic</strong> record, not a random survey of U.S. colonies, and it shapes how the numbers should be read:</p>
             <ul>
               <li><strong>Rates run high.</strong> A state where 60% of samples carried Nosema doesn&rsquo;t have Nosema in 60% of its colonies. It means 60% of the samples sent in from struggling colonies tested positive. Studies that compared BDDL results with the USDA APHIS National Honey Bee Disease Survey, which samples apparently healthy apiaries, found much higher mite and spore levels in BDDL samples.</li>
-              <li><strong>Who sends samples changes the numbers.</strong> Some states have inspection programs that send many samples, and others send few or none. A change in a state&rsquo;s inspection program can change its numbers as much as a change in bee health. Ohio, New York, and South Dakota together sent more than half of all samples.</li>
-              <li><strong>Sample counts change a lot over time.</strong> The lab received about 2,400 to 3,400 adult samples a year from 2008 to 2012, and about 230 to 400 a year since 2021.</li>
+              <li><strong>Who sends samples changes the numbers.</strong> Some states have inspection programs that send many samples, and others send few or none. A change in a state&rsquo;s inspection program can change its numbers as much as a change in bee health. Ohio, New York, and South Dakota together sent more than half of all adult samples, and Ohio alone sent more than a third of all brood samples.</li>
+              <li><strong>Sample counts change a lot over time.</strong> The lab received about 2,400 to 3,400 adult samples a year from 2008 to 2012, and about 230 to 400 a year since 2021. Brood samples follow a similar pattern, from about 1,000 to 4,000 a year before 2016 to about 250 to 400 a year since 2021.</li>
             </ul>
             <p>The map is most useful for seeing <strong>what is turning up in problem colonies</strong>, where, in which months, and how that has shifted over the years.</p>
           </section>
@@ -176,7 +182,7 @@
             <h2>How to use it</h2>
             <ul>
               <li><strong>Area</strong> shows states, or the nine NOAA climate regions plus Alaska and Hawaii. Regions pool many states, so they are steadier when state counts are small.</li>
-              <li><strong>Color the map by</strong> picks the parasite and the measure: percent of samples positive, average load, or number of samples.</li>
+              <li><strong>Color the map by</strong> picks the disease and the measure: percent of samples positive, average load, or number of samples. Adult bee diseases and foulbrood are grouped separately in the menu.</li>
               <li><strong>Years</strong> shows one year or a range of years. A range pools every sample in those years, which steadies small states.</li>
               <li><strong>Months</strong> limits the view to one season. Mite and spore levels change a lot through the year, so comparing the same season across years or states is fairer.</li>
               <li><strong>Click a state or region</strong> to see its numbers, how it compares with the U.S., its pattern by month, and its trend by year. Click a bar in the trend chart to jump to that year.</li>
@@ -186,15 +192,16 @@
 
           <section class="doc-section" id="ab-measures">
             <h2>The measures</h2>
-            <p class="section-intro" style="margin-bottom:20px">Each sample is one colony. These follow the definitions in the lab&rsquo;s published studies.</p>
+            <p class="section-intro" style="margin-bottom:20px">Each sample is one colony. A single submission can include samples from several colonies, occasionally hundreds, and each colony&rsquo;s sample is counted separately. These follow the definitions in the lab&rsquo;s published studies.</p>
             <div class="table-scroll">
               <table class="defs">
                 <thead><tr><th>Measure</th><th>What it shows</th><th>Unit</th></tr></thead>
                 <tbody>
-                  <tr><td>Percent positive</td><td>Samples in which the parasite was found, divided by samples tested for it. Shown for Varroa, Nosema, and tracheal mites.</td><td class="unit">% of samples</td></tr>
+                  <tr><td>Percent positive</td><td>Samples in which the parasite was found, divided by samples tested for it. Shown for Varroa, Nosema, and tracheal mites (adult samples) and for American and European foulbrood (brood samples).</td><td class="unit">% of samples</td></tr>
                   <tr><td>Mites per 100 bees</td><td>Varroa infestation level: mites washed off the bees divided by the number of bees, times 100. The average includes samples where no mites were found.</td><td class="unit">mites / 100 bees</td></tr>
                   <tr><td>Million spores per bee</td><td>Nosema spores counted under the microscope, per bee. The average includes samples where no spores were found.</td><td class="unit">million spores / bee</td></tr>
-                  <tr><td>Samples tested</td><td>Adult bee samples the lab received and tested.</td><td class="unit">samples</td></tr>
+                  <tr><td>Adult samples tested</td><td>Adult bee samples the lab received and tested.</td><td class="unit">samples</td></tr>
+                  <tr><td>Brood samples tested</td><td>Brood samples (comb sections or smears) the lab received and tested.</td><td class="unit">samples</td></tr>
                 </tbody>
               </table>
             </div>
@@ -206,13 +213,17 @@
 
           <section class="doc-section prose" id="ab-lab">
             <h2>Lab methods</h2>
-            <p>Each sample is about 100 to 300 adult worker bees, collected from one colony and shipped in alcohol.</p>
+            <p><strong>Adult bee samples</strong> are about 100 to 300 adult worker bees, collected from one colony and shipped in alcohol.</p>
             <ul>
               <li><strong>Varroa:</strong> bees are washed in alcohol with steady pressure for about 40 seconds over a #8 mesh screen, which separates the mites. Mites are counted, and the number of bees is calculated from their wet weight (about 0.16 grams per bee).</li>
               <li><strong>Nosema:</strong> the abdomens of 30 bees are crushed in 30 mL of water, and spores are counted with a hemocytometer under a microscope at 400&times; magnification.</li>
               <li><strong>Tracheal mites:</strong> 16 bees are dissected. A thin disk is cut from each thorax, cleared in lactic acid, and the breathing tubes are examined under a dissecting microscope.</li>
             </ul>
-            <p>Full methods are in Abban et al. (2024) and Alburaki et al. (2025), listed under <a href="#ab-sources">Sources</a>.</p>
+            <p><strong>Brood samples</strong> are usually a section of brood comb about 2 by 2 inches, sometimes a whole frame, or a &ldquo;brood smear&rdquo; that an inspector collects in the field by swabbing diseased cells.</p>
+            <ul>
+              <li><strong>American and European foulbrood:</strong> samples are first inspected visually. Material from diseased cells is then smeared on a slide, dried, stained with carbol fuchsin, and examined under a microscope at 1,000&times; magnification. The two diseases are told apart by the shape of the bacteria and their spores.</li>
+            </ul>
+            <p>Full methods are in Abban et al. (2024), Alburaki et al. (2024), and Alburaki et al. (2025), listed under <a href="#ab-sources">Sources</a>.</p>
           </section>
 
           <section class="doc-section prose" id="ab-years">
@@ -225,6 +236,7 @@
                   <tr><td>Tracheal mite, positive or not</td><td class="unit">1984 to 2015, 2023, 2025 to now</td><td>Not examined from 2016 to 2022 or in 2024.</td></tr>
                   <tr><td>Varroa, positive or not</td><td class="unit">1990 to now</td><td>Varroa was first found in the U.S. in 1987. Every sample before 1990 is recorded as negative, which most likely means it wasn&rsquo;t screened yet, so those years are treated as not tested.</td></tr>
                   <tr><td>Mites per 100 bees and spores per bee</td><td class="unit">2015 to now</td><td>Before 2015 the lab recorded only whether each parasite was present.</td></tr>
+                  <tr><td>American and European foulbrood</td><td class="unit">1984 to now</td><td>Every brood sample, every year.</td></tr>
                 </tbody>
               </table>
             </div>
@@ -259,7 +271,8 @@
             <ul>
               <li><strong>A count above zero marked negative.</strong> One Varroa sample and seven Nosema samples had a mite or spore count but were marked negative. They are counted as positive.</li>
               <li><strong>Marked positive with a count of zero.</strong> Seven Varroa samples and eight Nosema samples were positive but had a count of zero, for example a mite found in the sample but none in the counted wash. Their counts were set to 1.0 mites per 100 bees and 0.1 million spores per bee, low placeholder values that keep them in the averages without inflating them.</li>
-              <li><strong>State codes.</strong> Extra spaces were removed, and one record coded &ldquo;KT&rdquo; was read as Kentucky.</li>
+              <li><strong>State codes.</strong> Extra spaces and tabs were removed, and records coded &ldquo;KT&rdquo; (one adult, one brood) were read as Kentucky.</li>
+              <li><strong>Impossible dates.</strong> 111 brood samples from 1985 to 1989 had a day of &ldquo;0&rdquo;. The day was cleared; the month and year were kept.</li>
             </ul>
             <p>Positive samples with no count recorded (&ldquo;na&rdquo;) were left out of the averages rather than filled in. Zip codes, sample numbers, and submitter details are never published; the most detailed level on this site is the state.</p>
           </section>
@@ -276,6 +289,8 @@
               <li><strong>Not a prevalence survey.</strong> Rates describe samples from colonies with problems. See <a href="#ab-samples">Where samples come from</a>.</li>
               <li><strong>Location is where the sample was sent from.</strong> Samples are mapped to the state on the submission. Colonies that move for pollination may have picked up parasites elsewhere.</li>
               <li><strong>Months.</strong> About 1,100 samples from 2016 to 2022 (about 15% of those years&rsquo; samples) have no month recorded. They count in the all-months view and in yearly totals, but not in a season or month breakdown.</li>
+              <li><strong>2007 may be incomplete.</strong> Every disease drops sharply in 2007, in both adult and brood samples: for example, American foulbrood falls to about 6% of brood samples, between about 58% in 2006 and 21% in 2008. A drop across every test at once points to missing records rather than a real change, so treat that year with caution.</li>
+              <li><strong>Counts may differ from published studies.</strong> The lab&rsquo;s database has been updated since some studies were written, and studies may filter samples differently, so totals and percentages here won&rsquo;t always match a paper exactly.</li>
               <li><strong>Methods changed over 40 years.</strong> Lab staff, equipment, and sample volumes changed over time, so small shifts between decades should be read with care.</li>
               <li><strong>Recent data is provisional.</strong> The current year is partial, and recent records may still be revised.</li>
             </ul>
@@ -284,7 +299,7 @@
           <section class="doc-section prose" id="ab-sources">
             <h2>Sources</h2>
             <ul>
-              <li>USDA Agricultural Research Service, Bee Research Laboratory, Bee Disease Diagnostic Laboratory records, adult bee samples, 1984 to 2026.</li>
+              <li>USDA Agricultural Research Service, Bee Research Laboratory, Bee Disease Diagnostic Laboratory records, adult bee and brood samples, 1984 to 2026.</li>
               <li>Abban, S. K., Alburaki, M., et al. (2024). Varroa and Nosema in honey bee samples sent to the Bee Disease Diagnostic Laboratory, 2015 to 2022. <em>Scientific Reports</em> 14: 1726. <a href="https://doi.org/10.1038/s41598-024-51514-9" target="_blank" rel="noopener">doi:10.1038/s41598-024-51514-9</a></li>
               <li>Alburaki, M., et al. (2025). A thirty-two-year (1984&ndash;2015) longitudinal analysis of honey bee disease. <em>Apidologie</em>.</li>
               <li>Alburaki, M., Abban, S. K., Evans, J. D., and Chen, Y. P. (2024). Occurrence and distribution of two bacterial brood diseases (American and European foulbrood) in US honey bee colonies and resistance to antibiotics from 2015 to 2022. <em>Journal of Apicultural Research</em> 63(4): 701&ndash;710. <a href="https://doi.org/10.1080/00218839.2024.2329854" target="_blank" rel="noopener">doi:10.1080/00218839.2024.2329854</a></li>

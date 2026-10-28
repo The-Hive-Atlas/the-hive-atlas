@@ -9,7 +9,7 @@ The Hive Atlas brings public data on honey bee colony losses, disease, and colon
 | Page | What it shows | Source |
 |---|---|---|
 | **Colony Losses** | Quarterly colony losses, renovations, and self-reported stressors by state, 2015 to now | USDA National Agricultural Statistics Service (NASS), *Honey Bee Colonies* reports |
-| **Disease Surveillance** | Varroa, Nosema, and tracheal mite results from adult bee samples, by state, climate region, year, and month, 1984 to now | USDA ARS Bee Disease Diagnostic Laboratory, Beltsville, Maryland |
+| **Disease Surveillance** | Varroa, Nosema, tracheal mite, and American and European foulbrood results from adult bee and brood samples, by state, climate region, year, and month, 1984 to now | USDA ARS Bee Disease Diagnostic Laboratory, Beltsville, Maryland |
 | **Colony Monitoring** | Repeated colony inspections by climate region, plus a personal report for your own records | Currently **simulated demonstration data** |
 | **Genetic Diversity** | Mitochondrial lineages of U.S. honey bee populations | Coming soon |
 
@@ -51,11 +51,12 @@ python3 pipeline/import_nass_release.py UNZIPPED_RELEASE_FOLDER data/nass-colony
 python3 pipeline/build_losses.py data/nass-colony-losses.csv data/colony-losses.js
 ```
 
-To update the disease data from a new laboratory spreadsheet (keep the spreadsheet itself out of this repository):
+To update the disease data from new laboratory spreadsheets (keep the spreadsheets themselves out of this repository):
 
 ```
 python3 pipeline/clean_bddl.py Adult_BDDL.xlsx Adult_BDDL_cleaned.xlsx
-python3 pipeline/build_disease.py Adult_BDDL_cleaned.xlsx data/disease.js data/bddl-adult-state-year.csv
+python3 pipeline/clean_brood.py Brood.xlsx Brood_cleaned.xlsx
+python3 pipeline/build_disease.py Adult_BDDL_cleaned.xlsx data/disease.js data/bddl-state-year.csv Brood_cleaned.xlsx
 ```
 
 ## Contributing data

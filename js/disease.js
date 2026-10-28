@@ -38,14 +38,19 @@
     { id: 'nos', label: 'Nosema: percent of samples positive', short: 'Nosema', tile: 'Nosema positive', unit: 'pct', n: 2, pos: 3, group: 'Nosema' },
     { id: 'ms', label: 'Nosema: average million spores per bee', short: 'Million spores per bee', tile: 'Spores per bee (millions)', unit: 'load', n: 8, sum: 9, group: 'Nosema' },
     { id: 'tm', label: 'Tracheal mite: percent of samples positive', short: 'Tracheal mite', tile: 'Tracheal mite positive', unit: 'pct', n: 4, pos: 5, group: 'Tracheal mite' },
-    { id: 'samples', label: 'Samples tested', short: 'Samples', tile: 'Samples tested', unit: 'count', group: 'Samples' }
+    { id: 'afb', label: 'American foulbrood: percent of brood samples positive', short: 'American foulbrood', tile: 'American foulbrood', unit: 'pct', n: 10, pos: 11, brood: true, group: 'Foulbrood (brood samples)' },
+    { id: 'efb', label: 'European foulbrood: percent of brood samples positive', short: 'European foulbrood', tile: 'European foulbrood', unit: 'pct', n: 10, pos: 12, brood: true, group: 'Foulbrood (brood samples)' },
+    { id: 'samples', label: 'Adult samples tested', short: 'Adult samples', tile: 'Adult samples', unit: 'count', idx: 0, group: 'Samples' },
+    { id: 'brood', label: 'Brood samples tested', short: 'Brood samples', tile: 'Brood samples', unit: 'count', idx: 11, brood: true, group: 'Samples' }
   ];
   var M = {}; MEASURES.forEach(function (m) { M[m.id] = m; });
   // first and last year each test was run
   MEASURES.forEach(function (m) {
-    if (m.id === 'samples') { m.years = YEARS.slice(); return; }
+    if (m.unit === 'count') { m.years = YEARS.filter(function (y) { return Object.keys(CUBE).some(function (s) { return (CUBE[s][y] || []).some(function (c) { return c[1][m.idx] > 0; }); }); }); return; }
     m.years = YEARS.filter(function (y) { return Object.keys(CUBE).some(function (s) { return (CUBE[s][y] || []).some(function (c) { return c[1][m.n + 1] > 0; }); }); });
   });
+  function isCount(mid) { return M[mid].unit === 'count'; }
+  function sampleKind(mid) { return M[mid].brood ? 'brood' : 'adult'; }
   function testedIn(mid, y0, y1) { return M[mid].years.some(function (y) { return y >= y0 && y <= y1; }); }
 
   // Opening view: climate regions, Varroa positive, the last three complete years pooled, so the map is filled in
@@ -64,13 +69,13 @@
   function agg(area, y0, y1, months) {
     var ck = area + '|' + y0 + '|' + y1 + '|' + (months ? months.join(',') : '');
     if (aggCache[ck]) return aggCache[ck];
-    var t = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    var t = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     statesOf(area).forEach(function (s) {
       var cy = CUBE[s]; if (!cy) return;
       for (var y = y0; y <= y1; y++) {
         (cy[y] || []).forEach(function (c) {
           if (months && months.indexOf(c[0]) < 0) return;
-          for (var i = 0; i < 11; i++) t[i] += c[1][i];
+          for (var i = 0; i < 14; i++) t[i] += c[1][i] || 0;
         });
       }
     });
@@ -79,8 +84,9 @@
   // { v, n, status: ok | none (no samples) | nottested }
   function valueFrom(t, mid) {
     var m = M[mid];
-    if (!t[0]) return { v: null, n: 0, status: 'none' };
-    if (mid === 'samples') return { v: t[0], n: t[0], status: 'ok' };
+    var base = m.brood ? t[11] : t[0]; // adult or brood samples, whichever this measure uses
+    if (!base) return { v: null, n: 0, status: 'none' };
+    if (m.unit === 'count') return { v: base, n: base, status: 'ok' };
     var n = t[m.n + 1];
     if (!n) return { v: null, n: 0, status: 'nottested', samples: t[0] };
     return { v: m.unit === 'pct' ? 100 * t[m.pos + 1] / n : t[m.sum + 1] / n, n: n, pos: m.unit === 'pct' ? t[m.pos + 1] : null, status: 'ok' };
@@ -118,7 +124,7 @@
   }
   function testedNote(mid) {
     var m = M[mid], ys = m.years;
-    if (mid === 'samples' || !ys.length) return '';
+    if (M[mid].unit === 'count' || M[mid].brood || !ys.length) return '';
     if (mid === 'tm') return 'The lab examined samples for tracheal mites through 2015 and in some years since (' + ys.filter(function (y) { return y > 2015; }).join(', ') + ').';
     return (mid === 'vil' || mid === 'ms' ? 'Counts' : 'Tests') + ' start in ' + ys[0] + '.';
   }
@@ -180,7 +186,7 @@
       var area = tileArea(code), r = area ? val(area, st.measure) : { status: 'none' };
       var g = document.createElementNS(NS, 'g');
       var isSel = area && area === st.sel;
-      var few = r.status === 'ok' && r.n < SMALL_N && st.measure !== 'samples';
+      var few = r.status === 'ok' && r.n < SMALL_N && !isCount(st.measure);
       g.setAttribute('class', 'area' + (isSel ? ' sel' : '') + (few ? ' few' : ''));
       g.setAttribute('data-code', code);
       g.setAttribute('tabindex', '0');
@@ -224,6 +230,7 @@
     if (!testedIn(st.measure, s[0], s[1])) notes.push('<strong>No ' + (st.measure === 'vil' || st.measure === 'ms' ? 'counts' : 'tests') + ' in this period.</strong> ' + testedNote(st.measure));
     else if (s[0] < M[st.measure].years[0]) notes.push('<strong>Partial range:</strong> ' + testedNote(st.measure) + ' Earlier years in the range add samples but no results for this measure.');
     if (st.measure === 'tm' && testedIn('tm', s[0], s[1]) && s[1] > 2015) notes.push(testedNote('tm'));
+    if (s[0] <= 2007 && s[1] >= 2007 && !isCount(st.measure)) notes.push('<strong>2007 may be incomplete:</strong> every disease drops sharply that year in both adult and brood samples, which suggests some positive results may be missing. Treat that year with caution.');
     $('dx-callout').innerHTML = notes.join(' ');
     $('dx-callout').hidden = !notes.length;
     drawLegend();
@@ -232,8 +239,8 @@
   function showTip(code, e, el) {
     var area = tileArea(code), r = area ? val(area, st.measure) : { status: 'none' }, shown = fmt(st.measure, r);
     var head = st.geo === 'region' && area ? areaName(area) : NAMES[code];
-    var extra = r.status === 'ok' && st.measure !== 'samples' ? ' · ' + r.n.toLocaleString('en-US') + ' tested' : '';
-    tip.innerHTML = '<strong>' + head + '</strong><span>' + (shown ? shown + (st.measure === 'samples' ? ' samples' : unitWord(st.measure) || ' ' + M[st.measure].short.toLowerCase()) + extra : statusText(r, st.measure)) + '</span>';
+    var extra = r.status === 'ok' && !isCount(st.measure) ? ' · ' + r.n.toLocaleString('en-US') + ' tested' : '';
+    tip.innerHTML = '<strong>' + head + '</strong><span>' + (shown ? shown + (isCount(st.measure) ? ' samples' : unitWord(st.measure) || ' ' + M[st.measure].short.toLowerCase()) + extra : statusText(r, st.measure)) + '</span>';
     tip.hidden = false;
     if (e) moveTip(e);
     else if (el) { var cr = mapCard.getBoundingClientRect(), er = el.getBoundingClientRect(); place(er.left + er.width / 2 - cr.left, er.top - cr.top); }
@@ -248,7 +255,7 @@
       var lab = i === 0 ? 'Under ' + compact(mid, b[0]) : i === b.length ? compact(mid, b[i - 1]) + ' or more' : compact(mid, b[i - 1]) + '–' + compact(mid, b[i]);
       items.push('<span><i style="background:' + binColor(i) + '"></i>' + lab + '</span>');
     }
-    if (mid !== 'samples') items.push('<span><i class="few"></i>Fewer than ' + SMALL_N + ' samples</span>');
+    if (!isCount(mid)) items.push('<span><i class="few"></i>Fewer than ' + SMALL_N + ' samples</span>');
     items.push('<span><i style="background:var(--nodata)"></i>No samples</span>');
     items.push('<span><i class="hatch"></i>Not tested</span>');
     $('dx-legend').innerHTML = items.join('');
@@ -266,28 +273,29 @@
     if (area === 'US') return '';
     var mine = val(area, mid), us = val('US', mid);
     if (mine.status !== 'ok' || us.status !== 'ok') return '';
-    if (mid === 'samples') return (mine.v / us.v * 100).toFixed(1) + '% of all U.S. samples (' + fmt(mid, us) + ')';
+    if (isCount(mid)) return (mine.v / us.v * 100).toFixed(1) + '% of all U.S. ' + sampleKind(mid) + ' samples (' + fmt(mid, us) + ')';
     var d = mine.v - us.v, amt = Math.abs(d).toFixed(1);
     if (Number(amt) === 0) return 'About the same as the U.S. (' + fmt(mid, us) + ')';
     if (M[mid].unit === 'pct') return amt + (amt === '1.0' ? ' point ' : ' points ') + (d > 0 ? 'above' : 'below') + ' the U.S. (' + fmt(mid, us) + ')';
     return amt + ' ' + (d > 0 ? 'above' : 'below') + ' the U.S. (' + fmt(mid, us) + ')';
   }
   function basisLine(area, mid, r) {
-    var all = val(area, 'samples');
+    var kind = sampleKind(mid), all = val(area, kind === 'brood' ? 'brood' : 'samples');
     if (!all.v) return '';
-    if (mid === 'samples') return '<p class="lx-sample">Adult bee samples the lab received and tested' + (st.season !== 'all' ? ' in these months' : '') + '.</p>';
-    if (r.status !== 'ok') return '<p class="lx-sample">' + all.v.toLocaleString('en-US') + ' samples were received in this period. ' + testedNote(mid) + '</p>';
+    if (isCount(mid)) return '<p class="lx-sample">' + (kind === 'brood' ? 'Brood (comb or smear) samples' : 'Adult bee samples') + ' the lab received and tested' + (st.season !== 'all' ? ' in these months' : '') + '.</p>';
+    if (r.status !== 'ok') return '<p class="lx-sample">' + all.v.toLocaleString('en-US') + ' ' + kind + ' samples were received in this period. ' + testedNote(mid) + '</p>';
     var small = r.n < SMALL_N;
-    var txt = M[mid].unit === 'pct' ? '<b>' + r.pos.toLocaleString('en-US') + '</b> of <b>' + r.n.toLocaleString('en-US') + '</b> samples tested positive.'
+    var txt = M[mid].unit === 'pct' ? '<b>' + r.pos.toLocaleString('en-US') + '</b> of <b>' + r.n.toLocaleString('en-US') + '</b> ' + kind + ' samples tested positive.'
       : 'Average of <b>' + r.n.toLocaleString('en-US') + '</b> samples with a count, including those with none found.';
     return '<p class="lx-sample">' + (small ? '<span class="lx-smallchip">Small sample</span> ' : '') + txt + (small ? ' With this few samples, one or two colonies can swing the result a lot.' : '') + '</p>';
   }
 
   function renderPanel() {
     var area = st.sel, panel = $('dx-panel'), html = [];
-    var all = val(area, 'samples');
+    var all = val(area, 'samples'), br = val(area, 'brood');
+    var cnt = function (r, w) { return (r.v || 0).toLocaleString('en-US') + ' ' + w + ' sample' + (r.v === 1 ? '' : 's'); };
     html.push('<div class="lx-panel-head"><h2>' + areaName(area) + '</h2>' + (area !== 'US' ? '<button type="button" class="lx-link" id="dx-to-us">View United States</button>' : '') + '</div>');
-    html.push('<p class="lx-sub">' + timeLabel() + ' · ' + (all.v ? all.v.toLocaleString('en-US') + ' sample' + (all.v === 1 ? '' : 's') : 'No samples') + '</p>');
+    html.push('<p class="lx-sub">' + timeLabel() + ' · ' + (all.v || br.v ? cnt(all, 'adult') + ', ' + cnt(br, 'brood') : 'No samples') + '</p>');
     if (area.indexOf('R:') === 0 && D.regions[area.slice(2)].states.length > 1) html.push('<p class="lx-small">' + D.regions[area.slice(2)].states.map(function (s) { return NAMES[s]; }).join(', ') + '.</p>');
     var r = val(area, st.measure), shown = fmt(st.measure, r), rk = rankOf(area, st.measure), cmp = compareLine(area, st.measure);
     html.push('<div class="lx-hero"><p class="lx-k">' + M[st.measure].label + '</p>' +
@@ -298,9 +306,9 @@
 
     var tiles = MEASURES.filter(function (m) { return m.id !== st.measure; });
     html.push('<div class="lx-tiles">' + tiles.map(function (m) {
-      var tr = val(area, m.id), s = fmt(m.id, tr), few = tr.status === 'ok' && tr.n < SMALL_N && m.id !== 'samples';
+      var tr = val(area, m.id), s = fmt(m.id, tr), few = tr.status === 'ok' && tr.n < SMALL_N && !isCount(m.id);
       return '<button type="button" class="lx-tile" data-measure="' + m.id + '" title="Color the map by ' + m.label.toLowerCase() + '"><span class="lx-k">' + m.tile + '</span><span class="lx-v">' + (s || '<span class="lx-na">' + (tr.status === 'nottested' ? (m.unit === 'load' ? 'not counted' : 'not tested') : 'n/a') + '</span>') + '</span>' +
-        (tr.status === 'ok' && m.id !== 'samples' ? '<span class="lx-rank">' + tr.n.toLocaleString('en-US') + ' tested' + (few ? ' <span class="lx-fewmark" aria-label="small sample">!</span>' : '') + '</span>' : '') + '<span class="lx-show">Show on map</span></button>';
+        (tr.status === 'ok' && !isCount(m.id) ? '<span class="lx-rank">' + tr.n.toLocaleString('en-US') + ' tested' + (few ? ' <span class="lx-fewmark" aria-label="small sample">!</span>' : '') + '</span>' : '') + '<span class="lx-show">Show on map</span></button>';
     }).join('') + '</div>');
 
     // By month
@@ -310,17 +318,17 @@
       for (var mo = 1; mo <= 12; mo++) {
         var a = valMonth(area, st.measure, mo), u = valMonth('US', st.measure, mo);
         rows.push(a); us.push(u);
-        if (a.status === 'ok' && (a.n >= SMALL_N || st.measure === 'samples')) max = Math.max(max, a.v);
+        if (a.status === 'ok' && (a.n >= SMALL_N || isCount(st.measure))) max = Math.max(max, a.v);
         if (u.status === 'ok') max = Math.max(max, u.v);
       }
       if (max) {
         var stp = niceStep(max / 4), top = Math.ceil(max / stp) * stp;
         var inSeason = SEASONS[st.season].months;
-        html.push('<div class="lx-block"><h3 class="lx-h3">By month</h3><p class="lx-small">' + M[st.measure].short + ' by the month samples were ' + (st.measure === 'samples' ? 'received' : 'collected') + ', ' + (s[0] === s[1] ? 'in ' + s[0] : s[0] + ' to ' + s[1]) + '.' +
-          (area !== 'US' && st.measure !== 'samples' ? ' The dark tick marks the U.S.' : '') + ' Bars run from 0 to ' + compact(st.measure, top) + '. Lighter bars have fewer than ' + SMALL_N + ' samples.</p><ul class="lx-stress lx-seasons dx-months">' +
+        html.push('<div class="lx-block"><h3 class="lx-h3">By month</h3><p class="lx-small">' + M[st.measure].short + ' by the month samples were ' + (isCount(st.measure) ? 'received' : 'collected') + ', ' + (s[0] === s[1] ? 'in ' + s[0] : s[0] + ' to ' + s[1]) + '.' +
+          (area !== 'US' && !isCount(st.measure) ? ' The dark tick marks the U.S.' : '') + ' Bars run from 0 to ' + compact(st.measure, top) + '. Lighter bars have fewer than ' + SMALL_N + ' samples.</p><ul class="lx-stress lx-seasons dx-months">' +
           rows.map(function (x, i) {
-            var u = us[i], ok = x.status === 'ok', few = ok && x.n < SMALL_N && st.measure !== 'samples';
-            var mark = area !== 'US' && st.measure !== 'samples' && u.status === 'ok' ? '<b class="lx-usmark" style="left:' + Math.min(100, u.v / top * 100).toFixed(1) + '%" title="U.S. ' + fmt(st.measure, u) + '"></b>' : '';
+            var u = us[i], ok = x.status === 'ok', few = ok && x.n < SMALL_N && !isCount(st.measure);
+            var mark = area !== 'US' && !isCount(st.measure) && u.status === 'ok' ? '<b class="lx-usmark" style="left:' + Math.min(100, u.v / top * 100).toFixed(1) + '%" title="U.S. ' + fmt(st.measure, u) + '"></b>' : '';
             var dim = inSeason && inSeason.indexOf(i + 1) < 0 ? ' dx-dim' : '';
             return '<li class="' + dim + '"><span class="lx-sname">' + MONTHS[i + 1] + '</span><span class="lx-track"><span class="lx-fill' + (few ? ' dx-few' : '') + '" style="width:' + (ok ? Math.max(0.6, Math.min(100, x.v / top * 100)) : 0).toFixed(1) + '%"></span>' + mark + '</span>' +
               '<span class="lx-sval" title="' + (ok ? x.n + ' samples' : '') + '">' + (ok ? fmt(st.measure, x) : x.status === 'none' ? '–' : 'n/a') + '</span></li>';
@@ -335,7 +343,7 @@
     }
 
     html.push('<div class="lx-block"><h3 class="lx-h3">' + M[st.measure].short + ' by year</h3><div class="lx-trend" id="dx-trend"></div><p class="lx-small" id="dx-readout">' +
-      (st.mode === 'year' ? 'The darker bar is the selected year' : 'Darker bars are the years in this range') + (area !== 'US' && st.measure !== 'samples' ? ', and the dashed line is the U.S.' : '.') + ' Lighter bars have fewer than ' + SMALL_N + ' samples. Hover a bar to see its value, or click it to jump there.</p></div>');
+      (st.mode === 'year' ? 'The darker bar is the selected year' : 'Darker bars are the years in this range') + (area !== 'US' && !isCount(st.measure) ? ', and the dashed line is the U.S.' : '.') + ' Lighter bars have fewer than ' + SMALL_N + ' samples. Hover a bar to see its value, or click it to jump there.</p></div>');
     panel.innerHTML = html.join('');
     var toUs = $('dx-to-us'); if (toUs) toUs.addEventListener('click', function () { select('US'); });
     panel.querySelectorAll('[data-measure]').forEach(function (el) { el.addEventListener('click', function () { setMeasure(el.getAttribute('data-measure')); }); });
@@ -347,7 +355,7 @@
     var W = 520, H = 190, ml = 44, mr = 8, mt = 10, mb = 26;
     var rows = YEARS.map(function (y) { return { y: y, r: valAt(area, mid, y, y, st.season), us: valAt('US', mid, y, y, st.season) }; });
     var max = 0;
-    rows.forEach(function (d) { if (d.r.status === 'ok') max = Math.max(max, d.r.v); if (area !== 'US' && mid !== 'samples' && d.us.status === 'ok') max = Math.max(max, d.us.v); });
+    rows.forEach(function (d) { if (d.r.status === 'ok') max = Math.max(max, d.r.v); if (area !== 'US' && !isCount(mid) && d.us.status === 'ok') max = Math.max(max, d.us.v); });
     if (!max) { box.innerHTML = '<p class="lx-small">No values to chart for this selection.</p>'; return; }
     var stp = niceStep(max / 4), top = Math.ceil(max / stp) * stp;
     var bw = (W - ml - mr) / rows.length, y = function (v) { return mt + (H - mt - mb) * (1 - v / top); };
@@ -359,12 +367,12 @@
     rows.forEach(function (d, i) {
       var x = ml + i * bw;
       if (d.r.status === 'ok') {
-        var h = Math.max(0.5, y(0) - y(d.r.v)), cur = d.y >= s[0] && d.y <= s[1], few = mid !== 'samples' && d.r.n < SMALL_N;
+        var h = Math.max(0.5, y(0) - y(d.r.v)), cur = d.y >= s[0] && d.y <= s[1], few = !isCount(mid) && d.r.n < SMALL_N;
         o.push('<rect class="bar' + (cur ? ' cur' : '') + (few ? ' dx-fewbar' : '') + '" x="' + (x + bw * 0.12).toFixed(1) + '" y="' + (y(0) - h).toFixed(1) + '" width="' + (bw * 0.76).toFixed(1) + '" height="' + h.toFixed(1) + '"/>');
       }
       if (d.y % 5 === 0) o.push('<text class="xtick" x="' + (x + bw / 2).toFixed(1) + '" y="' + (H - 8) + '">' + d.y + '</text>');
     });
-    if (area !== 'US' && mid !== 'samples') {
+    if (area !== 'US' && !isCount(mid)) {
       var seg = [], segs = [];
       rows.forEach(function (d, i) {
         if (d.us.status === 'ok') seg.push((ml + i * bw + bw / 2).toFixed(1) + ',' + y(d.us.v).toFixed(1));
@@ -382,7 +390,7 @@
       var d = rows[+h.getAttribute('data-i')];
       h.addEventListener('mouseenter', function () {
         var a = fmt(mid, d.r), b = fmt(mid, d.us);
-        readout.textContent = d.y + ': ' + (a ? a + unitWord(mid) + (mid !== 'samples' ? ' (' + d.r.n + ' tested)' : ' samples') : statusText(d.r, mid)) + (area !== 'US' && mid !== 'samples' && b ? '; U.S. ' + b : '');
+        readout.textContent = d.y + ': ' + (a ? a + unitWord(mid) + (!isCount(mid) ? ' (' + d.r.n + ' tested)' : ' samples') : statusText(d.r, mid)) + (area !== 'US' && !isCount(mid) && b ? '; U.S. ' + b : '');
       });
       h.addEventListener('mouseleave', function () { readout.textContent = base; });
       h.addEventListener('click', function () { setMode('year', d.y); });
@@ -391,13 +399,13 @@
   function niceStep(x) { var p = Math.pow(10, Math.floor(Math.log10(x))), f = x / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; }
 
   /* ---------- Table ---------- */
-  var TABLE_COLS = ['samples', 'vd', 'vil', 'nos', 'ms', 'tm'];
-  var COL_LABEL = { samples: 'Samples', vd: 'Varroa %', vil: 'Mites / 100 bees', nos: 'Nosema %', ms: 'Spores (M / bee)', tm: 'Tracheal %' };
+  var TABLE_COLS = ['samples', 'vd', 'vil', 'nos', 'ms', 'tm', 'brood', 'afb', 'efb'];
+  var COL_LABEL = { samples: 'Adult samples', vd: 'Varroa %', vil: 'Mites / 100 bees', nos: 'Nosema %', ms: 'Spores (M / bee)', tm: 'Tracheal %', brood: 'Brood samples', afb: 'AFB %', efb: 'EFB %' };
   function renderTable() {
     var sk = st.sortKey || st.measure;
     var head = '<tr><th scope="col" data-k="name" class="' + (sk === 'name' ? 'sorted' : '') + '">' + (st.geo === 'region' ? 'Region' : 'State') + (sk === 'name' ? (st.sortDir < 0 ? ' ↓' : ' ↑') : '') + '</th>' +
       TABLE_COLS.map(function (m) { return '<th scope="col" class="num' + (sk === m ? ' sorted' : '') + '" data-k="' + m + '">' + COL_LABEL[m] + (sk === m ? (st.sortDir < 0 ? ' ↓' : ' ↑') : '') + '</th>'; }).join('') + '</tr>';
-    var areas = (st.geo === 'region' ? REGION_KEYS.map(function (k) { return 'R:' + k; }) : D.states.slice()).filter(function (a) { return val(a, 'samples').v; });
+    var areas = (st.geo === 'region' ? REGION_KEYS.map(function (k) { return 'R:' + k; }) : D.states.slice()).filter(function (a) { return val(a, 'samples').v || val(a, 'brood').v; });
     var f = st.filter.trim().toLowerCase();
     if (f) areas = areas.filter(function (a) { return areaName(a).toLowerCase().indexOf(f) >= 0 || a.toLowerCase() === f; });
     areas.sort(function (a, b) {
@@ -409,8 +417,8 @@
     function row(a, cls) {
       return '<tr class="' + cls + (a === st.sel ? ' on' : '') + '" data-code="' + a + '" tabindex="0"><th scope="row">' + areaName(a) + '</th>' +
         TABLE_COLS.map(function (m) {
-          var r = val(a, m), s = fmt(m, r), few = m === 'samples' && r.status === 'ok' && r.v < SMALL_N;
-          return '<td class="num' + (few ? ' lx-few' : '') + '"' + (r.status === 'ok' && m !== 'samples' ? ' title="' + r.n + ' tested"' : '') + '>' + (s || '<span class="lx-na">–</span>') + (few ? ' <span class="lx-fewmark" aria-label="small sample">!</span>' : '') + '</td>';
+          var r = val(a, m), s = fmt(m, r), few = isCount(m) && r.status === 'ok' && r.v < SMALL_N;
+          return '<td class="num' + (few ? ' lx-few' : '') + '"' + (r.status === 'ok' && !isCount(m) ? ' title="' + r.n + ' tested"' : '') + '>' + (s || '<span class="lx-na">–</span>') + (few ? ' <span class="lx-fewmark" aria-label="small sample">!</span>' : '') + '</td>';
         }).join('') + '</tr>';
     }
     $('dx-table').innerHTML = '<thead>' + head + '</thead><tbody>' + row('US', 'pin') + areas.map(function (a) { return row(a, ''); }).join('') + '</tbody>';
@@ -500,18 +508,19 @@
   (function summary() {
     // Describes the opening view: the last three complete years, pooled
     var y0 = st.from, y1 = st.to, g = function (m) { return valAt('US', m, y0, y1); };
-    var nStates = D.states.filter(function (s) { return valAt(s, 'samples', y0, y1).v; }).length;
-    var total = valAt('US', 'samples', FIRST, LAST).v;
+    var nStates = D.states.filter(function (s) { return valAt(s, 'samples', y0, y1).v || valAt(s, 'brood', y0, y1).v; }).length;
+    var total = valAt('US', 'samples', FIRST, LAST).v, totalB = valAt('US', 'brood', FIRST, LAST).v;
     var regs = REGION_KEYS.map(function (k) { return { k: k, r: valAt('R:' + k, 'vd', y0, y1) }; })
       .filter(function (x) { return x.r.status === 'ok' && x.r.n >= SMALL_N; })
       .sort(function (a, b) { return b.r.v - a.r.v; });
     var hi = regs[0], lo = regs[regs.length - 1];
     var rn = function (x) { return D.regions[x.k].name; };
-    $('dx-summary').innerHTML = 'From ' + y0 + ' to ' + y1 + ', the Bee Disease Diagnostic Laboratory tested <strong>' + fmt('samples', g('samples')) + '</strong> adult bee samples from ' + nStates + ' states and territories. <strong>' +
-      fmt('vd', g('vd')) + '</strong> carried Varroa mites, averaging ' + fmt('vil', g('vil')) + ' mites per 100 bees, and <strong>' + fmt('nos', g('nos')) + '</strong> carried Nosema.' +
+    $('dx-summary').innerHTML = 'From ' + y0 + ' to ' + y1 + ', the Bee Disease Diagnostic Laboratory tested <strong>' + fmt('samples', g('samples')) + '</strong> adult bee samples and <strong>' + fmt('brood', g('brood')) + '</strong> brood samples from ' + nStates + ' states and territories. <strong>' +
+      fmt('vd', g('vd')) + '</strong> of adult samples carried Varroa mites, averaging ' + fmt('vil', g('vil')) + ' mites per 100 bees, and <strong>' + fmt('nos', g('nos')) + '</strong> carried Nosema.' +
       (hi && lo && hi !== lo ? ' Varroa turned up most often in the <strong>' + rn(hi) + '</strong> (' + fmt('vd', hi.r) + ') and least often in the <strong>' + rn(lo) + '</strong> (' + fmt('vd', lo.r) + ').' : '') +
+      ' In brood samples, <strong>' + fmt('afb', g('afb')) + '</strong> had American foulbrood and <strong>' + fmt('efb', g('efb')) + '</strong> had European foulbrood.' +
       ' Samples come from colonies that looked sick or weak, so these rates are higher than in the average colony. Click any region or state to see its numbers.';
-    $('dx-note').textContent = total.toLocaleString('en-US') + ' samples from ' + FIRST + ' through ' + MONTHS[LAST_MONTH[LAST]] + ' ' + LAST + '.';
+    $('dx-note').textContent = total.toLocaleString('en-US') + ' adult and ' + totalB.toLocaleString('en-US') + ' brood samples from ' + FIRST + ' through ' + MONTHS[LAST_MONTH[LAST]] + ' ' + LAST + '.';
   })();
 
   setSeg('style', st.style); setSeg('geo', st.geo); syncTime();

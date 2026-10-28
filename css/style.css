@@ -625,3 +625,10 @@ button.lx-tile:hover .lx-show, button.lx-tile:focus-visible .lx-show { opacity: 
 .dx-months li.dx-dim { opacity: 0.45; }
 .lx-fill.dx-few { opacity: 0.5; }
 .lx-trend .bar.dx-fewbar { opacity: 0.45; }
+.dx-controls .lx-ctl { min-width: 0; }
+.dx-controls .lx-time { flex-wrap: wrap; }
+.dx-range { display: flex; max-width: 100%; }
+.dx-range select { min-width: 0; flex: 1 1 0; }
+@media (max-width: 600px) { .dx-range { width: 100%; } }
+.dx-controls .lx-ctl { grid-template-columns: minmax(0, 1fr); max-width: 100%; }
+.dx-controls .lx-ctl > * { min-width: 0; }
