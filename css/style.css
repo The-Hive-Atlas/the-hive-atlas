@@ -318,7 +318,10 @@ table.defs code { font-family: var(--font-mono); font-size: 0.85rem; }
 .pub-cats { display: grid; gap: 40px; }
 
 /* About */
-.person { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 20px; align-items: start; }
+.person { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 24px; align-items: start; }
+.avatar.photo { position: relative; width: 150px; height: 173px; background: var(--honey); }
+.avatar.photo img { position: absolute; inset: 4px; width: calc(100% - 8px); height: calc(100% - 8px); object-fit: cover; display: block; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
+@media (max-width: 520px) { .person { grid-template-columns: minmax(0, 1fr); gap: 14px; } .avatar.photo { width: 120px; height: 139px; } .avatar.photo img { inset: 3px; width: calc(100% - 6px); height: calc(100% - 6px); } }
 .avatar { width: 96px; height: 106px; background: var(--honey-soft); color: var(--honey-strong); display: grid; place-items: center; font-family: var(--font-display); font-weight: 600; font-size: 1.8rem; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
 .person h3 { font-family: var(--font-display); font-weight: 600; font-size: 1.3rem; margin: 0 0 2px; }
 .person .role { color: var(--muted); margin: 0 0 12px; font-size: 0.95rem; }
