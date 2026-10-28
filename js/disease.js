@@ -230,7 +230,6 @@
     if (!testedIn(st.measure, s[0], s[1])) notes.push('<strong>No ' + (st.measure === 'vil' || st.measure === 'ms' ? 'counts' : 'tests') + ' in this period.</strong> ' + testedNote(st.measure));
     else if (s[0] < M[st.measure].years[0]) notes.push('<strong>Partial range:</strong> ' + testedNote(st.measure) + ' Earlier years in the range add samples but no results for this measure.');
     if (st.measure === 'tm' && testedIn('tm', s[0], s[1]) && s[1] > 2015) notes.push(testedNote('tm'));
-    if (s[0] <= 2007 && s[1] >= 2007 && !isCount(st.measure)) notes.push('<strong>2007 may be incomplete:</strong> every disease drops sharply that year in both adult and brood samples, which suggests some positive results may be missing. Treat that year with caution.');
     $('dx-callout').innerHTML = notes.join(' ');
     $('dx-callout').hidden = !notes.length;
     drawLegend();
