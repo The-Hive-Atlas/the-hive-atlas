@@ -65,7 +65,7 @@ Researchers, state apiary programs, and beekeepers can share data with full cred
 
 ## Contact
 
-Founded by Mohamed Alburaki and Shayne Madella. Email **contact@thehiveatlas.com**.
+Founded by Mohamed Alburaki, Shayne Madella, and Nathalie Steinhauer. Email **contact@thehiveatlas.com**.
 
 ## Disclaimer
 
