@@ -66,3 +66,7 @@ Researchers, state apiary programs, and beekeepers can share data with full cred
 ## Contact
 
 Founded by Mohamed Alburaki and Shayne Madella. Email **contact@thehiveatlas.com**.
+
+## Disclaimer
+
+The Hive Atlas is an independent project. It is not affiliated with, endorsed by, or operated by the U.S. Department of Agriculture (USDA) or any other government agency. The views expressed are those of its founders and do not necessarily represent the views or policies of USDA or the United States Government.

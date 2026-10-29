@@ -197,6 +197,8 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
 footer ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 18px; }
 footer a { text-decoration: none; }
 footer a:hover { color: var(--ink); }
+footer .disclaimer { flex-basis: 100%; margin: 4px 0 0; font-size: 0.78rem; line-height: 1.5; max-width: 860px; }
+footer .disclaimer a { text-decoration: underline; text-underline-offset: 2px; }
 
 @media (max-width: 860px) {
   .hero .wrap { grid-template-columns: minmax(0, 1fr); gap: 36px; padding-block: 40px 40px; }
