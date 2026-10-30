@@ -645,3 +645,12 @@ button.lx-tile:hover .lx-show, button.lx-tile:focus-visible .lx-show { opacity: 
 li.dx-mhead .dx-n { font-family: var(--font-body); font-size: 0.72rem; }
 .dx-n.few { color: var(--bad); }
 @media (max-width: 480px) { .dx-months.has-n li { grid-template-columns: 34px minmax(0, 1fr) 48px 44px; gap: 8px; } }
+
+/* Seasonal-expectation shading: two-sided color scale */
+:root { --dv-lo2: #2f6f8f; --dv-lo1: #9fc6d8; --dv-mid: #e6e2d6; --dv-hi1: #e3b25b; --dv-hi2: #a3600a; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --dv-lo2: #6fb0d2; --dv-lo1: #2f5568; --dv-mid: #3a3f46; --dv-hi1: #8f6a22; --dv-hi2: #eab04a; } }
+:root[data-theme="dark"] { --dv-lo2: #6fb0d2; --dv-lo1: #2f5568; --dv-mid: #3a3f46; --dv-hi1: #8f6a22; --dv-hi2: #eab04a; }
+.dx-exp { margin: 10px 0 0; font-size: 0.88rem; line-height: 1.45; }
+.dx-exp i, .dx-expcell i { display: inline-block; width: 11px; height: 11px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; border: 1px solid var(--line); }
+.dx-expcell { white-space: nowrap; }
+.seg button:disabled { opacity: 0.45; cursor: not-allowed; }

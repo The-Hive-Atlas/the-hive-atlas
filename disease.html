@@ -67,6 +67,13 @@
           <select id="dx-measure"></select>
         </div>
         <div class="lx-ctl">
+          <span class="lx-lab" id="lab-shade">Shade by</span>
+          <div class="seg" data-seg="shade" role="group" aria-labelledby="lab-shade">
+            <button type="button" data-v="rate" aria-pressed="true">Rate</button>
+            <button type="button" data-v="expect" aria-pressed="false">vs. seasonal expectation</button>
+          </div>
+        </div>
+        <div class="lx-ctl">
           <span class="lx-lab" id="lab-mode">Years</span>
           <div class="lx-time">
             <div class="seg" data-seg="mode" role="group" aria-labelledby="lab-mode">
@@ -106,7 +113,7 @@
           <p class="lx-callout" id="dx-callout" hidden></p>
           <svg id="dx-map" class="lx-map" role="group" aria-label="Map of U.S. states"></svg>
           <div class="lx-legend" id="dx-legend"></div>
-          <p class="lx-small">Color ranges stay the same for every year, so you can compare across years. Puerto Rico (12 samples, 1985 to 1999) is in the table and the U.S. totals but not on the map.</p>
+          <p class="lx-small"><span id="dx-colornote">Color ranges stay the same for every year, so you can compare across years.</span> Puerto Rico (12 samples, 1985 to 1999) is in the table and the U.S. totals but not on the map.</p>
           <div class="lx-tip" id="dx-tip" hidden></div>
         </div>
         <aside class="lx-card lx-panel" id="dx-panel" aria-live="polite"></aside>
@@ -142,6 +149,7 @@
             <li><a href="#ab-lab">Lab methods</a></li>
             <li><a href="#ab-years">Which years each test covers</a></li>
             <li><a href="#ab-regions">Climate regions</a></li>
+            <li><a href="#ab-seasonal">Seasonal expectation</a></li>
             <li><a href="#ab-small">Small samples</a></li>
             <li><a href="#ab-cleaning">Data cleaning</a></li>
             <li><a href="#ab-colors">Colors and ranks</a></li>
@@ -257,6 +265,18 @@
               <li><strong>Northwest:</strong> ID, OR, WA</li>
               <li><strong>West:</strong> CA, NV</li>
             </ul>
+          </section>
+
+          <section class="doc-section prose" id="ab-seasonal">
+            <h2>Seasonal expectation</h2>
+            <p>Mite loads, spore counts, and foulbrood all rise and fall through the year, and states send samples at different times. A state that mostly sent winter samples can look worse than one that mostly sent summer samples, even if both are typical for their season. <strong>Shade by: vs. seasonal expectation</strong> takes that into account.</p>
+            <ul>
+              <li><strong>Expected value:</strong> for every sample, the national result for the same calendar month, taken from the lab&rsquo;s own samples over a <strong>five-year moving window</strong> (the sample&rsquo;s year and the two years on either side). Adding these up gives what an area would show if each of its samples were typical for its month. The moving window follows long-term changes, such as the rise of European foulbrood since about 2010. If fewer than 30 samples nationally fall in a month&rsquo;s window, the whole window is used instead.</li>
+              <li><strong>Compared with what was observed:</strong> for percent positive, the difference in percentage points (&ldquo;12.9 points above expected&rdquo;); for mites and spores, the ratio (&ldquo;1.5 times the expected load&rdquo;).</li>
+              <li><strong>Within the expected range:</strong> a difference is only colored when it is larger than chance alone would easily produce for that many samples (about two standard errors). Otherwise the area is shown in the neutral color. This keeps a state with three samples from looking dramatic.</li>
+              <li><strong>Much higher or lower:</strong> 15 or more percentage points from the expectation, or a load at least twice (or under half) the expectation.</li>
+            </ul>
+            <p>The comparison is with the lab&rsquo;s own national samples, which come from colonies with problems, so &ldquo;higher than expected&rdquo; means higher than other diagnostic samples from the same time of year, not higher than the average colony. Samples with no month recorded are compared with the whole window. The <strong>By month</strong> chart in each panel shows the same comparison month by month: the dark tick on each bar is the U.S. value for that month.</p>
           </section>
 
           <section class="doc-section prose" id="ab-small">

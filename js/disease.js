@@ -34,9 +34,9 @@
 
   var MEASURES = [
     { id: 'vd', label: 'Varroa: percent of samples positive', short: 'Varroa', tile: 'Varroa positive', unit: 'pct', n: 0, pos: 1, from: D.source.varroaFrom, group: 'Varroa mite' },
-    { id: 'vil', label: 'Varroa: average mites per 100 bees', short: 'Mites per 100 bees', tile: 'Mites per 100 bees', unit: 'load', n: 6, sum: 7, group: 'Varroa mite' },
+    { id: 'vil', label: 'Varroa: average mites per 100 bees', short: 'Mites per 100 bees', tile: 'Mites per 100 bees', unit: 'load', n: 6, sum: 7, sq: 14, group: 'Varroa mite' },
     { id: 'nos', label: 'Nosema: percent of samples positive', short: 'Nosema', tile: 'Nosema positive', unit: 'pct', n: 2, pos: 3, group: 'Nosema' },
-    { id: 'ms', label: 'Nosema: average million spores per bee', short: 'Million spores per bee', tile: 'Spores per bee (millions)', unit: 'load', n: 8, sum: 9, group: 'Nosema' },
+    { id: 'ms', label: 'Nosema: average million spores per bee', short: 'Million spores per bee', tile: 'Spores per bee (millions)', unit: 'load', n: 8, sum: 9, sq: 15, group: 'Nosema' },
     { id: 'tm', label: 'Tracheal mite: percent of samples positive', short: 'Tracheal mite', tile: 'Tracheal mite positive', unit: 'pct', n: 4, pos: 5, group: 'Tracheal mite' },
     { id: 'afb', label: 'American foulbrood: percent of brood samples positive', short: 'American foulbrood', tile: 'American foulbrood', unit: 'pct', n: 10, pos: 11, brood: true, group: 'Foulbrood (brood samples)' },
     { id: 'efb', label: 'European foulbrood: percent of brood samples positive', short: 'European foulbrood', tile: 'European foulbrood', unit: 'pct', n: 10, pos: 12, brood: true, group: 'Foulbrood (brood samples)' },
@@ -54,7 +54,7 @@
   function testedIn(mid, y0, y1) { return M[mid].years.some(function (y) { return y >= y0 && y <= y1; }); }
 
   // Opening view: climate regions, Varroa positive, the last three complete years pooled, so the map is filled in
-  var st = { style: 'hex', geo: 'region', measure: 'vd', mode: 'range', year: LATEST_FULL, from: Math.max(FIRST, LATEST_FULL - 2), to: LATEST_FULL, season: 'all', sel: 'US', sortKey: null, sortDir: -1, filter: '' };
+  var st = { style: 'hex', geo: 'region', measure: 'vd', mode: 'range', year: LATEST_FULL, from: Math.max(FIRST, LATEST_FULL - 2), to: LATEST_FULL, season: 'all', shade: 'rate', sel: 'US', sortKey: null, sortDir: -1, filter: '' };
   try { var saved = localStorage.getItem('hive-map-style'); if (saved === 'hex' || saved === 'shapes') st.style = saved; } catch (e) {}
   var $ = function (id) { return document.getElementById(id); };
 
@@ -69,13 +69,13 @@
   function agg(area, y0, y1, months) {
     var ck = area + '|' + y0 + '|' + y1 + '|' + (months ? months.join(',') : '');
     if (aggCache[ck]) return aggCache[ck];
-    var t = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    var t = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     statesOf(area).forEach(function (s) {
       var cy = CUBE[s]; if (!cy) return;
       for (var y = y0; y <= y1; y++) {
         (cy[y] || []).forEach(function (c) {
           if (months && months.indexOf(c[0]) < 0) return;
-          for (var i = 0; i < 14; i++) t[i] += c[1][i] || 0;
+          for (var i = 0; i < 16; i++) t[i] += c[1][i] || 0;
         });
       }
     });
@@ -94,6 +94,95 @@
   function valAt(area, mid, y0, y1, season) { return valueFrom(agg(area, y0, y1, SEASONS[season || 'all'].months), mid); }
   function val(area, mid) { var s = span(); return valAt(area, mid, s[0], s[1], st.season); }
   function valMonth(area, mid, month) { var s = span(); return valueFrom(agg(area, s[0], s[1], [month]), mid); }
+
+  /* ---------- Seasonal expectation ----------
+     Expected value for an area = what it would show if each of its samples matched the national BDDL
+     result for the same calendar month, over a 5-year window centered on the sample's year. */
+  var WIN = 2, MIN_BASE = 30;
+  var NAT = {};
+  Object.keys(CUBE).forEach(function (s) {
+    Object.keys(CUBE[s]).forEach(function (y) {
+      CUBE[s][y].forEach(function (c) {
+        var row = ((NAT[y] = NAT[y] || {})[c[0]] = NAT[y][c[0]] || new Array(16).fill(0));
+        for (var i = 0; i < 16; i++) row[i] += c[1][i] || 0;
+      });
+    });
+  });
+  var baseCache = {};
+  function baseline(mid, y, mo) {
+    var ck = mid + '|' + y + '|' + mo;
+    if (baseCache[ck]) return baseCache[ck];
+    var m = M[mid], ni = m.n + 1;
+    function sum(months) {
+      var t = { n: 0, a: 0, q: 0 };
+      for (var yy = y - WIN; yy <= y + WIN; yy++) {
+        var ny = NAT[yy]; if (!ny) continue;
+        Object.keys(ny).forEach(function (k) {
+          if (months && months.indexOf(+k) < 0) return;
+          var r = ny[k]; t.n += r[ni];
+          if (m.unit === 'pct') t.a += r[m.pos + 1]; else { t.a += r[m.sum + 1]; t.q += r[m.sq]; }
+        });
+      }
+      return t;
+    }
+    var t = mo ? sum([mo]) : null;
+    if (!t || t.n < MIN_BASE) t = sum(null); // too few samples that month nationally: use the whole window
+    var out = { n: t.n };
+    if (m.unit === 'pct') out.p = t.n ? t.a / t.n : null;
+    else { out.mean = t.n ? t.a / t.n : null; out.vr = t.n ? Math.max(0, t.q / t.n - out.mean * out.mean) : null; }
+    return (baseCache[ck] = out);
+  }
+  var expCache = {};
+  function expAt(area, mid, y0, y1, season) {
+    var months = SEASONS[season || 'all'].months, ck = [area, mid, y0, y1, season].join('|');
+    if (expCache[ck]) return expCache[ck];
+    var m = M[mid], ni = m.n + 1, N = 0, O = 0, E = 0, V = 0;
+    statesOf(area).forEach(function (s) {
+      var cy = CUBE[s]; if (!cy) return;
+      for (var y = y0; y <= y1; y++) {
+        (cy[y] || []).forEach(function (c) {
+          if (months && months.indexOf(c[0]) < 0) return;
+          var n = c[1][ni]; if (!n) return;
+          var b = baseline(mid, y, c[0]);
+          N += n;
+          if (m.unit === 'pct') { if (b.p == null) return; O += c[1][m.pos + 1]; E += n * b.p; V += n * b.p * (1 - b.p); }
+          else { if (b.mean == null) return; O += c[1][m.sum + 1]; E += n * b.mean; V += n * b.vr; }
+        });
+      }
+    });
+    var r = { n: N, o: O, e: E };
+    if (!N) r.status = 'none';
+    else {
+      r.status = 'ok';
+      r.obs = m.unit === 'pct' ? 100 * O / N : O / N;
+      r.exp = m.unit === 'pct' ? 100 * E / N : E / N;
+      r.diff = r.obs - r.exp;                                  // points (percent) or load units
+      r.ratio = E > 0 ? O / E : (O > 0 ? Infinity : 1);
+      r.z = V > 0 ? (O - E) / Math.sqrt(V) : (O === E ? 0 : (O > E ? 9 : -9));
+    }
+    return (expCache[ck] = r);
+  }
+  function expVal(area, mid) { var s = span(); return expAt(area, mid, s[0], s[1], st.season); }
+  // -2 much lower, -1 lower, 0 within expected range, 1 higher, 2 much higher
+  function expClass(mid, e) {
+    if (!e || e.status !== 'ok') return null;
+    if (Math.abs(e.z) < 1.96) return 0;
+    var strong = M[mid].unit === 'pct' ? Math.abs(e.diff) >= 15 : (e.ratio >= 2 || e.ratio <= 0.5);
+    return (e.z > 0 ? 1 : -1) * (strong ? 2 : 1);
+  }
+  var EXP_COLOR = { '-2': 'var(--dv-lo2)', '-1': 'var(--dv-lo1)', '0': 'var(--dv-mid)', '1': 'var(--dv-hi1)', '2': 'var(--dv-hi2)' };
+  function expText(mid, e, short) {
+    if (!e || e.status !== 'ok') return '';
+    var u = M[mid].unit;
+    var amt = u === 'pct' ? Math.abs(e.diff).toFixed(1) + ' points ' + (e.diff >= 0 ? 'above' : 'below')
+      : (e.ratio === Infinity ? 'above' : (e.ratio > 0 && e.ratio < 0.05 ? 'under 0.1 times' : e.ratio.toFixed(1) + ' times'));
+    var expS = u === 'pct' ? e.exp.toFixed(1) + '%' : e.exp.toFixed(1);
+    if (short) return u === 'pct' ? (e.diff >= 0 ? '+' : '−') + Math.abs(e.diff).toFixed(1) + ' pts vs. expected ' + expS : (e.ratio === Infinity ? 'above' : e.ratio.toFixed(1) + '×') + ' expected ' + expS;
+    if (u === 'pct') return amt + ' the seasonal expectation (' + expS + ')';
+    return amt + ' the seasonal expectation (' + expS + ')' + (e.ratio >= 2 && e.ratio !== Infinity ? ', at least double' : e.ratio <= 0.5 ? ', less than half' : '');
+  }
+  var EXP_WORD = { '-2': 'much lower than expected', '-1': 'lower than expected', '0': 'within the expected range', '1': 'higher than expected', '2': 'much higher than expected' };
+  function shadeExp() { return st.shade === 'expect' && !isCount(st.measure); }
 
   /* ---------- Labels and formatting ---------- */
   function timeLabel() {
@@ -195,6 +284,12 @@
       g.setAttribute('aria-label', (st.geo === 'region' && area ? NAMES[code] + ', ' + areaName(area) : NAMES[code]) + ', ' + (shown ? shown + unitWord(st.measure) : statusText(r, st.measure)) + (few ? ', small sample' : ''));
       var b = r.status === 'ok' ? bin(st.measure, r.v) : -1;
       var fill = b >= 0 ? binColor(b) : r.status === 'none' ? 'var(--nodata)' : 'url(#dx-hatch)';
+      var ec = null;
+      if (shadeExp() && r.status === 'ok') {
+        ec = expClass(st.measure, expVal(area, st.measure));
+        fill = ec == null ? 'url(#dx-hatch)' : EXP_COLOR[ec];
+        b = Math.abs(ec) === 2 ? 3 : 0; // light text on the two strongest colors
+      }
       var shape;
       if (hex) {
         if (!geo[code]) return;
@@ -222,7 +317,7 @@
       g.addEventListener('keydown', function (e) { if ((e.key === 'Enter' || e.key === ' ') && area) { e.preventDefault(); select(area); } });
     });
     selected.forEach(function (g) { svg.appendChild(g); });
-    $('dx-maptitle').textContent = M[st.measure].label + ', ' + timeLabel();
+    $('dx-maptitle').textContent = M[st.measure].label + (shadeExp() ? ', compared with seasonal expectation' : '') + ', ' + timeLabel();
     var usb = $('dx-us'), usv = fmt(st.measure, val('US', st.measure));
     usb.setAttribute('aria-pressed', String(st.sel === 'US'));
     usb.innerHTML = '<svg width="13" height="14" viewBox="0 0 34 38" aria-hidden="true"><polygon points="17,1 33,10 33,28 17,37 1,28 1,10"/></svg>United States' + (usv ? '<b>' + usv + '</b>' : '');
@@ -230,15 +325,19 @@
     if (!testedIn(st.measure, s[0], s[1])) notes.push('<strong>No ' + (st.measure === 'vil' || st.measure === 'ms' ? 'counts' : 'tests') + ' in this period.</strong> ' + testedNote(st.measure));
     else if (s[0] < M[st.measure].years[0]) notes.push('<strong>Partial range:</strong> ' + testedNote(st.measure) + ' Earlier years in the range add samples but no results for this measure.');
     if (st.measure === 'tm' && testedIn('tm', s[0], s[1]) && s[1] > 2015) notes.push(testedNote('tm'));
+    if (shadeExp()) notes.push('<strong>Compared with the seasonal expectation:</strong> each area\u2019s result next to what the lab\u2019s samples from the same months showed nationally, over a five-year window around each year. Neutral means within the expected range for that many samples.');
     $('dx-callout').innerHTML = notes.join(' ');
     $('dx-callout').hidden = !notes.length;
     drawLegend();
+    var cn = $('dx-colornote');
+    if (cn) cn.textContent = shadeExp() ? 'Colors compare each area with the seasonal expectation for the same period. Areas with fewer than ' + SMALL_N + ' samples are outlined.' : 'Color ranges stay the same for every year, so you can compare across years.';
   }
 
   function showTip(code, e, el) {
     var area = tileArea(code), r = area ? val(area, st.measure) : { status: 'none' }, shown = fmt(st.measure, r);
     var head = st.geo === 'region' && area ? areaName(area) : NAMES[code];
     var extra = r.status === 'ok' && !isCount(st.measure) ? ' · ' + r.n.toLocaleString('en-US') + ' tested' : '';
+    if (shadeExp() && r.status === 'ok') extra = ' · ' + expText(st.measure, expVal(area, st.measure), true);
     tip.innerHTML = '<strong>' + head + '</strong><span>' + (shown ? shown + (isCount(st.measure) ? ' samples' : unitWord(st.measure) || ' ' + M[st.measure].short.toLowerCase()) + extra : statusText(r, st.measure)) + '</span>';
     tip.hidden = false;
     if (e) moveTip(e);
@@ -250,6 +349,17 @@
 
   function drawLegend() {
     var b = breaks(st.measure), items = [], mid = st.measure;
+    if (shadeExp()) {
+      var pct = M[mid].unit === 'pct';
+      [['-2', pct ? '15+ points lower' : 'Under half'], ['-1', 'Lower'], ['0', 'Within expected range'], ['1', 'Higher'], ['2', pct ? '15+ points higher' : 'Twice or more']].forEach(function (x) {
+        items.push('<span><i style="background:' + EXP_COLOR[x[0]] + '"></i>' + x[1] + '</span>');
+      });
+      items.push('<span><i class="few"></i>Fewer than ' + SMALL_N + ' samples</span>');
+      items.push('<span><i style="background:var(--nodata)"></i>No samples</span>');
+      items.push('<span><i class="hatch"></i>Not tested</span>');
+      $('dx-legend').innerHTML = items.join('');
+      return;
+    }
     for (var i = 0; i <= b.length; i++) {
       var lab = i === 0 ? 'Under ' + compact(mid, b[0]) : i === b.length ? compact(mid, b[i - 1]) + ' or more' : compact(mid, b[i - 1]) + '–' + compact(mid, b[i]);
       items.push('<span><i style="background:' + binColor(i) + '"></i>' + lab + '</span>');
@@ -264,9 +374,11 @@
   function rankOf(area, mid) {
     var mine = val(area, mid);
     if (mine.status !== 'ok' || area === 'US' || mine.n < SMALL_N) return null;
-    var n = 0, above = 0;
-    areasForGeo().forEach(function (a) { var r = val(a, mid); if (r.status === 'ok' && r.n >= SMALL_N) { n++; if (r.v > mine.v) above++; } });
-    return { rank: above + 1, of: n };
+    var useExp = shadeExp() && mid === st.measure;
+    var score = function (a) { if (!useExp) return val(a, mid).v; var e = expVal(a, mid); return M[mid].unit === 'pct' ? e.diff : Math.log(Math.max(e.ratio, 1e-6)); };
+    var my = score(area), n = 0, above = 0;
+    areasForGeo().forEach(function (a) { var r = val(a, mid); if (r.status === 'ok' && r.n >= SMALL_N) { n++; if (score(a) > my) above++; } });
+    return { rank: above + 1, of: n, exp: useExp };
   }
   function compareLine(area, mid) {
     if (area === 'US') return '';
@@ -277,6 +389,13 @@
     if (Number(amt) === 0) return 'About the same as the U.S. (' + fmt(mid, us) + ')';
     if (M[mid].unit === 'pct') return amt + (amt === '1.0' ? ' point ' : ' points ') + (d > 0 ? 'above' : 'below') + ' the U.S. (' + fmt(mid, us) + ')';
     return amt + ' ' + (d > 0 ? 'above' : 'below') + ' the U.S. (' + fmt(mid, us) + ')';
+  }
+  function expLine(area, mid, r) {
+    if (isCount(mid) || r.status !== 'ok') return '';
+    if (area === 'US') return shadeExp() ? '<p class="dx-exp">The U.S. is the reference for the seasonal expectation, so it isn\u2019t compared with itself.</p>' : '';
+    var e = expVal(area, mid), c = expClass(mid, e);
+    if (c == null) return '';
+    return '<p class="dx-exp"><i style="background:' + EXP_COLOR[c] + '"></i>' + expText(mid, e) + ': <strong>' + EXP_WORD[c] + '</strong>' + (e.n < SMALL_N ? ' (but based on very few samples)' : '') + '.</p>';
   }
   function basisLine(area, mid, r) {
     var kind = sampleKind(mid), all = val(area, kind === 'brood' ? 'brood' : 'samples');
@@ -300,7 +419,8 @@
     html.push('<div class="lx-hero"><p class="lx-k">' + M[st.measure].label + '</p>' +
       '<p class="lx-big">' + (shown ? shown + (M[st.measure].unit === 'load' ? '<span class="dx-unit">' + unitWord(st.measure) + '</span>' : '') : '<span class="lx-na">' + statusText(r, st.measure) + '</span>') + '</p>' +
       (cmp ? '<p class="lx-cmp">' + cmp + '</p>' : '') +
-      (rk ? '<p class="lx-rank">Rank ' + rk.rank + ' of ' + rk.of + ' ' + (st.geo === 'region' ? 'regions' : 'states') + ' with ' + SMALL_N + ' or more samples (1 is the highest)</p>' : '') +
+      (rk ? '<p class="lx-rank">Rank ' + rk.rank + ' of ' + rk.of + ' ' + (st.geo === 'region' ? 'regions' : 'states') + ' with ' + SMALL_N + ' or more samples' + (rk.exp ? ', by difference from the seasonal expectation' : '') + ' (1 is the highest)</p>' : '') +
+      expLine(area, st.measure, r) +
       basisLine(area, st.measure, r) + '</div>');
 
     var tiles = MEASURES.filter(function (m) { return m.id !== st.measure; });
@@ -325,7 +445,7 @@
         var inSeason = SEASONS[st.season].months;
         html.push('<div class="lx-block"><h3 class="lx-h3">By month</h3><p class="lx-small">' + M[st.measure].short + ' by the month samples were ' + (isCount(st.measure) ? 'received' : 'collected') + ', ' + (s[0] === s[1] ? 'in ' + s[0] : s[0] + ' to ' + s[1]) + '.' +
           (area !== 'US' && !isCount(st.measure) ? ' The dark tick marks the U.S. value.' : '') + ' Bars run from 0 to ' + compact(st.measure, top) + '. Lighter bars have fewer than ' + SMALL_N + ' samples. The last column is the number of samples tested each month.</p><ul class="lx-stress lx-seasons dx-months' + (isCount(st.measure) ? '' : ' has-n') + '">' +
-          (isCount(st.measure) ? '' : '<li class="dx-mhead" aria-hidden="true"><span></span><span></span><span class="lx-sval">' + (M[st.measure].unit === 'pct' ? '% positive' : 'Average') + '</span><span class="dx-n">Samples</span></li>') +
+          (isCount(st.measure) ? '' : '<li class="dx-mhead" aria-hidden="true"><span></span><span></span><span class="lx-sval">' + (M[st.measure].unit === 'pct' ? 'Positive' : 'Average') + '</span><span class="dx-n">Samples</span></li>') +
           rows.map(function (x, i) {
             var u = us[i], ok = x.status === 'ok', few = ok && x.n < SMALL_N && !isCount(st.measure);
             var mark = area !== 'US' && !isCount(st.measure) && u.status === 'ok' ? '<b class="lx-usmark" style="left:' + Math.min(100, u.v / top * 100).toFixed(1) + '%" title="U.S. ' + fmt(st.measure, u) + '"></b>' : '';
@@ -403,20 +523,33 @@
   var TABLE_COLS = ['samples', 'vd', 'vil', 'nos', 'ms', 'tm', 'brood', 'afb', 'efb'];
   var COL_LABEL = { samples: 'Adult samples', vd: 'Varroa %', vil: 'Mites / 100 bees', nos: 'Nosema %', ms: 'Spores (M / bee)', tm: 'Tracheal %', brood: 'Brood samples', afb: 'AFB %', efb: 'EFB %' };
   function renderTable() {
-    var sk = st.sortKey || st.measure;
-    var head = '<tr><th scope="col" data-k="name" class="' + (sk === 'name' ? 'sorted' : '') + '">' + (st.geo === 'region' ? 'Region' : 'State') + (sk === 'name' ? (st.sortDir < 0 ? ' ↓' : ' ↑') : '') + '</th>' +
-      TABLE_COLS.map(function (m) { return '<th scope="col" class="num' + (sk === m ? ' sorted' : '') + '" data-k="' + m + '">' + COL_LABEL[m] + (sk === m ? (st.sortDir < 0 ? ' ↓' : ' ↑') : '') + '</th>'; }).join('') + '</tr>';
+    var ex = shadeExp();
+    var sk = st.sortKey || (ex ? 'exp' : st.measure);
+    var arrow = function (k) { return sk === k ? (st.sortDir < 0 ? ' ↓' : ' ↑') : ''; };
+    var head = '<tr><th scope="col" data-k="name" class="' + (sk === 'name' ? 'sorted' : '') + '">' + (st.geo === 'region' ? 'Region' : 'State') + arrow('name') + '</th>' +
+      (ex ? '<th scope="col" class="num' + (sk === 'exp' ? ' sorted' : '') + '" data-k="exp" title="' + M[st.measure].short + ' compared with the seasonal expectation">' + M[st.measure].short + ' vs. expected' + arrow('exp') + '</th>' : '') +
+      TABLE_COLS.map(function (m) { return '<th scope="col" class="num' + (sk === m ? ' sorted' : '') + '" data-k="' + m + '">' + COL_LABEL[m] + arrow(m) + '</th>'; }).join('') + '</tr>';
+    var expScore = function (a) { var e = expVal(a, st.measure); if (!e || e.status !== 'ok' || val(a, st.measure).status !== 'ok') return -Infinity; return M[st.measure].unit === 'pct' ? e.diff : Math.log(Math.max(e.ratio, 1e-6)); };
     var areas = (st.geo === 'region' ? REGION_KEYS.map(function (k) { return 'R:' + k; }) : D.states.slice()).filter(function (a) { return val(a, 'samples').v || val(a, 'brood').v; });
     var f = st.filter.trim().toLowerCase();
     if (f) areas = areas.filter(function (a) { return areaName(a).toLowerCase().indexOf(f) >= 0 || a.toLowerCase() === f; });
     areas.sort(function (a, b) {
       if (sk === 'name') return (areaName(a) < areaName(b) ? -1 : 1) * st.sortDir;
-      var va = val(a, sk), vb = val(b, sk), xa = va.status === 'ok' ? va.v : -Infinity, xb = vb.status === 'ok' ? vb.v : -Infinity;
+      var xa, xb;
+      if (sk === 'exp') { xa = expScore(a); xb = expScore(b); }
+      else { var va = val(a, sk), vb = val(b, sk); xa = va.status === 'ok' ? va.v : -Infinity; xb = vb.status === 'ok' ? vb.v : -Infinity; }
       if (xa === xb) return areaName(a) < areaName(b) ? -1 : 1;
       return (xa - xb) * st.sortDir;
     });
     function row(a, cls) {
-      return '<tr class="' + cls + (a === st.sel ? ' on' : '') + '" data-code="' + a + '" tabindex="0"><th scope="row">' + areaName(a) + '</th>' +
+      var expCell = '';
+      if (ex && a === 'US') {
+        expCell = '<td class="num dx-expcell lx-na" title="The U.S. is the reference">reference</td>';
+      } else if (ex) {
+        var e = expVal(a, st.measure), c = val(a, st.measure).status === 'ok' ? expClass(st.measure, e) : null;
+        expCell = '<td class="num dx-expcell" title="' + (c != null ? EXP_WORD[c] : '') + '">' + (c != null ? '<i style="background:' + EXP_COLOR[c] + '"></i>' + expText(st.measure, e, true).replace(/ vs\. expected .*| expected .*/, '') : '<span class="lx-na">–</span>') + '</td>';
+      }
+      return '<tr class="' + cls + (a === st.sel ? ' on' : '') + '" data-code="' + a + '" tabindex="0"><th scope="row">' + areaName(a) + '</th>' + expCell +
         TABLE_COLS.map(function (m) {
           var r = val(a, m), s = fmt(m, r), few = isCount(m) && r.status === 'ok' && r.v < SMALL_N;
           return '<td class="num' + (few ? ' lx-few' : '') + '"' + (r.status === 'ok' && !isCount(m) ? ' title="' + r.n + ' tested"' : '') + '>' + (s || '<span class="lx-na">–</span>') + (few ? ' <span class="lx-fewmark" aria-label="small sample">!</span>' : '') + '</td>';
@@ -424,7 +557,7 @@
     }
     $('dx-table').innerHTML = '<thead>' + head + '</thead><tbody>' + row('US', 'pin') + areas.map(function (a) { return row(a, ''); }).join('') + '</tbody>';
     $('dx-tabletitle').textContent = (st.geo === 'region' ? 'Climate regions, ' : 'States with samples, ') + timeLabel();
-    $('dx-tablenote').textContent = areas.length + (st.geo === 'region' ? ' regions' : ' states and territories') + ' sent samples in this period. Percents are the share of tested samples that were positive; loads are averages over samples with a count. A ! means fewer than ' + SMALL_N + ' samples. Click a heading to sort, or a row to see it on the map.';
+    $('dx-tablenote').textContent = areas.length + (st.geo === 'region' ? ' regions' : ' states and territories') + ' sent samples in this period. Percents are the share of tested samples that were positive; loads are averages over samples with a count. A ! means fewer than ' + SMALL_N + ' samples.' + (ex ? ' "vs. expected" compares each area with the national result for the same months, over a five-year window; the color shows whether the difference is outside the expected range.' : '') + ' Click a heading to sort, or a row to see it on the map.';
     $('dx-table').querySelectorAll('th[data-k]').forEach(function (th) {
       th.addEventListener('click', function () {
         var k = th.getAttribute('data-k');
@@ -448,7 +581,7 @@
     st.measure = mid; msel.value = mid; st.sortKey = null; renderAll();
     var h = document.querySelector('#dx-panel .lx-hero'); if (h) { h.classList.remove('flash'); void h.offsetWidth; h.classList.add('flash'); }
   }
-  function renderAll() { drawMap(); renderPanel(); renderTable(); }
+  function renderAll() { if (typeof syncShade === 'function') syncShade(); drawMap(); renderPanel(); renderTable(); }
   function setSeg(group, value) { document.querySelectorAll('[data-seg="' + group + '"] button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === value)); }); }
   function yearOptions(sel, v) { sel.innerHTML = YEARS.slice().reverse().map(function (y) { return '<option value="' + y + '">' + y + (y === LAST && LAST_MONTH[LAST] < 12 ? ' (through ' + MONTHS[LAST_MONTH[LAST]] + ')' : '') + '</option>'; }).join(''); sel.value = String(v); }
   function syncTime() {
@@ -482,6 +615,14 @@
     b.addEventListener('click', function () { st.style = b.getAttribute('data-v'); setSeg('style', st.style); try { localStorage.setItem('hive-map-style', st.style); } catch (e) {} drawMap(); });
   });
   document.querySelectorAll('[data-seg="geo"] button').forEach(function (b) { b.addEventListener('click', function () { setGeo(b.getAttribute('data-v')); }); });
+  document.querySelectorAll('[data-seg="shade"] button').forEach(function (b) {
+    b.addEventListener('click', function () { if (b.disabled) return; st.shade = b.getAttribute('data-v'); st.sortKey = null; setSeg('shade', st.shade); renderAll(); });
+  });
+  function syncShade() {
+    var cnt = isCount(st.measure);
+    document.querySelectorAll('[data-seg="shade"] button[data-v="expect"]').forEach(function (b) { b.disabled = cnt; b.title = cnt ? 'Not available for sample counts' : ''; });
+    setSeg('shade', cnt ? 'rate' : st.shade);
+  }
   document.querySelectorAll('[data-seg="mode"] button').forEach(function (b) { b.addEventListener('click', function () { setMode(b.getAttribute('data-v')); }); });
   yearOptions($('dx-year'), st.year); yearOptions($('dx-from'), st.from); yearOptions($('dx-to'), st.to);
   $('dx-year').addEventListener('change', function () { st.year = +$('dx-year').value; syncTime(); renderAll(); });

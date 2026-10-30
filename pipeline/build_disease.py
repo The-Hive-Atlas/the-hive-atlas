@@ -14,7 +14,8 @@ Output: data/disease.js defines window.HIVE_DISEASE with one row per state, year
      varroa tested, varroa positive, nosema tested, nosema positive,
      tracheal tested, tracheal positive,
      varroa counts, sum of mites per 100 bees, nosema counts, sum of million spores per bee,
-     brood samples, American foulbrood positive, European foulbrood positive]
+     brood samples, American foulbrood positive, European foulbrood positive,
+     sum of squared mite loads, sum of squared spore loads (for the seasonal-expectation view)]
 and a CSV of the same counts by state and year for download.
 
 What counts as tested:
@@ -86,7 +87,7 @@ def main(src, dst_js, dst_csv, brood_src=None):
     rows = ws.iter_rows(values_only=True)
     head = list(next(rows))
     col = {k: head.index(k) for k in ('Month', 'Year', 'State', 'VD', 'VIL', 'NOS', 'MSPB', 'TM')}
-    cube = defaultdict(lambda: [0] * 14)
+    cube = defaultdict(lambda: [0] * 16)
     unknown = defaultdict(int)
     for r in rows:
         if r[col['Year']] is None:
@@ -106,9 +107,9 @@ def main(src, dst_js, dst_csv, brood_src=None):
             c[5] += 1; c[6] += tm
         vil, ms = number(r[col['VIL']]), number(r[col['MSPB']])
         if vil is not None:
-            c[7] += 1; c[8] += vil
+            c[7] += 1; c[8] += vil; c[14] += vil * vil
         if ms is not None:
-            c[9] += 1; c[10] += ms
+            c[9] += 1; c[10] += ms; c[15] += ms * ms
     # Brood samples: American and European foulbrood, 1 = found, 0 = not found
     if brood_src:
         wb2 = openpyxl.load_workbook(brood_src, read_only=True).worksheets[0]
@@ -133,14 +134,14 @@ def main(src, dst_js, dst_csv, brood_src=None):
     sidx = {s: i for i, s in enumerate(states)}
     out = []
     for (s, y, m), c in sorted(cube.items(), key=lambda kv: (kv[0][1], sidx[kv[0][0]], kv[0][2])):
-        out.append([sidx[s], y, m] + c[:8] + [round(c[8], 2), c[9], round(c[10], 3)] + c[11:14])
+        out.append([sidx[s], y, m] + c[:8] + [round(c[8], 2), c[9], round(c[10], 3)] + c[11:14] + [round(c[14], 2), round(c[15], 3)])
     years = sorted({k[1] for k in cube})
     data = {
         'source': {'name': 'USDA ARS Bee Research Laboratory, Bee Disease Diagnostic Laboratory', 'built': date.today().isoformat(),
                    'first': years[0], 'last': years[-1], 'varroaFrom': VARROA_FROM},
         'states': states, 'names': NAMES,
         'regions': {k: {'name': v[0], 'states': v[1]} for k, v in REGIONS.items()},
-        'cols': ['state', 'year', 'month', 'samples', 'vd_n', 'vd_pos', 'nos_n', 'nos_pos', 'tm_n', 'tm_pos', 'vil_n', 'vil_sum', 'ms_n', 'ms_sum', 'brood_n', 'afb_pos', 'efb_pos'],
+        'cols': ['state', 'year', 'month', 'samples', 'vd_n', 'vd_pos', 'nos_n', 'nos_pos', 'tm_n', 'tm_pos', 'vil_n', 'vil_sum', 'ms_n', 'ms_sum', 'brood_n', 'afb_pos', 'efb_pos', 'vil_sumsq', 'ms_sumsq'],
         'rows': out,
     }
     with open(dst_js, 'w', encoding='utf-8') as f:
@@ -150,7 +151,7 @@ def main(src, dst_js, dst_csv, brood_src=None):
         f.write(';\n')
 
     # Download: state by year
-    sy = defaultdict(lambda: [0] * 14)
+    sy = defaultdict(lambda: [0] * 16)
     for (s, y, m), c in cube.items():
         t = sy[(s, y)]
         for i, v in enumerate(c):
