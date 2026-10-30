@@ -46,8 +46,8 @@ def main(src, dst):
         g = lambda k: ws.cell(r, C[k]).value
         st = g('State')
         if isinstance(st, str):
-            new = st.strip().upper()
-            new = {'KT': 'KY'}.get(new, new)
+            u = {'KT': 'KY'}.get(st.strip().upper(), st.strip().upper())
+            new = u if len(u) == 2 and u.isalpha() and u != 'NA' else st.strip()  # leave 'na' and odd codes as they are
             if new != st:
                 setv(r, 'State', new, 'State code fixed (extra space, tab, or nonstandard code)')
         z = g('ZipCode')

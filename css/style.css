@@ -638,3 +638,10 @@ button.lx-tile:hover .lx-show, button.lx-tile:focus-visible .lx-show { opacity: 
 @media (max-width: 600px) { .dx-range { width: 100%; } }
 .dx-controls .lx-ctl { grid-template-columns: minmax(0, 1fr); max-width: 100%; }
 .dx-controls .lx-ctl > * { min-width: 0; }
+.dx-months.has-n li { grid-template-columns: 40px minmax(0, 1fr) 52px 52px; }
+.dx-months li.dx-mhead { font-size: 0.72rem; color: var(--muted); margin-bottom: -4px; }
+.dx-months li.dx-mhead .lx-sval { font-family: var(--font-body); font-size: 0.72rem; }
+.dx-n { text-align: right; font-family: var(--font-mono); font-size: 0.76rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+li.dx-mhead .dx-n { font-family: var(--font-body); font-size: 0.72rem; }
+.dx-n.few { color: var(--bad); }
+@media (max-width: 480px) { .dx-months.has-n li { grid-template-columns: 34px minmax(0, 1fr) 48px 44px; gap: 8px; } }

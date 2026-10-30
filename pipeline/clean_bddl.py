@@ -30,7 +30,8 @@ for r in range(2, ws.max_row + 1):
     if nos == 1 and isnum(ms) and ms == 0: setv(r, 'MSPB', 0.1, 'NOS was 1 but MSPB was 0: set MSPB to 0.1')
     st = g('State')
     if isinstance(st, str):
-        new = st.strip().upper(); new = {'KT': 'KY'}.get(new, new)
+        u = {'KT': 'KY'}.get(st.strip().upper(), st.strip().upper())
+        new = u if len(u) == 2 and u.isalpha() and u != 'NA' else st.strip()  # leave 'na' and odd codes as they are
         if new != st: setv(r, 'State', new, 'State code fixed (extra space or nonstandard code)')
     z = g('ZipCode')
     if isinstance(z, str) and z != z.strip() and z.strip():

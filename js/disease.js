@@ -324,13 +324,15 @@
         var stp = niceStep(max / 4), top = Math.ceil(max / stp) * stp;
         var inSeason = SEASONS[st.season].months;
         html.push('<div class="lx-block"><h3 class="lx-h3">By month</h3><p class="lx-small">' + M[st.measure].short + ' by the month samples were ' + (isCount(st.measure) ? 'received' : 'collected') + ', ' + (s[0] === s[1] ? 'in ' + s[0] : s[0] + ' to ' + s[1]) + '.' +
-          (area !== 'US' && !isCount(st.measure) ? ' The dark tick marks the U.S.' : '') + ' Bars run from 0 to ' + compact(st.measure, top) + '. Lighter bars have fewer than ' + SMALL_N + ' samples.</p><ul class="lx-stress lx-seasons dx-months">' +
+          (area !== 'US' && !isCount(st.measure) ? ' The dark tick marks the U.S. value.' : '') + ' Bars run from 0 to ' + compact(st.measure, top) + '. Lighter bars have fewer than ' + SMALL_N + ' samples. The last column is the number of samples tested each month.</p><ul class="lx-stress lx-seasons dx-months' + (isCount(st.measure) ? '' : ' has-n') + '">' +
+          (isCount(st.measure) ? '' : '<li class="dx-mhead" aria-hidden="true"><span></span><span></span><span class="lx-sval">' + (M[st.measure].unit === 'pct' ? '% positive' : 'Average') + '</span><span class="dx-n">Samples</span></li>') +
           rows.map(function (x, i) {
             var u = us[i], ok = x.status === 'ok', few = ok && x.n < SMALL_N && !isCount(st.measure);
             var mark = area !== 'US' && !isCount(st.measure) && u.status === 'ok' ? '<b class="lx-usmark" style="left:' + Math.min(100, u.v / top * 100).toFixed(1) + '%" title="U.S. ' + fmt(st.measure, u) + '"></b>' : '';
             var dim = inSeason && inSeason.indexOf(i + 1) < 0 ? ' dx-dim' : '';
             return '<li class="' + dim + '"><span class="lx-sname">' + MONTHS[i + 1] + '</span><span class="lx-track"><span class="lx-fill' + (few ? ' dx-few' : '') + '" style="width:' + (ok ? Math.max(0.6, Math.min(100, x.v / top * 100)) : 0).toFixed(1) + '%"></span>' + mark + '</span>' +
-              '<span class="lx-sval" title="' + (ok ? x.n + ' samples' : '') + '">' + (ok ? fmt(st.measure, x) : x.status === 'none' ? '–' : 'n/a') + '</span></li>';
+              '<span class="lx-sval" title="' + (ok ? x.n + ' samples' : '') + '">' + (ok ? fmt(st.measure, x) : x.status === 'none' ? '–' : 'n/a') + '</span>' +
+              (isCount(st.measure) ? '' : '<span class="dx-n' + (few ? ' few' : '') + '" aria-label="' + (ok ? x.n : 0) + ' samples">' + (ok ? x.n.toLocaleString('en-US') : '0') + '</span>') + '</li>';
           }).join('') + '</ul></div>');
       }
     }
