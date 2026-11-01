@@ -91,16 +91,17 @@
 
         <section class="doc-section" id="genetics">
           <h2>Genetic measures</h2>
-          <p class="section-intro" style="margin-bottom:20px">Genetic lenses summarize mitochondrial DNA results within the selected area and year.</p>
+          <p class="section-intro" style="margin-bottom:20px">Genetic measures summarize mitochondrial DNA results for the colonies genotyped in the selected area. Mitochondrial DNA is inherited from the queen, so they describe maternal lines only. Only counts by state are published.</p>
           <div class="table-scroll">
             <table class="defs">
-              <thead><tr><th>Lens</th><th>What it shows</th><th>Unit</th></tr></thead>
+              <thead><tr><th>Measure</th><th>What it shows</th><th>Unit</th></tr></thead>
               <tbody>
-                <tr><td>Lineage makeup</td><td>Share of colonies assigned to each major evolutionary lineage: A (African), M (western and northern European), C (eastern European), O (Middle Eastern).</td><td class="unit">% of colonies</td></tr>
-                <tr><td>Dominant lineage</td><td>The lineage with the largest share in the area.</td><td class="unit">category</td></tr>
-                <tr><td>Haplotype frequency</td><td>How often a selected mitochondrial haplotype appears among sampled colonies.</td><td class="unit">% of colonies</td></tr>
-                <tr><td>Haplotype diversity</td><td>The probability that two randomly chosen colonies carry different haplotypes. Higher values mean a more varied population.</td><td class="unit">0 to 1</td></tr>
-                <tr><td>Samples</td><td>Number of genotyped colonies behind the estimate.</td><td class="unit">count</td></tr>
+                <tr><td>Lineage makeup</td><td>Share of genotyped colonies assigned to each evolutionary lineage: A (African), M (western and northern European), C (eastern European), O (Middle Eastern).</td><td class="unit">% of colonies</td></tr>
+                <tr><td>M or A lineage</td><td>The M and A lineages added together: colonies with non-C maternal ancestry.</td><td class="unit">% of colonies</td></tr>
+                <tr><td>Haplotype frequency</td><td>How often a mitochondrial haplotype appears among the genotyped colonies.</td><td class="unit">% of colonies</td></tr>
+                <tr><td>Haplotype diversity</td><td>The chance that two randomly chosen colonies carry different haplotypes, calculated with Nei&rsquo;s unbiased estimator, n/(n&minus;1) &times; (1 &minus; sum of squared haplotype frequencies). Higher values mean a more varied population.</td><td class="unit">0 to 1</td></tr>
+                <tr><td>Novel haplotypes</td><td>Share of colonies carrying a haplotype flagged as novel in the source data.</td><td class="unit">% of colonies</td></tr>
+                <tr><td>Colonies genotyped</td><td>Number of colonies behind the estimate. Areas with fewer than 10 are flagged.</td><td class="unit">count</td></tr>
               </tbody>
             </table>
           </div>

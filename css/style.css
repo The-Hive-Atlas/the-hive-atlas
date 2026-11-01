@@ -654,3 +654,17 @@ li.dx-mhead .dx-n { font-family: var(--font-body); font-size: 0.72rem; }
 .dx-exp i, .dx-expcell i { display: inline-block; width: 11px; height: 11px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; border: 1px solid var(--line); }
 .dx-expcell { white-space: nowrap; }
 .seg button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* Genetic Diversity map: lineage makeup bar and key */
+.gx-stack { display: flex; height: 16px; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; background: var(--bg); }
+.gx-stack span { display: block; height: 100%; }
+.gx-keys { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 0.86rem; }
+.gx-keys li { display: inline-flex; align-items: center; gap: 6px; }
+.gx-keys i { width: 12px; height: 12px; border-radius: 2px; display: inline-block; }
+.gx-keys span { color: var(--muted); }
+.gx-haps li { grid-template-columns: 112px minmax(0, 1fr) 56px; }
+.gx-haps .lx-sname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-mono); font-size: 0.8rem; }
+.gx-caveat { margin: 0 0 16px; padding: 10px 14px; border-left: 3px solid var(--honey); background: var(--honey-soft); border-radius: 0 8px 8px 0; font-size: 0.9rem; line-height: 1.5; }
+.gx-controls { flex-wrap: wrap; }
+.gx-controls .lx-ctl { grid-template-columns: minmax(0, 1fr); max-width: 100%; min-width: 0; }
+.gx-controls .lx-ctl > * { min-width: 0; }

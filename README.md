@@ -11,7 +11,7 @@ The Hive Atlas brings public data on honey bee colony losses, disease, and colon
 | **Colony Losses** | Quarterly colony losses, renovations, and self-reported stressors by state, 2015 to now | USDA National Agricultural Statistics Service (NASS), *Honey Bee Colonies* reports |
 | **Disease Surveillance** | Varroa, Nosema, tracheal mite, and American and European foulbrood results from adult bee and brood samples, by state, climate region, year, and month, 1984 to now | USDA ARS Bee Disease Diagnostic Laboratory, Beltsville, Maryland |
 | **Colony Monitoring** | Repeated colony inspections by climate region, plus a personal report for your own records | Currently **simulated demonstration data** |
-| **Genetic Diversity** | Mitochondrial lineages of U.S. honey bee populations | Coming soon |
+| **Genetic Diversity** | Mitochondrial lineages (A, M, C), haplotypes, and haplotype diversity of U.S. honey bee colonies, by state, from 1,063 colonies sampled in 2019 | Genetic_Database2026 (mitochondrial DNA genotyping) |
 
 Each map page has an **About this map** tab with definitions, methods, and limits. Methods for the whole site are on the [Data & Methods](https://thehiveatlas.com/methods.html) page.
 
@@ -50,6 +50,14 @@ To update the NASS colony loss data each August:
 python3 pipeline/import_nass_release.py UNZIPPED_RELEASE_FOLDER data/nass-colony-losses.csv RELEASE_DATE SOURCE_NAME
 python3 pipeline/build_losses.py data/nass-colony-losses.csv data/colony-losses.js
 ```
+
+To update the genetic diversity data from a new version of the genetic database spreadsheet (keep the spreadsheet itself out of this repository, since it has one row per colony):
+
+```
+python3 pipeline/build_genetics.py Genetic_Database2026.xlsx data/genetics.js data/genetics-state-year.csv
+```
+
+The genetics files are separate from the disease files: the script has its own state names and climate regions and reads nothing from `data/disease.js`. It publishes counts by state and year only, and calculates haplotype diversity itself from the haplotype counts (the spreadsheet's `Haplo.Div` column is not used). It prints any state where the spreadsheet's own value differs. The map reads the data for every year it finds, but shows them pooled; a year selector would need to be added to `genetics.html` and `js/genetics.js` once there is more than one survey year.
 
 To update the disease data from new laboratory spreadsheets (keep the spreadsheets themselves out of this repository):
 
