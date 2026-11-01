@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Genetic Diversity · The Hive Atlas</title>
+<meta name="description" content="Honey bee mitochondrial lineages and haplotype diversity by U.S. state, from 1,063 genotyped colonies.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&amp;family=Public+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="The Hive Atlas home">
+      <svg width="34" height="38" viewBox="0 0 34 38" aria-hidden="true">
+        <polygon points="17,1 33,10 33,28 17,37 1,28 1,10" fill="none" stroke="var(--honey)" stroke-width="2"/>
+        <polygon points="17,10 25,14.5 25,23.5 17,28 9,23.5 9,14.5" fill="var(--honey)"/>
+      </svg>
+      <span>
+        <span class="brand-name">The Hive Atlas</span>
+        <span class="brand-sub">U.S. Honey Bee Health Data</span>
+      </span>
+    </a>
+    <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav id="site-nav" aria-label="Main">
+      <ul><li><a href="disease.html">Disease</a></li><li><a href="genetics.html" aria-current="page">Genetics</a></li><li><a href="losses.html">Colony Losses</a></li><li><a href="monitoring.html">Monitoring</a></li><li><a href="methods.html">Methods</a></li><li><a href="contribute.html">Contribute</a></li><li><a href="publications.html">Publications</a></li><li><a href="about.html">About</a></li></ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="page-head lx-head">
+    <div class="wrap">
+      <p class="lx-note" id="gx-note">Mitochondrial DNA results.</p>
+      <h1>Honey bee genetic diversity</h1>
+      <p class="lede" id="gx-summary">Mitochondrial DNA results for U.S. honey bee colonies: which evolutionary lineage each colony belongs to, which haplotypes are common, and how varied each state&rsquo;s bees are.</p>
+      <div class="lx-tabs" role="tablist" aria-label="Genetic diversity">
+        <button type="button" role="tab" id="tab-map" aria-selected="true" aria-controls="gx-view">Map</button>
+        <button type="button" role="tab" id="tab-about" aria-selected="false" aria-controls="about">About this map</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="gx-view" role="tabpanel" aria-labelledby="tab-map">
+    <div class="wrap lx-wrap">
+      <p class="gx-caveat"><strong>A snapshot, not a census.</strong> Each state is represented by a small set of colonies, so these numbers describe the colonies tested, not every colony in the state. States with fewer than 10 colonies are outlined. <button type="button" class="lx-link" data-open-about>How to read this map</button></p>
+      <div class="lx-controls gx-controls">
+        <div class="lx-ctl">
+          <span class="lx-lab" id="lab-style">Map style</span>
+          <div class="seg" data-seg="style" role="group" aria-labelledby="lab-style">
+            <button type="button" data-v="hex" aria-pressed="true">Hexagons</button>
+            <button type="button" data-v="shapes" aria-pressed="false">State shapes</button>
+          </div>
+        </div>
+        <div class="lx-ctl">
+          <span class="lx-lab" id="lab-geo">Area</span>
+          <div class="seg" data-seg="geo" role="group" aria-labelledby="lab-geo">
+            <button type="button" data-v="state" aria-pressed="true">States</button>
+            <button type="button" data-v="region" aria-pressed="false">Climate regions</button>
+          </div>
+        </div>
+        <div class="lx-ctl lx-grow">
+          <label class="lx-lab" for="gx-measure">Color the map by</label>
+          <select id="gx-measure"></select>
+        </div>
+        <div class="lx-ctl">
+          <label class="lx-lab" for="gx-goto">Go to a state</label>
+          <input id="gx-goto" type="text" list="gx-statelist" placeholder="e.g. Maryland or MD" autocomplete="off">
+          <datalist id="gx-statelist"></datalist>
+        </div>
+      </div>
+
+      <div class="lx-main">
+        <div class="lx-card lx-mapcard" id="gx-mapcard">
+          <h2 class="lx-cardtitle" id="gx-maptitle">Lineage</h2>
+          <div class="lx-maptools">
+            <p class="lx-small">Click a state to see its numbers, or the button to go back to the whole country.</p>
+            <button type="button" class="lx-usbtn" id="gx-us" aria-pressed="true">United States</button>
+          </div>
+          <svg id="gx-map" class="lx-map" role="group" aria-label="Map of U.S. states"></svg>
+          <div class="lx-legend" id="gx-legend"></div>
+          <p class="lx-small">Color ranges are fixed for each measure. Gray areas have no genotyped colonies. Guam (25 colonies) and Puerto Rico (8) are in the table and the U.S. totals but not on the map.</p>
+          <div class="lx-tip" id="gx-tip" hidden></div>
+        </div>
+        <aside class="lx-card lx-panel" id="gx-panel" aria-live="polite"></aside>
+      </div>
+
+      <div class="lx-card lx-tablecard">
+        <div class="lx-tablehead">
+          <div>
+            <h2 class="lx-cardtitle" id="gx-tabletitle">States with colonies genotyped</h2>
+            <p class="lx-small" id="gx-tablenote"></p>
+          </div>
+          <input id="gx-filter" type="search" placeholder="Filter states" aria-label="Filter states" autocomplete="off">
+        </div>
+        <div class="table-scroll lx-tablescroll">
+          <table class="lx-table" id="gx-table"></table>
+        </div>
+      </div>
+
+      <p class="lx-small">Want the definitions, methods, and limits? <button type="button" class="lx-link" data-open-about>Read about this map</button> &middot; <a href="data/genetics-state-year.csv" download>Download counts by state (CSV)</a></p>
+    </div>
+  </section>
+
+  <section id="about" class="lx-aboutpanel" role="tabpanel" aria-labelledby="tab-about" hidden>
+    <div class="wrap" style="padding-block:40px 24px">
+      <div class="doc-layout">
+        <aside class="toc" aria-label="On this tab">
+          <p>On this tab</p>
+          <ul>
+            <li><a href="#ab-what">What the map shows</a></li>
+            <li><a href="#ab-measures">The measures</a></li>
+            <li><a href="#ab-lineages">The lineages</a></li>
+            <li><a href="#ab-use">How to use it</a></li>
+            <li><a href="#ab-small">Small samples</a></li>
+            <li><a href="#ab-limits">Limits</a></li>
+          </ul>
+        </aside>
+        <div>
+          <section class="doc-section prose" id="ab-what">
+            <h2>What the map shows</h2>
+            <p>Results from <strong>mitochondrial DNA</strong> testing of honey bee colonies sampled across the United States in 2019. For each colony, the data record its <strong>evolutionary lineage</strong> and its <strong>haplotype</strong>, the specific version of the mitochondrial DNA it carries.</p>
+            <p>Mitochondrial DNA is passed down from the queen, so these results trace the <strong>maternal line</strong> of each colony. They do not describe the drones, and they do not measure how much of a colony&rsquo;s genome comes from each ancestry.</p>
+            <p>Only summarized counts by state are published. Individual colonies, sample numbers, and apiary locations are not.</p>
+          </section>
+
+          <section class="doc-section prose" id="ab-measures">
+            <h2>The measures</h2>
+            <ul>
+              <li><strong>Lineage percents</strong> (M or A, C, M, A): the share of genotyped colonies in the area assigned to each lineage. &ldquo;M or A&rdquo; adds the M and A lineages together, which shows where bees with non-C maternal ancestry turn up.</li>
+              <li><strong>Haplotype diversity</strong>: the chance that two colonies picked at random from the area carry different haplotypes. It runs from 0 (all the same) to 1 (all different). It is calculated from the counts with the unbiased estimator of Nei, which corrects for small samples, so it can be pooled for climate regions and the whole country.</li>
+              <li><strong>Novel haplotypes</strong>: the share of colonies carrying a haplotype flagged as novel in the source data, meaning one that did not match a previously published sequence.</li>
+              <li><strong>Colonies genotyped</strong>: how many colonies stand behind each number.</li>
+            </ul>
+          </section>
+
+          <section class="doc-section prose" id="ab-lineages">
+            <h2>The lineages</h2>
+            <ul>
+              <li><strong>C</strong>, eastern European. This includes the most widely managed breeds. In the haplotype list, C1 is <em>ligustica</em> (Italian) bees, C2 is <em>carnica</em>, and C3 is Buckfast.</li>
+              <li><strong>M</strong>, western and northern European, the lineage of the dark bee.</li>
+              <li><strong>A</strong>, African, in this data set found most often in Puerto Rico and the Gulf states (Louisiana, Florida, and Texas), with a few colonies elsewhere.</li>
+              <li><strong>O</strong>, Middle Eastern. No colonies in this data set were assigned to it.</li>
+            </ul>
+          </section>
+
+          <section class="doc-section prose" id="ab-use">
+            <h2>How to use it</h2>
+            <ul>
+              <li><strong>Area</strong> shows states, or the nine NOAA climate regions plus Alaska and Hawaii. Regions pool several states, so they are steadier when state counts are small.</li>
+              <li><strong>Color the map by</strong> picks the measure.</li>
+              <li><strong>Click a state or region</strong> to see its lineage makeup and most common haplotypes, and how it compares with the U.S.</li>
+              <li><strong>The table</strong> lists every state with colonies genotyped. Click a heading to sort, or a row to open that state.</li>
+            </ul>
+          </section>
+
+          <section class="doc-section prose" id="ab-small">
+            <h2>Small samples</h2>
+            <p>Each state has between 6 and 37 genotyped colonies, usually 20 to 25. With so few colonies, a single colony can shift a state&rsquo;s percent by several points. States with fewer than 10 colonies are outlined on the map and marked in the table, and they are left out of the ranks.</p>
+          </section>
+
+          <section class="doc-section prose" id="ab-limits">
+            <h2>Limits</h2>
+            <ul>
+              <li>One survey year (2019). The map cannot show change over time yet.</li>
+              <li>North Carolina, New Hampshire, Ohio, Rhode Island, and Wyoming have no genotyped colonies. They appear in gray.</li>
+              <li>The data are from <strong>maternal lines only</strong>. A colony with a C-lineage queen can still have drones and workers with other ancestry.</li>
+              <li>Colonies were not drawn at random from every state, so the numbers should not be read as the exact makeup of each state&rsquo;s bees.</li>
+              <li>Guam and Puerto Rico are in the table and the U.S. totals but not on the map.</li>
+            </ul>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>The Hive Atlas · Open honey bee health data for the United States</span>
+    <ul>
+      <li><a href="methods.html">Data &amp; Methods</a></li>
+      <li><a href="publications.html">Publications</a></li>
+      <li><a href="about.html">About &amp; Contact</a></li>
+    </ul>
+    <p class="disclaimer">The Hive Atlas is an independent project. It is not affiliated with, endorsed by, or operated by the U.S. Department of Agriculture (USDA) or any other government agency. The views expressed on this site are those of its founders and do not necessarily represent the views or policies of USDA or the United States Government. <a href="about.html#disclaimer">Full disclaimer</a></p>
+  </div>
+</footer>
+<script src="js/site.js"></script>
+<script src="data/state-shapes.js"></script>
+<script src="data/genetics.js"></script>
+<script src="js/genetics.js"></script>
+<script data-goatcounter="https://thehiveatlas.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</body>
+</html>
