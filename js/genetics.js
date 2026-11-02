@@ -68,7 +68,6 @@
   var US_BREAKS = { ma: [1, 4, 8, 15], c: [80, 90, 95, 98], m: [1, 4, 8, 12], a: [1, 3, 6, 10], hd: [0.5, 0.6, 0.7, 0.8], samples: [15, 20, 24, 30], hap: [5, 10, 25, 50] };
   var WORLD_BREAKS = { ma: [20, 40, 60, 80], c: [20, 40, 60, 80], m: [20, 40, 60, 80], a: [20, 40, 60, 80], hd: [0.2, 0.4, 0.6, 0.8], samples: [10, 25, 50, 100], hap: [5, 10, 25, 50] };
   var MEASURES = [
-    { id: 'ma', label: 'M or A lineage: percent of colonies', short: 'M or A lineage', tile: 'M or A lineage', unit: 'pct', group: 'Lineage', pos: function (t) { return t.lin[1] + t.lin[2]; } },
     { id: 'c', label: 'C lineage: percent of colonies', short: 'C lineage', tile: 'C lineage', unit: 'pct', group: 'Lineage', pos: function (t) { return t.lin[0]; } },
     { id: 'm', label: 'M lineage: percent of colonies', short: 'M lineage', tile: 'M lineage', unit: 'pct', group: 'Lineage', pos: function (t) { return t.lin[1]; } },
     { id: 'a', label: 'A lineage: percent of colonies', short: 'A lineage', tile: 'A lineage', unit: 'pct', group: 'Lineage', pos: function (t) { return t.lin[2]; } },
@@ -82,7 +81,7 @@
   function isCount(mid) { return M[mid].unit === 'count'; }
   function breaks(mid) { return (IS_US ? US_BREAKS : WORLD_BREAKS)[mid]; }
 
-  var st = { country: 'USA', geo: 'state', measure: 'ma', hap: null, sel: 'ALL', sortKey: null, sortDir: -1, filter: '' };
+  var st = { country: 'USA', geo: 'state', measure: 'c', hap: null, sel: 'ALL', sortKey: null, sortDir: -1, filter: '' };
   try { var savedC = localStorage.getItem('hive-genetics-country'); if (savedC && BYKEY[savedC]) st.country = savedC; } catch (e) {}
   try { var qC = new URLSearchParams(location.search).get('country'); if (qC) { var hitC = MENU.filter(function (c) { return c.key.toLowerCase() === qC.toLowerCase() || c.name.toLowerCase() === qC.toLowerCase(); })[0]; if (hitC) st.country = hitC.key; } } catch (e) {}
   var $ = function (id) { return document.getElementById(id); };
@@ -357,7 +356,7 @@
       (r.status === 'ok' && r.pos != null ? '<p class="lx-small">' + r.pos.toLocaleString('en-US') + ' of ' + plural(r.n, 'colony') + ' with a recorded ' + (r.hap ? 'haplotype' : 'lineage') + '.</p>' : '') +
       (r.status === 'ok' && M[st.measure].unit === 'index' ? '<p class="lx-small">From ' + plural(r.n, 'colony') + ' with a recorded haplotype.</p>' : '') + '</div>');
 
-    var tiles = MEASURES.filter(function (m) { return m.id !== st.measure && m.id !== 'ma'; });
+    var tiles = MEASURES.filter(function (m) { return m.id !== st.measure; });
     html.push('<div class="lx-tiles">' + tiles.map(function (m) {
       var tr = val(area, m.id), s = fmt(m.id, tr);
       return '<button type="button" class="lx-tile" data-measure="' + m.id + '" title="Color the map by ' + m.label.toLowerCase() + '"><span class="lx-k">' + m.tile + '</span><span class="lx-v">' +
@@ -392,8 +391,8 @@
   function hapNote(h) { return h === 'C1' ? 'C1 (A. m. ligustica)' : h === 'C2' ? 'C2 (A. m. carnica)' : h === 'C3' ? 'C3 (Buckfast)' : h; }
 
   /* ---------- Table ---------- */
-  var BASE_COLS = ['samples', 'ma', 'c', 'm', 'a', 'hd'];
-  var COL_LABEL = { samples: 'Colonies', ma: 'M or A %', c: 'C %', m: 'M %', a: 'A %', hd: 'Diversity' };
+  var BASE_COLS = ['samples', 'c', 'm', 'a', 'hd'];
+  var COL_LABEL = { samples: 'Colonies', c: 'C %', m: 'M %', a: 'A %', hd: 'Diversity' };
   function renderTable() {
     var TABLE_COLS = BASE_COLS.concat(st.hap != null ? ['hap'] : []);
     COL_LABEL.hap = st.hap != null ? G.haplotypes[st.hap] + ' %' : '';
@@ -444,7 +443,7 @@
   function markTableRow() { $('gx-table').querySelectorAll('tbody tr').forEach(function (tr) { tr.classList.toggle('on', tr.getAttribute('data-code') === st.sel); }); }
   function setMeasure(mid) {
     if (mid === st.measure) return;
-    st.measure = mid; msel.value = mid; st.hap = null; hsel.value = ''; st.sortKey = null; renderAll();
+    st.measure = mid; hapOption(false); msel.value = mid; st.hap = null; hsel.value = ''; st.sortKey = null; renderAll();
     var h = document.querySelector('#gx-panel .lx-hero'); if (h) { h.classList.remove('flash'); void h.offsetWidth; h.classList.add('flash'); }
   }
   function renderAll() { drawMap(); renderPanel(); renderTable(); }
@@ -458,7 +457,7 @@
   function setCountry(key) {
     st.country = key; loadCountry(key);
     st.sel = 'ALL'; st.geo = 'state'; setSeg('geo', 'state'); st.sortKey = null; st.filter = ''; $('gx-filter').value = '';
-    st.hap = null; if (st.measure === 'hap') { st.measure = 'ma'; msel.value = 'ma'; } fillHaps();
+    st.hap = null; if (st.measure === 'hap') { st.measure = 'c'; msel.value = 'c'; } hapOption(false); fillHaps();
     csel.value = C.key;
     $('gx-geo-ctl').hidden = !IS_US;
     $('gx-goto-lab').textContent = IS_US ? 'Go to a state' : IS_WORLD ? 'Go to a country' : 'Go to an area';
@@ -483,9 +482,14 @@
   var msel = $('gx-measure'), groups = {};
   MEASURES.forEach(function (m) { (groups[m.group] = groups[m.group] || []).push(m); });
   msel.innerHTML = Object.keys(groups).map(function (g) { return '<optgroup label="' + g + '">' + groups[g].map(function (m) { return '<option value="' + m.id + '">' + m.label + '</option>'; }).join('') + '</optgroup>'; }).join('');
-  msel.insertAdjacentHTML('beforeend', '<option value="hap" hidden>Selected haplotype (see Haplotype menu)</option>');
+  // "Selected haplotype" is in this menu only while a haplotype is picked (Safari shows hidden options)
+  function hapOption(on) {
+    var o = msel.querySelector('option[value="hap"]');
+    if (on && !o) msel.insertAdjacentHTML('beforeend', '<option value="hap">Selected haplotype (see Haplotype menu)</option>');
+    if (!on && o) o.remove();
+  }
   msel.value = st.measure;
-  msel.addEventListener('change', function () { st.measure = msel.value; st.hap = null; hsel.value = ''; st.sortKey = null; renderAll(); });
+  msel.addEventListener('change', function () { st.measure = msel.value; if (st.measure !== 'hap') hapOption(false); st.hap = null; hsel.value = ''; st.sortKey = null; renderAll(); });
 
   /* Haplotype menu: lists the haplotypes found in the selected country, most common first */
   var hsel = $('gx-hap');
@@ -497,8 +501,8 @@
     hsel.disabled = !list.length;
   }
   hsel.addEventListener('change', function () {
-    if (hsel.value === '') { st.hap = null; if (st.measure === 'hap') { st.measure = 'ma'; msel.value = 'ma'; } }
-    else { st.hap = Number(hsel.value); st.measure = 'hap'; msel.value = 'hap'; }
+    if (hsel.value === '') { st.hap = null; if (st.measure === 'hap') { st.measure = 'c'; msel.value = 'c'; } hapOption(false); }
+    else { st.hap = Number(hsel.value); st.measure = 'hap'; hapOption(true); msel.value = 'hap'; }
     st.sortKey = null; renderAll();
   });
   document.querySelectorAll('[data-seg="geo"] button').forEach(function (b) { b.addEventListener('click', function () { setGeo(b.getAttribute('data-v')); }); });
