@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&amp;family=Public+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
-<link rel="stylesheet" href="css/style.css?v=20261102c">
+<link rel="stylesheet" href="css/style.css?v=20261102d">
 </head>
 <body>
 <header class="site-header">
@@ -49,11 +49,8 @@
       <p class="dx-caveat"><strong>Diagnostic samples, not a random survey.</strong> Inspectors and beekeepers send samples from colonies that look sick, weak, or in decline, so these rates run higher than in the average colony. <button type="button" class="lx-link" data-open-about>Why this matters</button></p>
       <div class="lx-controls dx-controls">
         <div class="lx-ctl">
-          <span class="lx-lab" id="lab-style">Map style</span>
-          <div class="seg" data-seg="style" role="group" aria-labelledby="lab-style">
-            <button type="button" data-v="hex" aria-pressed="true">Hexagons</button>
-            <button type="button" data-v="shapes" aria-pressed="false">State shapes</button>
-          </div>
+          <label class="lx-lab" for="dx-country">Country</label>
+          <select id="dx-country"><option value="US" selected>United States</option></select>
         </div>
         <div class="lx-ctl">
           <span class="lx-lab" id="lab-geo">Area</span>
@@ -345,10 +342,10 @@
     <p class="disclaimer">The Hive Atlas is an independent project. It is not affiliated with, endorsed by, or operated by the U.S. Department of Agriculture (USDA) or any other government agency. The views expressed on this site are those of its founders and do not necessarily represent the views or policies of USDA or the United States Government. <a href="about.html#disclaimer">Full disclaimer</a></p>
   </div>
 </footer>
-<script src="js/site.js?v=20261102c"></script>
-<script src="data/state-shapes.js?v=20261102c"></script>
-<script src="data/disease.js?v=20261102c"></script>
-<script src="js/disease.js?v=20261102c"></script>
+<script src="js/site.js?v=20261102d"></script>
+<script src="data/state-shapes.js?v=20261102d"></script>
+<script src="data/disease.js?v=20261102d"></script>
+<script src="js/disease.js?v=20261102d"></script>
 <script data-goatcounter="https://mohamedalburaki.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </body>

@@ -54,8 +54,8 @@
   function testedIn(mid, y0, y1) { return M[mid].years.some(function (y) { return y >= y0 && y <= y1; }); }
 
   // Opening view: climate regions, Varroa positive, the last three complete years pooled, so the map is filled in
-  var st = { style: 'hex', geo: 'region', measure: 'vd', mode: 'range', year: LATEST_FULL, from: Math.max(FIRST, LATEST_FULL - 2), to: LATEST_FULL, season: 'all', shade: 'rate', sel: 'US', sortKey: null, sortDir: -1, filter: '' };
-  try { var saved = localStorage.getItem('hive-map-style'); if (saved === 'hex' || saved === 'shapes') st.style = saved; } catch (e) {}
+  var st = { style: 'shapes', geo: 'region', measure: 'vd', mode: 'range', year: LATEST_FULL, from: Math.max(FIRST, LATEST_FULL - 2), to: LATEST_FULL, season: 'all', shade: 'rate', sel: 'US', sortKey: null, sortDir: -1, filter: '' };
+  // The map always uses state shapes. The Country menu lists the countries with disease data (the United States for now).
   var $ = function (id) { return document.getElementById(id); };
 
   /* ---------- Values ---------- */
@@ -611,9 +611,8 @@
   msel.value = st.measure;
   msel.addEventListener('change', function () { st.measure = msel.value; st.sortKey = null; renderAll(); });
 
-  document.querySelectorAll('[data-seg="style"] button').forEach(function (b) {
-    b.addEventListener('click', function () { st.style = b.getAttribute('data-v'); setSeg('style', st.style); try { localStorage.setItem('hive-map-style', st.style); } catch (e) {} drawMap(); });
-  });
+  var csel = $('dx-country');
+  if (csel) csel.addEventListener('change', function () { csel.value = 'US'; select('US'); });
   document.querySelectorAll('[data-seg="geo"] button').forEach(function (b) { b.addEventListener('click', function () { setGeo(b.getAttribute('data-v')); }); });
   document.querySelectorAll('[data-seg="shade"] button').forEach(function (b) {
     b.addEventListener('click', function () { if (b.disabled) return; st.shade = b.getAttribute('data-v'); st.sortKey = null; setSeg('shade', st.shade); renderAll(); });
@@ -665,7 +664,7 @@
     $('dx-note').textContent = total.toLocaleString('en-US') + ' adult and ' + totalB.toLocaleString('en-US') + ' brood samples from ' + FIRST + ' through ' + MONTHS[LAST_MONTH[LAST]] + ' ' + LAST + '.';
   })();
 
-  setSeg('style', st.style); setSeg('geo', st.geo); syncTime();
+  setSeg('geo', st.geo); syncTime();
   renderAll();
 
   /* ---------- Tabs ---------- */
