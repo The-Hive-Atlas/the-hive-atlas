@@ -11,7 +11,7 @@ The Hive Atlas brings public data on honey bee colony losses, disease, and colon
 | **Colony Losses** | Quarterly colony losses, renovations, and self-reported stressors by state, 2015 to now | USDA National Agricultural Statistics Service (NASS), *Honey Bee Colonies* reports |
 | **Disease Surveillance** | Varroa, Nosema, tracheal mite, and American and European foulbrood results from adult bee and brood samples, by state, climate region, year, and month, 1984 to now | USDA ARS Bee Disease Diagnostic Laboratory, Beltsville, Maryland |
 | **Colony Monitoring** | Repeated colony inspections by climate region, plus a personal report for your own records | Currently **simulated demonstration data** |
-| **Genetic Diversity** | Mitochondrial lineages (A, M, C), haplotypes, and haplotype diversity of U.S. honey bee colonies, by state, from 1,063 colonies sampled in 2019 | Genetic_Database2026 (mitochondrial DNA genotyping) |
+| **Genetic Diversity** | Mitochondrial lineages (A, M, C), haplotypes, and haplotype diversity of honey bee colonies by country and area, from 8,642 colonies in 25 countries (1,111 in the United States) | Genetic_Database2026 (mitochondrial DNA genotyping, worldwide) |
 
 Each map page has an **About this map** tab with definitions, methods, and limits. Methods for the whole site are on the [Data & Methods](https://thehiveatlas.com/methods.html) page.
 
@@ -55,9 +55,13 @@ To update the genetic diversity data from a new version of the genetic database 
 
 ```
 python3 pipeline/build_genetics.py Genetic_Database2026.xlsx data/genetics.js data/genetics-state-year.csv
+python3 pipeline/build_country_shapes.py ne_10m_admin_0_countries.geojson data/genetics.js data/country-shapes.js
+python3 pipeline/build_world_shapes.py ne_50m_admin_0_countries.geojson data/genetics.js data/world-shapes.js
 ```
 
-The genetics files are separate from the disease files: the script has its own state names and climate regions and reads nothing from `data/disease.js`. It publishes counts by state and year only, and calculates haplotype diversity itself from the haplotype counts (the spreadsheet's `Haplo.Div` column is not used). It prints any state where the spreadsheet's own value differs. The map reads the data for every year it finds, but shows them pooled; a year selector would need to be added to `genetics.html` and `js/genetics.js` once there is more than one survey year.
+The second and third commands rebuild the country outlines and the world map used by the "Worldwide" choice in the Country menu (only needed when a country is added); `ne_10m_admin_0_countries.geojson` and `ne_50m_admin_0_countries.geojson` are in the `geojson` folder of https://github.com/nvkelso/natural-earth-vector.
+
+The script reads the spreadsheet's `All populations` sheet. It publishes counts by country, area (U.S. state, or the region named in the spreadsheet), and year only; rows with no Country are left out. A new country must be added to the `COUNTRIES` list in the script (display name and ISO numeric code, used to draw its outline). The genetics page draws the United States with state shapes and other countries as a Natural Earth outline (`data/country-shapes.js`, stored in the site so nothing loads from outside) with one dot per area. Haplotype diversity is calculated on the page from the haplotype counts. All years are shown pooled.
 
 To update the disease data from new laboratory spreadsheets (keep the spreadsheets themselves out of this repository):
 

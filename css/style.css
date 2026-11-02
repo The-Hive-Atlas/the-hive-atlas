@@ -11,7 +11,7 @@
   --honey-soft: #f5e8c8;
   --c0: #f1ead8; --c1: #ebd39a; --c2: #ddb04f; --c3: #c1861a; --c4: #8a5a07;
   --nodata: #c4cbd4;
-  --lin-c: #d9a13a; --lin-m: #5b7290; --lin-a: #8a9a5b; --lin-o: #b0705a;
+  --lin-c: #2f6db3; --lin-m: #3f8a4e; --lin-a: #c0392b; --lin-o: #b0705a;
   --good: #2f6b3a; --good-soft: #e1efe2; --bad: #a3361f; --bad-soft: #f7e1db;
   --font-display: "Spectral", Georgia, "Times New Roman", serif;
   --font-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -23,7 +23,7 @@
     --honey: #e3a93c; --honey-strong: #f0bf5f; --honey-soft: #3a2f17;
     --c0: #3b3324; --c1: #6a5426; --c2: #9b7425; --c3: #cf9a31; --c4: #f2c766;
     --nodata: #4d5866;
-    --lin-c: #e3ac45; --lin-m: #7f98b8; --lin-a: #a7b878; --lin-o: #cf8f78;
+    --lin-c: #6aa0e0; --lin-m: #6cbb7b; --lin-a: #e8806f; --lin-o: #cf8f78;
     --good: #8fd19b; --good-soft: #1f3324; --bad: #f19a84; --bad-soft: #3d221c;
     color-scheme: dark;
   }
@@ -33,7 +33,7 @@
   --honey: #e3a93c; --honey-strong: #f0bf5f; --honey-soft: #3a2f17;
   --c0: #3b3324; --c1: #6a5426; --c2: #9b7425; --c3: #cf9a31; --c4: #f2c766;
   --nodata: #4d5866;
-  --lin-c: #e3ac45; --lin-m: #7f98b8; --lin-a: #a7b878; --lin-o: #cf8f78;
+  --lin-c: #6aa0e0; --lin-m: #6cbb7b; --lin-a: #e8806f; --lin-o: #cf8f78;
   --good: #8fd19b; --good-soft: #1f3324; --bad: #f19a84; --bad-soft: #3d221c;
   color-scheme: dark;
 }
@@ -668,3 +668,18 @@ li.dx-mhead .dx-n { font-family: var(--font-body); font-size: 0.72rem; }
 .gx-controls { flex-wrap: wrap; }
 .gx-controls .lx-ctl { grid-template-columns: minmax(0, 1fr); max-width: 100%; min-width: 0; }
 .gx-controls .lx-ctl > * { min-width: 0; }
+
+/* Genetic Diversity map: countries outside the U.S. (outline plus one dot per area) */
+.lx-map.is-dots .land { fill: var(--bg); stroke: var(--muted); stroke-width: 1; stroke-linejoin: round; }
+.lx-map.is-dots .shape { stroke: var(--surface); stroke-width: 1.5; }
+.lx-map.is-dots .area:hover .shape, .lx-map.is-dots .area:focus-visible .shape { stroke: var(--ink); stroke-width: 2; }
+.lx-map.is-dots .area.sel .shape { stroke: var(--ink); stroke-width: 3; }
+.lx-map.is-dots .area.few .shape { stroke: var(--ink); stroke-dasharray: 3 2; stroke-width: 1.4; }
+/* Genetic Diversity map: Worldwide view */
+.lx-map.is-globe .land { pointer-events: none; fill: var(--nodata); stroke: var(--surface); stroke-width: 0.4; opacity: 0.55; }
+.lx-map.is-globe .shape { stroke: var(--surface); stroke-width: 0.6; }
+.lx-map.is-globe .shape.dot { stroke: var(--ink); stroke-width: 1; }
+.lx-map.is-globe .area:hover .shape, .lx-map.is-globe .area:focus-visible .shape { stroke: var(--ink); stroke-width: 1.2; }
+.lx-map.is-globe .area.sel .shape { stroke: var(--ink); stroke-width: 2; }
+.lx-map.is-globe .area.few .shape { stroke: var(--ink); stroke-dasharray: 2 2; stroke-width: 1; }
+#gx-panel #gx-open-country { cursor: pointer; font-family: var(--font-body); padding: 9px 16px; font-size: 0.9rem; }
