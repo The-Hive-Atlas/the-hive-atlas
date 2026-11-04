@@ -1,4 +1,4 @@
-"""Builds data/visitors.json: total page views and visits by country, from the site's GoatCounter account.
+"""Builds data/visitors.json: total visits and visits by country, from the site's GoatCounter account.
 
 Run by .github/workflows/visitors.yml once a day. Needs a GoatCounter API token with only the
 "Read statistics" permission, stored as the GitHub secret GOATCOUNTER_TOKEN. Nothing here identifies
@@ -20,7 +20,7 @@ OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'vi
 API = 'https://%s.goatcounter.com/api/v0' % SITE
 
 
-def get(path, **params):
+def get(path, missing_ok=False, **params):
     url = API + path + ('?' + urllib.parse.urlencode(params) if params else '')
     req = urllib.request.Request(url, headers={
         'Authorization': 'Bearer ' + TOKEN, 'Content-Type': 'application/json', 'User-Agent': 'the-hive-atlas-visitors'})
@@ -31,6 +31,8 @@ def get(path, **params):
         except urllib.error.HTTPError as e:
             if e.code == 429 and attempt < 3:      # GoatCounter rate limit: wait and retry
                 time.sleep(2 + attempt * 3); continue
+            if e.code == 404 and missing_ok:        # GoatCounter says "not found" when a period has no visits
+                return None
             raise SystemExit('GoatCounter API error %s on %s: %s' % (e.code, path, e.read()[:300].decode('utf8', 'replace')))
 
 
@@ -42,12 +44,11 @@ if not TOKEN:
 now = dt.datetime.now(dt.timezone.utc).replace(microsecond=0)
 span = {'start': START + 'T00:00:00Z', 'end': now.strftime('%Y-%m-%dT%H:%M:%SZ')}
 
-total = get('/stats/total', **span)
-pageviews = total.get('total', 0) or 0
+total = get('/stats/total', missing_ok=True, **span)
 
 countries, offset = {}, 0
 while True:
-    page = get('/stats/locations', limit=100, offset=offset, **span)
+    page = get('/stats/locations', missing_ok=True, limit=100, offset=offset, **span) or {}
     rows = page.get('stats') or []
     for row in rows:
         code = (row.get('id') or '').upper()[:2]
@@ -58,14 +59,19 @@ while True:
     offset += len(rows)
     time.sleep(0.5)
 
+# Total visits; if GoatCounter has no total for the period, use the sum over countries
+visits = (total or {}).get('total') or sum(countries.values())
+if not countries:
+    print('GoatCounter returned no visits by country since %s. Check that the dashboard shows visits; the panel stays hidden until it does.' % START)
+
 data = {
     'updated': now.strftime('%Y-%m-%dT%H:%M:%SZ'),
     'since': START,
-    'pageviews': pageviews,
+    'pageviews': visits,
     'countries': sorted(([c, n] for c, n in countries.items() if n > 0), key=lambda x: (-x[1], x[0])),
 }
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 with open(OUT, 'w') as f:
     json.dump(data, f, separators=(',', ':'))
     f.write('\n')
-print('Wrote %s: %d page views, %d countries' % (os.path.relpath(OUT), pageviews, len(data['countries'])))
+print('Wrote %s: %d visits, %d countries' % (os.path.relpath(OUT), visits, len(data['countries'])))

@@ -1,6 +1,6 @@
 /* The Hive Atlas: Visitors panel at the bottom of every page.
    Reads data/visitors.json (built daily from GoatCounter by .github/workflows/visitors.yml) and shows
-   page views and visits by country with flags. Shows nothing until that file exists.
+   total visits and visits by country with flags. Shows nothing until that file exists.
    Flags: flag-icons by Panayiotis Lipiridis (MIT), images/flags/. */
 (function () {
   var foot = document.querySelector('footer .wrap');
@@ -39,7 +39,7 @@
         return '<li title="' + esc(nm + ': ' + num(n)) + '"><img src="' + base + 'images/flags/' + cc.toLowerCase() + '.svg" width="21" height="16" alt="' + esc(nm) + '" loading="lazy" decoding="async">' +
           '<span class="cc">' + esc(cc) + '</span><b>' + num(n) + '</b></li>';
       }).join('') + '</ul>' +
-      '<p class="visitors-foot">' + esc(T('Page views: {n}', { n: num(d.pageviews || 0) })) + ' · ' +
+      '<p class="visitors-foot">' + esc(T('Total visits: {n}', { n: num(d.pageviews || 0) })) + ' · ' +
       esc(T('Countries: {n}', { n: num(d.countries.length) })) + ' · ' + esc(T('Updated {d}', { d: day(d.updated) })) + ' · ' +
       '<a href="https://www.goatcounter.com" target="_blank" rel="noopener">' + esc(T('Counted with GoatCounter')) + '</a></p>';
     // a broken flag image falls back to the country code alone
