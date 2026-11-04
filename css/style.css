@@ -683,3 +683,48 @@ li.dx-mhead .dx-n { font-family: var(--font-body); font-size: 0.72rem; }
 .lx-map.is-globe .area.sel .shape { stroke: var(--ink); stroke-width: 2; }
 .lx-map.is-globe .area.few .shape { stroke: var(--ink); stroke-dasharray: 2 2; stroke-width: 1; }
 #gx-panel #gx-open-country { cursor: pointer; font-family: var(--font-body); padding: 9px 16px; font-size: 0.9rem; }
+
+/* ---------- Languages: header menu, Arabic font, right-to-left layout ---------- */
+.lang-menu { position: relative; display: inline-flex; align-items: center; flex: none; color: var(--muted); }
+.lang-menu .lang-globe { position: absolute; inset-inline-start: 10px; pointer-events: none; }
+.lang-menu select {
+  font: 500 0.88rem var(--font-body); color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; padding-inline-start: 32px; cursor: pointer; max-width: 100%;
+}
+.lang-menu select:hover { border-color: var(--honey); }
+.lang-menu option[lang="ar"] { font-family: "IBM Plex Sans Arabic", Tahoma, sans-serif; }
+@media (max-width: 1040px) { .site-header .wrap > .brand { margin-inline-end: auto; } .site-header .wrap > .lang-menu { order: 2; } .site-header .wrap > .menu-btn { order: 3; } }
+/* Small phones: globe only; the full list still opens */
+@media (max-width: 520px) {
+  .lang-menu select { width: 44px; padding: 6px 0; padding-inline-start: 32px; color: transparent; }
+  .lang-menu select option { color: var(--ink); }
+}
+
+:root[lang="ar"] { --font-display: "IBM Plex Sans Arabic", Tahoma, sans-serif; --font-body: "IBM Plex Sans Arabic", Tahoma, sans-serif; --font-mono: "IBM Plex Mono", "IBM Plex Sans Arabic", ui-monospace, Menlo, Consolas, monospace; }
+/* Arabic letters must join: no letter spacing anywhere */
+:root[lang="ar"] *, :root[lang="ar"] *::before, :root[lang="ar"] *::after { letter-spacing: 0 !important; }
+:root[lang="ar"] h1, :root[lang="ar"] h2, :root[lang="ar"] h3 { letter-spacing: 0; line-height: 1.35; }
+:root[lang="ar"] .eyebrow, :root[lang="ar"] .stat-label, :root[lang="ar"] .control .k, :root[lang="ar"] .brand-sub, :root[lang="ar"] .badge,
+:root[lang="ar"] .toc p, :root[lang="ar"] .lx-note, :root[lang="ar"] .contact-card .label, :root[lang="ar"] table.defs thead th { letter-spacing: 0; text-transform: none; }
+svg.lx-map, svg.hexmap, .lx-map, .lx-trend svg, .mx-chart { direction: ltr; }
+[dir="rtl"] .control { border-left: none; border-right: 1px solid var(--line); }
+[dir="rtl"] .control:first-child { border-right: none; }
+@media (max-width: 860px) { [dir="rtl"] .control:nth-child(3) { border-right: none; } }
+@media (max-width: 480px) { [dir="rtl"] .control { border-right: none; } }
+[dir="rtl"] .prose ul, [dir="rtl"] .audiences ul, [dir="rtl"] .mx-tips { padding-left: 0; padding-right: 1.2em; }
+[dir="rtl"] table.defs th, [dir="rtl"] table.defs td, [dir="rtl"] .lx-table th, [dir="rtl"] .lx-table td { text-align: right; }
+[dir="rtl"] .lx-table .num, [dir="rtl"] .lx-sval, [dir="rtl"] .mx-n, [dir="rtl"] .dx-n { text-align: left; }
+[dir="rtl"] .toc ul { border-left: 0; border-right: 2px solid var(--line); }
+[dir="rtl"] .toc a { padding-left: 0; padding-right: 14px; }
+[dir="rtl"] .cite { border-left: 1px solid var(--line); border-right: 3px solid var(--honey); }
+[dir="rtl"] .lx-usbtn b { padding-left: 0; border-left: 0; padding-right: 7px; border-right: 1px solid var(--line); }
+[dir="rtl"] button.lx-tile { text-align: right; }
+[dir="rtl"] .seg button + button { border-left: 0; border-right: 1px solid var(--line); }
+[dir="rtl"] .lx-fill { inset: 0 0 0 auto; }
+[dir="rtl"] .mx-key:first-child { margin-left: 8px; margin-right: 0; }
+[dir="rtl"] .mx-keys i, [dir="rtl"] .dx-exp i, [dir="rtl"] .dx-expcell i { margin-right: 0; margin-left: 6px; }
+[dir="rtl"] .mx-dc li { padding-left: 0; padding-right: 16px; }
+[dir="rtl"] .mx-dc li::before { left: auto; right: 0; }
+[dir="rtl"] .dx-caveat, [dir="rtl"] .gx-caveat { border-left: 0; border-right: 3px solid var(--honey); border-radius: 8px 0 0 8px; }
+[dir="rtl"] .dx-unit { margin-left: 0; margin-right: 4px; }
+[dir="rtl"] .gx-refs ol { padding-left: 0; padding-right: 1.4em; }

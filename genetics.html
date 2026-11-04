@@ -8,7 +8,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&amp;family=Public+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&amp;family=Public+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600&amp;display=swap">
 <style>
 
 /* The Hive Atlas shared styles. Colors and fonts are set once here as tokens and used by every page. */
@@ -709,9 +709,78 @@ li.dx-mhead .dx-n { font-family: var(--font-body); font-size: 0.72rem; }
 .gx-refs a { color: var(--honey-strong); text-underline-offset: 2px; }
 .gx-refs details { display: grid; gap: 10px; }
 .gx-refs summary { cursor: pointer; font-weight: 600; font-size: 0.88rem; color: var(--honey-strong); margin-bottom: 8px; }
+/* Language switch */
+.lang-switch { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; margin: 0 0 12px; }
+.lang-switch a { font: 600 0.8rem var(--font-body); text-decoration: none; padding: 4px 12px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: var(--surface); }
+.lang-switch a:hover { border-color: var(--honey); color: var(--ink); }
+.lang-switch a[aria-current="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.lang-switch a[lang="ar"] { font-family: "IBM Plex Sans Arabic", Tahoma, sans-serif; }
+/* Arabic: font and right-to-left layout */
+:root[lang="ar"] { --font-display: "IBM Plex Sans Arabic", Tahoma, sans-serif; --font-body: "IBM Plex Sans Arabic", Tahoma, sans-serif; }
+:root[lang="ar"] h1, :root[lang="ar"] h2 { letter-spacing: 0; line-height: 1.35; }
+:root[lang="ar"] .lx-note, :root[lang="ar"] .badge, :root[lang="ar"] .toc p { letter-spacing: 0; }
+.lx-map { direction: ltr; }
+[dir="rtl"] .gx-caveat { border-left: 0; border-right: 3px solid var(--honey); border-radius: 8px 0 0 8px; }
+[dir="rtl"] .lx-table th, [dir="rtl"] .lx-table td { text-align: right; }
+[dir="rtl"] .lx-table .num { text-align: left; }
+[dir="rtl"] .prose ul { padding-left: 0; padding-right: 1.2em; }
+[dir="rtl"] .gx-refs ol { padding-left: 0; padding-right: 1.4em; }
+[dir="rtl"] .toc ul { border-left: 0; border-right: 2px solid var(--line); }
+[dir="rtl"] .toc a { padding-left: 0; padding-right: 14px; }
+[dir="rtl"] .lx-fill { inset: 0 0 0 auto; }
+[dir="rtl"] .lx-sval { text-align: left; }
+[dir="rtl"] .lx-usbtn b { padding-left: 0; border-left: 0; padding-right: 7px; border-right: 1px solid var(--line); }
+[dir="rtl"] .lang-switch { justify-content: flex-start; }
 #gx-panel #gx-open-country { cursor: pointer; font-family: var(--font-body); padding: 9px 16px; font-size: 0.9rem; }
 
+
+/* ---------- Languages: header menu, Arabic font, right-to-left layout ---------- */
+.lang-menu { position: relative; display: inline-flex; align-items: center; flex: none; color: var(--muted); }
+.lang-menu .lang-globe { position: absolute; inset-inline-start: 10px; pointer-events: none; }
+.lang-menu select {
+  font: 500 0.88rem var(--font-body); color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; padding-inline-start: 32px; cursor: pointer; max-width: 100%;
+}
+.lang-menu select:hover { border-color: var(--honey); }
+.lang-menu option[lang="ar"] { font-family: "IBM Plex Sans Arabic", Tahoma, sans-serif; }
+@media (max-width: 1040px) { .site-header .wrap > .brand { margin-inline-end: auto; } .site-header .wrap > .lang-menu { order: 2; } .site-header .wrap > .menu-btn { order: 3; } }
+/* Small phones: globe only; the full list still opens */
+@media (max-width: 520px) {
+  .lang-menu select { width: 44px; padding: 6px 0; padding-inline-start: 32px; color: transparent; }
+  .lang-menu select option { color: var(--ink); }
+}
+
+:root[lang="ar"] { --font-display: "IBM Plex Sans Arabic", Tahoma, sans-serif; --font-body: "IBM Plex Sans Arabic", Tahoma, sans-serif; --font-mono: "IBM Plex Mono", "IBM Plex Sans Arabic", ui-monospace, Menlo, Consolas, monospace; }
+/* Arabic letters must join: no letter spacing anywhere */
+:root[lang="ar"] *, :root[lang="ar"] *::before, :root[lang="ar"] *::after { letter-spacing: 0 !important; }
+:root[lang="ar"] h1, :root[lang="ar"] h2, :root[lang="ar"] h3 { letter-spacing: 0; line-height: 1.35; }
+:root[lang="ar"] .eyebrow, :root[lang="ar"] .stat-label, :root[lang="ar"] .control .k, :root[lang="ar"] .brand-sub, :root[lang="ar"] .badge,
+:root[lang="ar"] .toc p, :root[lang="ar"] .lx-note, :root[lang="ar"] .contact-card .label, :root[lang="ar"] table.defs thead th { letter-spacing: 0; text-transform: none; }
+svg.lx-map, svg.hexmap, .lx-map, .lx-trend svg, .mx-chart { direction: ltr; }
+[dir="rtl"] .control { border-left: none; border-right: 1px solid var(--line); }
+[dir="rtl"] .control:first-child { border-right: none; }
+@media (max-width: 860px) { [dir="rtl"] .control:nth-child(3) { border-right: none; } }
+@media (max-width: 480px) { [dir="rtl"] .control { border-right: none; } }
+[dir="rtl"] .prose ul, [dir="rtl"] .audiences ul, [dir="rtl"] .mx-tips { padding-left: 0; padding-right: 1.2em; }
+[dir="rtl"] table.defs th, [dir="rtl"] table.defs td, [dir="rtl"] .lx-table th, [dir="rtl"] .lx-table td { text-align: right; }
+[dir="rtl"] .lx-table .num, [dir="rtl"] .lx-sval, [dir="rtl"] .mx-n, [dir="rtl"] .dx-n { text-align: left; }
+[dir="rtl"] .toc ul { border-left: 0; border-right: 2px solid var(--line); }
+[dir="rtl"] .toc a { padding-left: 0; padding-right: 14px; }
+[dir="rtl"] .cite { border-left: 1px solid var(--line); border-right: 3px solid var(--honey); }
+[dir="rtl"] .lx-usbtn b { padding-left: 0; border-left: 0; padding-right: 7px; border-right: 1px solid var(--line); }
+[dir="rtl"] button.lx-tile { text-align: right; }
+[dir="rtl"] .seg button + button { border-left: 0; border-right: 1px solid var(--line); }
+[dir="rtl"] .lx-fill { inset: 0 0 0 auto; }
+[dir="rtl"] .mx-key:first-child { margin-left: 8px; margin-right: 0; }
+[dir="rtl"] .mx-keys i, [dir="rtl"] .dx-exp i, [dir="rtl"] .dx-expcell i { margin-right: 0; margin-left: 6px; }
+[dir="rtl"] .mx-dc li { padding-left: 0; padding-right: 16px; }
+[dir="rtl"] .mx-dc li::before { left: auto; right: 0; }
+[dir="rtl"] .dx-caveat, [dir="rtl"] .gx-caveat { border-left: 0; border-right: 3px solid var(--honey); border-radius: 8px 0 0 8px; }
+[dir="rtl"] .dx-unit { margin-left: 0; margin-right: 4px; }
+[dir="rtl"] .gx-refs ol { padding-left: 0; padding-right: 1.4em; }
+
 </style>
+<script src="js/i18n.js?v=20261103a"></script>
 </head>
 <body>
 <header class="site-header">
@@ -909,6 +978,7 @@ li.dx-mhead .dx-n { font-family: var(--font-body); font-size: 0.72rem; }
     <p class="disclaimer">The Hive Atlas is an independent project. It is not affiliated with, endorsed by, or operated by the U.S. Department of Agriculture (USDA) or any other government agency. The views expressed on this site are those of its founders and do not necessarily represent the views or policies of USDA or the United States Government. <a href="https://thehiveatlas.com/about.html#disclaimer">Full disclaimer</a></p>
   </div>
 </footer>
+<script>window.I18N && I18N.apply();</script>
 <script>
 /* The Hive Atlas shared script: mobile menu, copy buttons, and the static map illustrations. */
 (function () {
@@ -1026,6 +1096,11 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
 (function () {
   var G = window.HIVE_GENETICS, SH = window.HIVE_SHAPES;
   if (!G || !SH || !G.countries) return;
+  // Language helpers (see the i18n script); English fallbacks if it is missing
+  var I = window.I18N || { lang: 'en', T: function (s, v) { return v ? s.replace(/\{(\w+)\}/g, function (m, k) { return v[k] != null ? v[k] : m; }) : s; },
+    N: function (x, d) { d = d || 0; return Number(x).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }); },
+    PCT: function (x, d) { return Number(x).toFixed(d || 0) + '%'; }, P: null, NM: function (s) { return s; }, ISO: function (s) { return s; }, lower: function (s) { return s.toLowerCase(); }, sep: ', ' };
+  var T = I.T, NUM = I.N, PCT = I.PCT, NM = I.NM, ISO = I.ISO, SEP = I.sep;
 
   var NS = 'http://www.w3.org/2000/svg';
   var SMALL_N = 10; // fewer colonies than this gets a "small sample" flag
@@ -1035,6 +1110,10 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
   var US_MAP_STATES = Object.keys(SH.states).sort(function (a, b) { return US_NAMES[a] < US_NAMES[b] ? -1 : 1; });
   var ci = {}; G.cols.forEach(function (c, i) { ci[c] = i; });
   var BYKEY = {}; G.countries.forEach(function (c) { BYKEY[c.key] = c; });
+  // Country, area, region and state names in the page language
+  G.countries.forEach(function (c) { c.name = NM(c.name); c.areas.forEach(function (a) { a.name = NM(a.name); }); });
+  REGION_KEYS.forEach(function (k) { US_REGIONS[k].name = NM(US_REGIONS[k].name); });
+  for (var uk in US_NAMES) US_NAMES[uk] = NM(US_NAMES[uk]);
   var WSH = window.HIVE_WORLD_SHAPES || { land: [], sampled: {} };
   /* "Worldwide": every country pooled, one row per country. Each country's dot point is the
      colony-weighted middle of its areas (used for small countries and for the tooltip position). */
@@ -1052,10 +1131,10 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
     });
     return P;
   }
-  var WORLD = pool('WORLD', 'Worldwide');
+  var WORLD = pool('WORLD', NM('Worldwide'));
   BYKEY.WORLD = WORLD;
   var CONTS = G.continents || [];
-  CONTS.forEach(function (ct) { BYKEY['CONT:' + ct] = pool('CONT:' + ct, ct, ct); });
+  CONTS.forEach(function (ct) { BYKEY['CONT:' + ct] = pool('CONT:' + ct, NM(ct), ct); });
   // Country menu for a continent ('' = all continents)
   function menuFor(cont) {
     if (!cont) return [G.countries[0], WORLD].concat(G.countries.slice(1));
@@ -1092,8 +1171,8 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
       if (!ysp.length) noYear += r[ci.samples];
     });
     var ys = Object.keys(years).map(Number).sort();
-    YEAR_LABEL = ys.length ? (ys.length > 1 ? ys[0] + '–' + ys[ys.length - 1] : String(ys[0])) : 'year not recorded';
-    YEAR_NOTE = ys.length && noYear ? plural(noYear, 'colony') + ' without a sampling year' : '';
+    YEAR_LABEL = ys.length ? ISO(ys.length > 1 ? ys[0] + '–' + ys[ys.length - 1] : String(ys[0])) : T('year not recorded');
+    YEAR_NOTE = ys.length && noYear ? T('{n} without a sampling year', { n: plural(noYear, 'colony') }) : '';
   }
   var YEAR_NOTE = '', aggCache = {};
   // Years behind one area (or region): "2010–2012", "2019", or "year not recorded"
@@ -1101,25 +1180,25 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
     if (area === 'ALL') return YEAR_LABEL;
     var ys = {}; idsOf(area).forEach(function (id) { for (var y in V[id].years) if (+y) ys[y] = 1; });
     var l = Object.keys(ys).map(Number).sort();
-    return l.length ? (l.length > 1 ? l[0] + '–' + l[l.length - 1] : String(l[0])) : 'year not recorded';
+    return l.length ? ISO(l.length > 1 ? l[0] + '–' + l[l.length - 1] : String(l[0])) : T('year not recorded');
   }
 
   var US_BREAKS = { ma: [1, 4, 8, 15], c: [80, 90, 95, 98], m: [1, 4, 8, 12], a: [1, 3, 6, 10], hd: [0.5, 0.6, 0.7, 0.8], samples: [15, 20, 24, 30], hap: [5, 10, 25, 50], ssp: [20, 40, 60, 80] };
   var WORLD_BREAKS = { ma: [20, 40, 60, 80], c: [20, 40, 60, 80], m: [20, 40, 60, 80], a: [20, 40, 60, 80], hd: [0.2, 0.4, 0.6, 0.8], samples: [10, 25, 50, 100], hap: [5, 10, 25, 50], ssp: [20, 40, 60, 80] };
   var MEASURES = [
-    { id: 'c', label: 'C lineage: percent of colonies', short: 'C lineage', tile: 'C lineage', unit: 'pct', group: 'Lineage', pos: function (t) { return t.lin[0]; } },
-    { id: 'm', label: 'M lineage: percent of colonies', short: 'M lineage', tile: 'M lineage', unit: 'pct', group: 'Lineage', pos: function (t) { return t.lin[1]; } },
-    { id: 'a', label: 'A lineage: percent of colonies', short: 'A lineage', tile: 'A lineage', unit: 'pct', group: 'Lineage', pos: function (t) { return t.lin[2]; } },
-    { id: 'hd', label: 'Haplotype diversity (0 to 1)', short: 'Haplotype diversity', tile: 'Haplotype diversity', unit: 'index', group: 'Diversity' },
-    { id: 'samples', label: 'Colonies genotyped', short: 'Colonies genotyped', tile: 'Colonies genotyped', unit: 'count', group: 'Samples' }
+    { id: 'c', label: T('C lineage: percent of colonies'), short: T('C lineage'), tile: T('C lineage'), unit: 'pct', group: 'Lineage', pos: function (t) { return t.lin[0]; } },
+    { id: 'm', label: T('M lineage: percent of colonies'), short: T('M lineage'), tile: T('M lineage'), unit: 'pct', group: 'Lineage', pos: function (t) { return t.lin[1]; } },
+    { id: 'a', label: T('A lineage: percent of colonies'), short: T('A lineage'), tile: T('A lineage'), unit: 'pct', group: 'Lineage', pos: function (t) { return t.lin[2]; } },
+    { id: 'hd', label: T('Haplotype diversity (0 to 1)'), short: T('Haplotype diversity'), tile: T('Haplotype diversity'), unit: 'index', group: 'Diversity' },
+    { id: 'samples', label: T('Colonies genotyped'), short: T('Colonies genotyped'), tile: T('Colonies genotyped'), unit: 'count', group: 'Samples' }
   ];
   var M = {}; MEASURES.forEach(function (m) { M[m.id] = m; });
   // Picked from the Haplotype menu: share of colonies (with a recorded haplotype) carrying one haplotype
-  M.hap = { id: 'hap', unit: 'pct', group: 'Haplotype', get label() { return 'Haplotype ' + G.haplotypes[st.hap] + ': percent of colonies'; },
-    get short() { return 'Haplotype ' + G.haplotypes[st.hap]; }, get tile() { return this.short; } };
+  M.hap = { id: 'hap', unit: 'pct', group: 'Haplotype', get label() { return T('Haplotype {h}: percent of colonies', { h: G.haplotypes[st.hap] }); },
+    get short() { return T('Haplotype {h}', { h: G.haplotypes[st.hap] }); }, get tile() { return this.short; } };
   // Picked from the Subspecies menu: share of colonies (with a recorded subspecies) assigned to one subspecies
-  M.ssp = { id: 'ssp', unit: 'pct', group: 'Subspecies', get label() { return 'Subspecies ' + G.subspecies[st.ssp] + ': percent of colonies'; },
-    get short() { return 'Subspecies ' + G.subspecies[st.ssp]; }, get tile() { return this.short; } };
+  M.ssp = { id: 'ssp', unit: 'pct', group: 'Subspecies', get label() { return T('Subspecies {h}: percent of colonies', { h: G.subspecies[st.ssp] }); },
+    get short() { return T('Subspecies {h}', { h: G.subspecies[st.ssp] }); }, get tile() { return this.short; } };
   function isCount(mid) { return M[mid].unit === 'count'; }
   function breaks(mid) { return (IS_US ? US_BREAKS : WORLD_BREAKS)[mid]; }
 
@@ -1162,16 +1241,16 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
   }
 
   /* ---------- Text ---------- */
-  function areaName(a) { return a === 'ALL' ? C.name : a.indexOf('R:') === 0 ? US_REGIONS[a.slice(2)].name + ' region' : AREA_BY_ID[a] ? AREA_BY_ID[a].name : a; }
-  function areaWord(pl) { return IS_US ? (st.geo === 'region' ? (pl ? 'regions' : 'region') : (pl ? 'states' : 'state')) : IS_WORLD ? (pl ? 'countries' : 'country') : (pl ? 'areas' : 'area'); }
+  function areaName(a) { return a === 'ALL' ? C.name : a.indexOf('R:') === 0 ? T('{r} region', { r: US_REGIONS[a.slice(2)].name }) : AREA_BY_ID[a] ? AREA_BY_ID[a].name : a; }
+  function areaUnit() { return IS_US ? (st.geo === 'region' ? 'region' : 'state') : IS_WORLD ? 'country' : 'area'; }
   function fmt(mid, r) {
     if (!r || r.status !== 'ok') return '';
     var u = M[mid].unit;
-    return u === 'pct' ? r.v.toFixed(1) + '%' : u === 'index' ? r.v.toFixed(2) : r.v.toLocaleString('en-US');
+    return u === 'pct' ? PCT(r.v, 1) : u === 'index' ? NUM(r.v, 2) : NUM(r.v);
   }
-  function compact(mid, v) { var u = M[mid].unit; return u === 'pct' ? v + '%' : u === 'index' ? v.toFixed(1) : String(v); }
-  function unitWord(mid) { return isCount(mid) ? ' colonies' : ''; }
-  function plural(n, w) { return n.toLocaleString('en-US') + ' ' + (n === 1 ? w : /y$/.test(w) && !/ay$|ey$/.test(w) ? w.slice(0, -1) + 'ies' : w + 's'); }
+  function compact(mid, v) { var u = M[mid].unit; return u === 'pct' ? PCT(v, 0) : u === 'index' ? NUM(v, 1) : NUM(v); }
+  // n with its unit word: colony, area, state, country, region, study, stateTerr
+  function plural(n, w) { if (I.P) return I.P(n, w); var en = { colony: 'colonies', area: 'areas', state: 'states', country: 'countries', region: 'regions', study: 'studies', stateTerr: 'states and territories' }; return NUM(n) + ' ' + (n === 1 ? (w === 'stateTerr' ? 'state or territory' : w) : en[w] || w + 's'); }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
   /* ---------- Map ---------- */
@@ -1193,15 +1272,15 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
   }
   function ariaFor(code, area, r, few) {
     var shown = fmt(st.measure, r);
-    return (IS_US && st.geo === 'region' && area ? areaName(code) + ', ' + areaName(area) : areaName(code)) + ', ' +
-      (shown ? shown + unitWord(st.measure) + ' (' + M[st.measure].short + ')' : 'no colonies genotyped') + (few ? ', small sample' : '');
+    return (IS_US && st.geo === 'region' && area ? areaName(code) + SEP + areaName(area) : areaName(code)) + SEP +
+      (shown ? (isCount(st.measure) ? T('{v} colonies', { v: shown }) : shown) + ' (' + M[st.measure].short + ')' : T('no colonies genotyped')) + (few ? T(', small sample') : '');
   }
 
   function drawMap() {
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     hideTip();
     if (IS_US) drawUS(); else if (IS_WORLD) drawGlobe(); else drawWorld();
-    $('gx-maptitle').textContent = M[st.measure].label + ', ' + C.name + ', ' + YEAR_LABEL;
+    $('gx-maptitle').textContent = M[st.measure].label + SEP + C.name + SEP + YEAR_LABEL;
     var usb = $('gx-us'), usv = fmt(st.measure, val('ALL', st.measure));
     usb.setAttribute('aria-pressed', String(st.sel === 'ALL'));
     usb.innerHTML = '<svg width="13" height="14" viewBox="0 0 34 38" aria-hidden="true"><polygon points="17,1 33,10 33,28 17,37 1,28 1,10"/></svg>' + esc(C.name) + (usv ? '<b>' + usv + '</b>' : '');
@@ -1210,7 +1289,7 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
 
   function drawUS() {
     svg.setAttribute('class', 'lx-map is-shapes' + (st.geo === 'region' ? ' is-region' : ''));
-    svg.setAttribute('aria-label', 'Map of U.S. states');
+    svg.setAttribute('aria-label', T('Map of U.S. states'));
     svg.setAttribute('viewBox', SH.viewBox.join(' '));
     var selected = [];
     US_MAP_STATES.forEach(function (code) {
@@ -1236,8 +1315,9 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
     });
     selected.forEach(function (g) { svg.appendChild(g); });
     var off = areaIds().filter(function (s) { return !SH.states[s]; });
-    $('gx-mapnote').textContent = 'Color ranges are fixed for each measure. Gray states have no genotyped colonies.' +
-      (off.length ? ' ' + off.map(function (s) { return areaName(s) + ' (' + V[s].n + ' colonies)'; }).join(' and ') + (off.length > 1 ? ' are' : ' is') + ' in the table and the U.S. totals but not on the map.' : '');
+    $('gx-mapnote').textContent = T('Color ranges are fixed for each measure. Gray states have no genotyped colonies.') +
+      (off.length ? ' ' + T(off.length > 1 ? '{list} are in the table and the U.S. totals but not on the map.' : '{list} is in the table and the U.S. totals but not on the map.',
+        { list: off.map(function (s) { return areaName(s) + ' (' + plural(V[s].n, 'colony') + ')'; }).join(T(' and ')) }) : '');
   }
 
   function bboxOf(pts) {
@@ -1248,7 +1328,7 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
 
   function drawWorld() {
     svg.setAttribute('class', 'lx-map is-dots');
-    svg.setAttribute('aria-label', 'Map of ' + C.name + ' with one dot per area');
+    svg.setAttribute('aria-label', T('Map of {c} with one dot per area', { c: C.name }));
     var placed = AREAS.filter(function (a) { return V[a.id] && a.lat != null && a.lon != null; });
     var pts = placed.map(function (a) { return [a.lon, a.lat]; });
     // Keep only the outline parts near the sampled areas (drops far-off territories)
@@ -1296,13 +1376,13 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
 
     var unplaced = areaIds().filter(function (id) { var a = AREA_BY_ID[id]; return a.lat == null || a.lon == null; });
     var nUn = unplaced.reduce(function (s, id) { return s + V[id].n; }, 0);
-    $('gx-mapnote').textContent = 'Each dot is an area named in the source data, placed at the area’s reference point (often its capital); bigger dots mean more colonies. ' +
-      (unplaced.length ? plural(nUn, 'colony') + ' with no recorded location ' + (nUn === 1 ? 'is' : 'are') + ' in the table and the ' + C.name + ' totals but not on the map. ' : '') +
-      (polys.length ? 'Country outline: Natural Earth.' : '');
+    $('gx-mapnote').textContent = T('Each dot is an area named in the source data, placed at the area’s reference point (often its capital); bigger dots mean more colonies. ') +
+      (unplaced.length ? T(nUn === 1 ? '{n} with no recorded location is in the table and the {c} totals but not on the map. ' : '{n} with no recorded location are in the table and the {c} totals but not on the map. ', { n: plural(nUn, 'colony'), c: C.name }) : '') +
+      (polys.length ? T('Country outline: Natural Earth.') : '');
   }
 
   function drawGlobe() {
-    svg.setAttribute('aria-label', (C.cont ? 'Map of ' + C.name : 'World map') + ' with the countries that have genotyped colonies');
+    svg.setAttribute('aria-label', C.cont ? T('Map of {c} with the countries that have genotyped colonies', { c: C.name }) : T('World map with the countries that have genotyped colonies'));
     var W = 1000, LAT0 = 76, LAT1 = -56, k = W / 360, H = Math.round((LAT0 - LAT1) * k);
     function proj(p) { return [(p[0] + 180) * k, (LAT0 - p[1]) * k]; }
     var vb = [0, 0, W, H], sf = 1;
@@ -1358,14 +1438,16 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
     });
     dots.forEach(function (g) { svg.appendChild(g); });
     selected.forEach(function (g) { svg.appendChild(g); });
-    $('gx-mapnote').textContent = (C.cont ? 'Each country with colonies sampled in ' + C.name + ' is colored by the value for those colonies' : 'Each country with genotyped colonies is colored by the whole country’s value') + '; small countries also get a dot. Gray land has no colonies ' + (C.cont ? 'in this view' : 'in the database') + '. Pick a country in the Country menu, or use the link in the side panel, to see its areas. Outlines: Natural Earth.';
+    $('gx-mapnote').textContent = C.cont
+      ? T('Each country with colonies sampled in {c} is colored by the value for those colonies; small countries also get a dot. Gray land has no colonies in this view. Pick a country in the Country menu, or use the link in the side panel, to see its areas. Outlines: Natural Earth.', { c: C.name })
+      : T('Each country with genotyped colonies is colored by the whole country’s value; small countries also get a dot. Gray land has no colonies in the database. Pick a country in the Country menu, or use the link in the side panel, to see its areas. Outlines: Natural Earth.');
   }
 
   function showTip(code, e, el) {
     var area = tileArea(code), r = area ? val(area, st.measure) : { status: 'none' }, shown = fmt(st.measure, r);
     var head = IS_US && st.geo === 'region' && area ? areaName(area) : areaName(code);
     var extra = r.status === 'ok' && !isCount(st.measure) ? ' · ' + plural(r.n, 'colony') : '';
-    tip.innerHTML = '<strong>' + esc(head) + '</strong><span>' + (shown ? shown + (isCount(st.measure) ? ' colonies' : ' ' + M[st.measure].short.toLowerCase()) + extra : 'No colonies genotyped') + '</span>';
+    tip.innerHTML = '<strong>' + esc(head) + '</strong><span>' + (shown ? (isCount(st.measure) ? T('{v} colonies', { v: shown }) : shown + ' ' + I.lower(M[st.measure].short)) + extra : T('No colonies genotyped')) + '</span>';
     tip.hidden = false;
     if (e) moveTip(e);
     else if (el) { var cr = mapCard.getBoundingClientRect(), er = el.getBoundingClientRect(); place(er.left + er.width / 2 - cr.left, er.top - cr.top); }
@@ -1377,11 +1459,11 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
   function drawLegend() {
     var b = breaks(st.measure), mid = st.measure, items = [];
     for (var i = 0; i <= b.length; i++) {
-      var lab = i === 0 ? 'Under ' + compact(mid, b[0]) : i === b.length ? compact(mid, b[i - 1]) + ' or more' : compact(mid, b[i - 1]) + '–' + compact(mid, b[i]);
+      var lab = i === 0 ? T('Under {v}', { v: compact(mid, b[0]) }) : i === b.length ? T('{v} or more', { v: compact(mid, b[i - 1]) }) : ISO(compact(mid, b[i - 1]) + '–' + compact(mid, b[i]));
       items.push('<span><i style="background:' + binColor(i) + '"></i>' + lab + '</span>');
     }
-    if (!isCount(mid)) items.push('<span><i class="few"></i>Fewer than ' + SMALL_N + ' colonies</span>');
-    items.push('<span><i style="background:var(--nodata)"></i>' + (IS_US || IS_WORLD ? 'No colonies genotyped' : 'No value') + '</span>');
+    if (!isCount(mid)) items.push('<span><i class="few"></i>' + T('Fewer than {k} colonies', { k: SMALL_N }) + '</span>');
+    items.push('<span><i style="background:var(--nodata)"></i>' + (IS_US || IS_WORLD ? T('No colonies genotyped') : T('No value')) + '</span>');
     $('gx-legend').innerHTML = items.join('');
   }
 
@@ -1397,66 +1479,69 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
     if (area === 'ALL' || isCount(mid)) return '';
     var mine = val(area, mid), all = val('ALL', mid);
     if (mine.status !== 'ok' || all.status !== 'ok') return '';
-    var d = mine.v - all.v, u = M[mid].unit, amt = Math.abs(d).toFixed(u === 'index' ? 2 : 1), who = IS_US ? 'the U.S.' : IS_WORLD ? (C.cont ? 'the ' + C.name + ' total' : 'the worldwide total') : C.name;
-    if (Number(amt) === 0) return 'About the same as ' + who + ' (' + fmt(mid, all) + ')';
-    return amt + (u === 'pct' ? (amt === '1.0' ? ' point ' : ' points ') : ' ') + (d > 0 ? 'above' : 'below') + ' ' + who + ' (' + fmt(mid, all) + ')';
+    var d = mine.v - all.v, u = M[mid].unit, dig = u === 'index' ? 2 : 1, amt = Math.abs(d).toFixed(dig);
+    var who = IS_US ? T('the U.S.') : IS_WORLD ? (C.cont ? T('the {c} total', { c: C.name }) : T('the worldwide total')) : C.name;
+    var vv = { a: NUM(Math.abs(d), dig), who: who, v: fmt(mid, all) };
+    if (Number(amt) === 0) return T('About the same as {who} ({v})', vv);
+    return T((u === 'pct' ? (amt === '1.0' ? '{a} point ' : '{a} points ') : '{a} ') + (d > 0 ? 'above' : 'below') + ' {who} ({v})', vv);
   }
   function renderPanel() {
     var area = st.sel, panel = $('gx-panel'), html = [], t = agg(area), n = t.n;
-    html.push('<div class="lx-panel-head"><h2>' + esc(areaName(area)) + '</h2>' + (area !== 'ALL' ? '<button type="button" class="lx-link" id="gx-to-us">View ' + esc(C.name) + '</button>' : '') + '</div>');
-    html.push('<p class="lx-sub">' + (area !== 'ALL' && !IS_US && !IS_WORLD ? esc(C.name) + ' · ' : '') + yearsOf(area) + ' · ' + (n ? plural(n, 'colony') + ' genotyped' : 'No colonies genotyped') + '</p>');
-    if (IS_WORLD && area !== 'ALL') html.push('<p><button type="button" class="btn" id="gx-open-country" data-key="' + esc(area) + '">Open the ' + esc(areaName(area)) + ' map →</button></p>');
-    if (area === 'ALL' && YEAR_NOTE) html.push('<p class="lx-small">Includes ' + YEAR_NOTE + '.</p>');
+    html.push('<div class="lx-panel-head"><h2>' + esc(areaName(area)) + '</h2>' + (area !== 'ALL' ? '<button type="button" class="lx-link" id="gx-to-us">' + esc(T('View {c}', { c: C.name })) + '</button>' : '') + '</div>');
+    html.push('<p class="lx-sub">' + (area !== 'ALL' && !IS_US && !IS_WORLD ? esc(C.name) + ' · ' : '') + yearsOf(area) + ' · ' + (n ? T('{n} genotyped', { n: plural(n, 'colony'), k: NUM(n) }) : T('No colonies genotyped')) + '</p>');
+    if (IS_WORLD && area !== 'ALL') html.push('<p><button type="button" class="btn" id="gx-open-country" data-key="' + esc(area) + '">' + esc(T('Open the {a} map →', { a: areaName(area) })) + '</button></p>');
+    if (area === 'ALL' && YEAR_NOTE) html.push('<p class="lx-small">' + T('Includes {x}.', { x: YEAR_NOTE }) + '</p>');
     if (area.indexOf('R:') === 0 && US_REGIONS[area.slice(2)].states.length > 1) {
       var inReg = US_REGIONS[area.slice(2)].states, have = inReg.filter(function (s) { return V[s]; });
-      html.push('<p class="lx-small">' + have.map(function (s) { return areaName(s); }).join(', ') + '.' +
-        (have.length < inReg.length ? ' No colonies from ' + inReg.filter(function (s) { return !V[s]; }).map(function (s) { return US_NAMES[s]; }).join(', ') + '.' : '') + '</p>');
+      html.push('<p class="lx-small">' + have.map(function (s) { return areaName(s); }).join(SEP) + '.' +
+        (have.length < inReg.length ? T(' No colonies from {list}.', { list: inReg.filter(function (s) { return !V[s]; }).map(function (s) { return US_NAMES[s]; }).join(SEP) }) : '') + '</p>');
     }
     var r = val(area, st.measure), shown = fmt(st.measure, r), rk = rankOf(area, st.measure), cmp = compareLine(area, st.measure);
     html.push('<div class="lx-hero"><p class="lx-k">' + M[st.measure].label + '</p>' +
-      '<p class="lx-big">' + (shown || '<span class="lx-na">' + (n ? 'Not recorded' : 'No colonies genotyped') + '</span>') + '</p>' +
+      '<p class="lx-big">' + (shown || '<span class="lx-na">' + (n ? T('Not recorded') : T('No colonies genotyped')) + '</span>') + '</p>' +
       (cmp ? '<p class="lx-cmp">' + esc(cmp) + '</p>' : '') +
-      (rk ? '<p class="lx-rank">Rank ' + rk.rank + ' of ' + rk.of + ' ' + areaWord(true) + ' with ' + SMALL_N + ' or more colonies (1 is the highest)' + (rk.tied > 0 ? '; tied with ' + rk.tied + ' other' + (rk.tied === 1 ? '' : 's') : '') + '</p>' : '') +
-      (r.status === 'ok' && r.n < SMALL_N && !isCount(st.measure) ? '<p class="lx-small"><strong>Small sample.</strong> Fewer than ' + SMALL_N + ' colonies, so one colony moves this number a lot.</p>' : '') +
-      (r.status === 'ok' && r.pos != null ? '<p class="lx-small">' + r.pos.toLocaleString('en-US') + ' of ' + plural(r.n, 'colony') + ' with a recorded ' + (r.word || 'lineage') + '.</p>' : '') +
-      (r.status === 'ok' && M[st.measure].unit === 'index' ? '<p class="lx-small">From ' + plural(r.n, 'colony') + ' with a recorded haplotype.</p>' : '') + '</div>');
+      (rk ? '<p class="lx-rank">' + T('Rank {r} of {of} with {k} or more colonies (1 is the highest)', { r: NUM(rk.rank), of: plural(rk.of, areaUnit()), k: SMALL_N }) +
+        (rk.tied > 0 ? (rk.tied === 1 ? T('; tied with 1 other') : T('; tied with {n} others', { n: NUM(rk.tied) })) : '') + '</p>' : '') +
+      (r.status === 'ok' && r.n < SMALL_N && !isCount(st.measure) ? '<p class="lx-small">' + T('<strong>Small sample.</strong> Fewer than {k} colonies, so one colony moves this number a lot.', { k: SMALL_N }) + '</p>' : '') +
+      (r.status === 'ok' && r.pos != null ? '<p class="lx-small">' + T('{p} of {n} with a recorded ' + (r.word || 'lineage') + '.', { p: NUM(r.pos), n: plural(r.n, 'colony') }) + '</p>' : '') +
+      (r.status === 'ok' && M[st.measure].unit === 'index' ? '<p class="lx-small">' + T('From {n} with a recorded haplotype.', { n: plural(r.n, 'colony') }) + '</p>' : '') + '</div>');
 
     var tiles = MEASURES.filter(function (m) { return m.id !== st.measure; });
     html.push('<div class="lx-tiles">' + tiles.map(function (m) {
       var tr = val(area, m.id), s = fmt(m.id, tr);
-      return '<button type="button" class="lx-tile" data-measure="' + m.id + '" title="Color the map by ' + m.label.toLowerCase() + '"><span class="lx-k">' + m.tile + '</span><span class="lx-v">' +
-        (s || '<span class="lx-na">–</span>') + '</span><span class="lx-show">Show on map</span></button>';
+      return '<button type="button" class="lx-tile" data-measure="' + m.id + '" title="' + esc(T('Color the map by {m}', { m: I.lower(m.label) })) + '"><span class="lx-k">' + m.tile + '</span><span class="lx-v">' +
+        (s || '<span class="lx-na">–</span>') + '</span><span class="lx-show">' + T('Show on map') + '</span></button>';
     }).join('') + '</div>');
 
     if (t.nl) {
       var segs = [['C', t.lin[0], 'var(--lin-c)'], ['M', t.lin[1], 'var(--lin-m)'], ['A', t.lin[2], 'var(--lin-a)']].filter(function (x) { return x[1] > 0; });
-      html.push('<div class="lx-block"><h3 class="lx-h3">Lineage makeup</h3>' +
-        '<div class="gx-stack" role="img" aria-label="' + segs.map(function (x) { return x[0] + ' lineage ' + (100 * x[1] / t.nl).toFixed(1) + ' percent'; }).join(', ') + '">' +
+      html.push('<div class="lx-block"><h3 class="lx-h3">' + T('Lineage makeup') + '</h3>' +
+        '<div class="gx-stack" role="img" aria-label="' + segs.map(function (x) { return T('{l} lineage {p} percent', { l: x[0], p: NUM(100 * x[1] / t.nl, 1) }); }).join(SEP) + '">' +
         segs.map(function (x) { return '<span style="width:' + (100 * x[1] / t.nl).toFixed(2) + '%;background:' + x[2] + '"></span>'; }).join('') + '</div>' +
-        '<ul class="gx-keys">' + segs.map(function (x) { return '<li><i style="background:' + x[2] + '"></i>' + x[0] + ' lineage <b>' + (100 * x[1] / t.nl).toFixed(1) + '%</b> <span>(' + x[1].toLocaleString('en-US') + ')</span></li>'; }).join('') + '</ul>' +
-        (t.nl < n ? '<p class="lx-small">' + plural(n - t.nl, 'colony') + ' with no recorded lineage ' + (n - t.nl === 1 ? 'is' : 'are') + ' left out of these shares.</p>' : '') + '</div>');
+        '<ul class="gx-keys">' + segs.map(function (x) { return '<li><i style="background:' + x[2] + '"></i>' + T('{l} lineage', { l: x[0] }) + ' <b>' + PCT(100 * x[1] / t.nl, 1) + '</b> <span>(' + NUM(x[1]) + ')</span></li>'; }).join('') + '</ul>' +
+        (t.nl < n ? '<p class="lx-small">' + T(n - t.nl === 1 ? '{n} with no recorded lineage is left out of these shares.' : '{n} with no recorded lineage are left out of these shares.', { n: plural(n - t.nl, 'colony') }) + '</p>' : '') + '</div>');
     }
     if (t.nh) {
       var haps = Object.keys(t.haps).map(function (h) { return { h: G.haplotypes[h], c: t.haps[h] }; })
         .sort(function (a, b) { return b.c - a.c || (a.h < b.h ? -1 : 1); });
       var top = haps.slice(0, 8), max = top.length ? top[0].c : 1;
-      html.push('<div class="lx-block"><h3 class="lx-h3">Most common haplotypes</h3><p class="lx-small">Share of colonies with a recorded haplotype carrying each one' +
-        (haps.length > top.length ? ', top ' + top.length + ' of ' + haps.length : '') + '.</p><ul class="lx-stress gx-haps">' +
+      html.push('<div class="lx-block"><h3 class="lx-h3">' + T('Most common haplotypes') + '</h3><p class="lx-small">' + T('Share of colonies with a recorded haplotype carrying each one') +
+        (haps.length > top.length ? T(', top {k} of {n}', { k: NUM(top.length), n: NUM(haps.length) }) : '') + '.</p><ul class="lx-stress gx-haps">' +
         top.map(function (x) {
           return '<li><span class="lx-sname" title="' + esc(hapNote(x.h)) + '">' + esc(x.h) + '</span><span class="lx-track"><span class="lx-fill" style="width:' + Math.max(1, 100 * x.c / max).toFixed(1) + '%"></span></span>' +
-            '<span class="lx-sval" title="' + x.c + ' colonies">' + (100 * x.c / t.nh).toFixed(1) + '%</span></li>';
+            '<span class="lx-sval" title="' + esc(T('{v} colonies', { v: NUM(x.c) })) + '">' + PCT(100 * x.c / t.nh, 1) + '</span></li>';
         }).join('') + '</ul>' +
-        (IS_US ? '<p class="lx-small">C1, C2, and C3 are the common lineages of <em>ligustica</em>, <em>carnica</em>, and Buckfast bees. Names ending in “-USA” are haplotypes first described in the U.S. data.</p>' : '') + '</div>');
+        (IS_US ? '<p class="lx-small">' + T('C1, C2, and C3 are the common lineages of <em>ligustica</em>, <em>carnica</em>, and Buckfast bees. Names ending in “-USA” are haplotypes first described in the U.S. data.') + '</p>' : '') + '</div>');
     }
     if (t.ns) {
       var sps = Object.keys(t.ssp).map(function (h) { return { h: G.subspecies[h], c: t.ssp[h] }; })
         .sort(function (a, b) { return b.c - a.c || (a.h < b.h ? -1 : 1); });
       var stop = sps.slice(0, 8), smax = stop.length ? stop[0].c : 1;
-      html.push('<div class="lx-block"><h3 class="lx-h3">Subspecies</h3><p class="lx-small">Share of colonies with a recorded subspecies, as named by the source study' +
-        (sps.length > stop.length ? ', top ' + stop.length + ' of ' + sps.length : '') + '.' + (t.ns < n ? ' ' + plural(n - t.ns, 'colony') + ' with no subspecies recorded ' + (n - t.ns === 1 ? 'is' : 'are') + ' left out.' : '') + '</p><ul class="lx-stress gx-haps gx-ssps">' +
+      html.push('<div class="lx-block"><h3 class="lx-h3">' + T('Subspecies') + '</h3><p class="lx-small">' + T('Share of colonies with a recorded subspecies, as named by the source study') +
+        (sps.length > stop.length ? T(', top {k} of {n}', { k: NUM(stop.length), n: NUM(sps.length) }) : '') + '.' + (t.ns < n ? T(n - t.ns === 1 ? ' {n} with no subspecies recorded is left out.' : ' {n} with no subspecies recorded are left out.', { n: plural(n - t.ns, 'colony') }) : '') + '</p><ul class="lx-stress gx-haps gx-ssps">' +
         stop.map(function (x) {
           return '<li><span class="lx-sname" title="' + esc(x.h) + '">' + esc(x.h) + '</span><span class="lx-track"><span class="lx-fill" style="width:' + Math.max(1, 100 * x.c / smax).toFixed(1) + '%"></span></span>' +
-            '<span class="lx-sval" title="' + x.c + ' colonies">' + (100 * x.c / t.ns).toFixed(1) + '%</span></li>';
+            '<span class="lx-sval" title="' + esc(T('{v} colonies', { v: NUM(x.c) })) + '">' + PCT(100 * x.c / t.ns, 1) + '</span></li>';
         }).join('') + '</ul></div>');
     }
     panel.innerHTML = html.join('');
@@ -1470,18 +1555,18 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
     var src = IS_WORLD ? C.areas.map(function (a) { return BYKEY[a.id]; }).filter(Boolean) : [C];
     src.forEach(function (c) { (c.refs || []).forEach(function (p) { tally[p[0]] = (tally[p[0]] || 0) + p[1]; }); });
     var ids = Object.keys(tally).map(Number).sort(function (a, b) { return tally[b] - tally[a] || (G.refs[a].t < G.refs[b].t ? -1 : 1); });
-    if (!ids.length) { box.innerHTML = '<h3 class="lx-h3">Reference</h3><p class="lx-small">No reference recorded for these colonies.</p>'; return; }
+    if (!ids.length) { box.innerHTML = '<h3 class="lx-h3">' + T('Reference') + '</h3><p class="lx-small">' + T('No reference recorded for these colonies.') + '</p>'; return; }
     var items = '<ol>' + ids.map(function (i) {
       var r = G.refs[i], d = r.doi;
-      return '<li>' + esc(r.t) + '<span class="gx-refmeta">' +
-        (d ? 'DOI: <a href="https://doi.org/' + esc(encodeURI(d)) + '" target="_blank" rel="noopener">' + esc(d) + '</a> · ' : 'No DOI recorded · ') +
+      return '<li dir="auto">' + esc(r.t) + '<span class="gx-refmeta">' +
+        (d ? 'DOI: <a href="https://doi.org/' + esc(encodeURI(d)) + '" target="_blank" rel="noopener" dir="ltr">' + esc(d) + '</a> · ' : T('No DOI recorded · ')) +
         plural(tally[i], 'colony') + '</span></li>';
     }).join('') + '</ol>';
     var note = IS_WORLD
-      ? (ids.length + ' ' + (ids.length === 1 ? 'study' : 'studies') + ' behind ' + (C.cont ? 'the ' + esc(C.name) + ' data' : 'the worldwide data') + '. Pick a country to see just its references.')
-      : (ids.length === 1 ? 'The study' : 'The ' + ids.length + ' studies') + ' behind the ' + esc(C.name) + ' data, most colonies first.';
-    box.innerHTML = '<h3 class="lx-h3">Reference</h3><p class="lx-small">' + note + '</p>' +
-      (IS_WORLD ? '<details><summary>Show all ' + ids.length + ' references</summary>' + items + '</details>' : items);
+      ? (C.cont ? T('{n} behind the {c} data. Pick a country to see just its references.', { n: plural(ids.length, 'study'), c: esc(C.name) }) : T('{n} behind the worldwide data. Pick a country to see just its references.', { n: plural(ids.length, 'study') }))
+      : (ids.length === 1 ? T('The study behind the {c} data, most colonies first.', { c: esc(C.name) }) : T('The {k} studies behind the {c} data, most colonies first.', { k: NUM(ids.length), c: esc(C.name) }));
+    box.innerHTML = '<h3 class="lx-h3">' + T('Reference') + '</h3><p class="lx-small">' + note + '</p>' +
+      (IS_WORLD ? '<details><summary>' + T('Show all {k} references', { k: NUM(ids.length) }) + '</summary>' + items + '</details>' : items);
   }
   function hapNote(h) { return h === 'C1' ? 'C1 (A. m. ligustica)' : h === 'C2' ? 'C2 (A. m. carnica)' : h === 'C3' ? 'C3 (Buckfast)' : h; }
 
@@ -1494,9 +1579,9 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
     COL_LABEL.ssp = st.ssp != null ? G.subspecies[st.ssp] + ' %' : '';
     var sk = st.sortKey || st.measure;
     var arrow = function (k) { return sk === k ? (st.sortDir < 0 ? ' ↓' : ' ↑') : ''; };
-    var word = IS_US ? (st.geo === 'region' ? 'Region' : 'State') : IS_WORLD ? 'Country' : 'Area';
+    var word = T(IS_US ? (st.geo === 'region' ? 'Region' : 'State') : IS_WORLD ? 'Country' : 'Area');
     var head = '<tr><th scope="col" data-k="name" class="' + (sk === 'name' ? 'sorted' : '') + '">' + word + arrow('name') + '</th>' +
-      TABLE_COLS.map(function (m) { return '<th scope="col" class="num' + (sk === m ? ' sorted' : '') + '" data-k="' + m + '">' + COL_LABEL[m] + arrow(m) + '</th>'; }).join('') + '</tr>';
+      TABLE_COLS.map(function (m) { return '<th scope="col" class="num' + (sk === m ? ' sorted' : '') + '" data-k="' + m + '">' + esc(T(COL_LABEL[m])) + arrow(m) + '</th>'; }).join('') + '</tr>';
     var areas = areasForGeo().filter(function (a) { return val(a, 'samples').v; });
     var f = st.filter.trim().toLowerCase();
     if (f) areas = areas.filter(function (a) { return areaName(a).toLowerCase().indexOf(f) >= 0 || a.toLowerCase() === f; });
@@ -1512,13 +1597,15 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
         TABLE_COLS.map(function (m) {
           var r = val(a, m), s = fmt(m, r), flag = m === 'samples' && few;
           return '<td class="num' + (flag ? ' lx-few' : '') + '">' + (s || '<span class="lx-na">–</span>') +
-            (flag ? ' <span class="lx-fewmark" aria-label="small sample" title="Fewer than ' + SMALL_N + ' colonies">!</span>' : '') + '</td>';
+            (flag ? ' <span class="lx-fewmark" aria-label="' + T('small sample') + '" title="' + T('Fewer than {k} colonies', { k: SMALL_N }) + '">!</span>' : '') + '</td>';
         }).join('') + '</tr>';
     }
     $('gx-table').innerHTML = '<thead>' + head + '</thead><tbody>' + row('ALL', 'pin') + areas.map(function (a) { return row(a, ''); }).join('') + '</tbody>';
-    $('gx-tabletitle').textContent = (IS_US ? (st.geo === 'region' ? 'Climate regions' : 'States and territories with colonies genotyped') : IS_WORLD ? 'Countries with colonies genotyped' : C.name + ': areas with colonies genotyped') + ', ' + YEAR_LABEL;
-    $('gx-tablenote').textContent = areas.length + ' ' + (IS_US ? (st.geo === 'region' ? 'regions' : 'states and territories') : IS_WORLD ? 'countries' : (areas.length === 1 ? 'area' : 'areas')) + '. Percents are shares of colonies with a recorded lineage. Diversity is the chance that two colonies carry different haplotypes. A ! marks fewer than ' + SMALL_N + ' colonies.';
-    $('gx-filter').placeholder = 'Filter ' + (IS_US ? 'states' : IS_WORLD ? 'countries' : 'areas');
+    $('gx-tabletitle').textContent = (IS_US ? T(st.geo === 'region' ? 'Climate regions' : 'States and territories with colonies genotyped') : IS_WORLD ? T('Countries with colonies genotyped') : T('{c}: areas with colonies genotyped', { c: C.name })) + SEP + YEAR_LABEL;
+    $('gx-tablenote').textContent = plural(areas.length, IS_US ? (st.geo === 'region' ? 'region' : 'stateTerr') : IS_WORLD ? 'country' : 'area') + '. ' +
+      T('Percents are shares of colonies with a recorded lineage. Diversity is the chance that two colonies carry different haplotypes. A ! marks fewer than {k} colonies.', { k: SMALL_N });
+    $('gx-filter').placeholder = T(IS_US ? 'Filter states' : IS_WORLD ? 'Filter countries' : 'Filter areas');
+    $('gx-filter').setAttribute('aria-label', $('gx-filter').placeholder);
     $('gx-table').querySelectorAll('th[data-k]').forEach(function (th) {
       th.addEventListener('click', function () {
         var k = th.getAttribute('data-k');
@@ -1562,10 +1649,10 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
     st.hap = null; st.ssp = null; if (st.measure === 'hap' || st.measure === 'ssp') { st.measure = 'c'; msel.value = 'c'; } hapOption(false); fillHaps(); fillSsp();
     csel.value = C.key;
     $('gx-geo-ctl').hidden = !IS_US;
-    $('gx-goto-lab').textContent = IS_US ? 'Go to a state' : IS_WORLD ? 'Go to a country' : 'Go to an area';
-    $('gx-goto').placeholder = IS_US ? 'e.g. Maryland or MD' : 'e.g. ' + ((AREAS.filter(function (a) { return V[a.id]; })[0] || { name: '' }).name);
+    $('gx-goto-lab').textContent = T(IS_US ? 'Go to a state' : IS_WORLD ? 'Go to a country' : 'Go to an area');
+    $('gx-goto').placeholder = IS_US ? T('e.g. Maryland or MD') : T('e.g. {x}', { x: (AREAS.filter(function (a) { return V[a.id]; })[0] || { name: '' }).name });
     $('gx-statelist').innerHTML = ['ALL'].concat(areaIds()).map(function (c) { return '<option value="' + esc(areaName(c)) + '"></option>'; }).join('');
-    $('gx-maphelp').textContent = IS_US ? 'Click a state to see its numbers, or the button to go back to the whole country.' : IS_WORLD ? 'Click a country to see its numbers, or the button to go back to the worldwide total.' : 'Click a dot to see that area’s numbers, or the button to go back to the whole country.';
+    $('gx-maphelp').textContent = T(IS_US ? 'Click a state to see its numbers, or the button to go back to the whole country.' : IS_WORLD ? 'Click a country to see its numbers, or the button to go back to the worldwide total.' : 'Click a dot to see that area’s numbers, or the button to go back to the whole country.');
     try { localStorage.setItem('hive-genetics-country', key); } catch (e) {}
     summary(); renderRefs(); renderAll();
   }
@@ -1574,11 +1661,11 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
   function colonies(c) { return c.rows.reduce(function (s, r) { return s + r[ci.samples]; }, 0); }
   function fillCountries() {
     csel.innerHTML = menuFor(st.cont).map(function (c) {
-      return '<option value="' + esc(c.key) + '">' + esc(c.cont ? 'All countries in ' + c.name : c.name) + ' (' + colonies(c).toLocaleString('en-US') + ')</option>';
+      return '<option value="' + esc(c.key) + '">' + esc(c.cont ? T('All countries in {c}', { c: c.name }) : c.name) + ' (' + NUM(colonies(c)) + ')</option>';
     }).join('');
   }
-  contSel.innerHTML = '<option value="">All continents (' + colonies(WORLD).toLocaleString('en-US') + ')</option>' + CONTS.map(function (ct) {
-    return '<option value="' + esc(ct) + '">' + esc(ct) + ' (' + colonies(BYKEY['CONT:' + ct]).toLocaleString('en-US') + ')</option>';
+  contSel.innerHTML = '<option value="">' + T('All continents') + ' (' + NUM(colonies(WORLD)) + ')</option>' + CONTS.map(function (ct) {
+    return '<option value="' + esc(ct) + '">' + esc(NM(ct)) + ' (' + NUM(colonies(BYKEY['CONT:' + ct])) + ')</option>';
   }).join('');
   st.cont = '';
   try { var savedK = localStorage.getItem('hive-genetics-continent'); if (savedK && CONTS.indexOf(savedK) >= 0) st.cont = savedK; } catch (e) {}
@@ -1595,11 +1682,11 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
 
   var msel = $('gx-measure'), groups = {};
   MEASURES.forEach(function (m) { (groups[m.group] = groups[m.group] || []).push(m); });
-  msel.innerHTML = Object.keys(groups).map(function (g) { return '<optgroup label="' + g + '">' + groups[g].map(function (m) { return '<option value="' + m.id + '">' + m.label + '</option>'; }).join('') + '</optgroup>'; }).join('');
+  msel.innerHTML = Object.keys(groups).map(function (g) { return '<optgroup label="' + esc(T(g)) + '">' + groups[g].map(function (m) { return '<option value="' + m.id + '">' + m.label + '</option>'; }).join('') + '</optgroup>'; }).join('');
   // "Selected haplotype" is in this menu only while a haplotype is picked (Safari shows hidden options)
   // on: false, 'hap' or 'ssp' — only the picked menu's option is kept
   function hapOption(on) {
-    [['hap', 'Selected haplotype (see Haplotype menu)'], ['ssp', 'Selected subspecies (see Subspecies menu)']].forEach(function (x) {
+    [['hap', T('Selected haplotype (see Haplotype menu)')], ['ssp', T('Selected subspecies (see Subspecies menu)')]].forEach(function (x) {
       var o = msel.querySelector('option[value="' + x[0] + '"]'), want = on === true ? x[0] === 'hap' : on === x[0];
       if (want && !o) msel.insertAdjacentHTML('beforeend', '<option value="' + x[0] + '">' + x[1] + '</option>');
       if (!want && o) o.remove();
@@ -1613,8 +1700,8 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
   var ssel = $('gx-ssp');
   function fillSsp() {
     var t = agg('ALL'), list = Object.keys(t.ssp).map(Number).sort(function (a, b) { return t.ssp[b] - t.ssp[a] || (G.subspecies[a] < G.subspecies[b] ? -1 : 1); });
-    ssel.innerHTML = '<option value="">All subspecies</option>' + list.map(function (h) {
-      return '<option value="' + h + '">' + esc(G.subspecies[h]) + ' (' + t.ssp[h].toLocaleString('en-US') + ')</option>';
+    ssel.innerHTML = '<option value="">' + T('All subspecies') + '</option>' + list.map(function (h) {
+      return '<option value="' + h + '">' + esc(G.subspecies[h]) + ' (' + NUM(t.ssp[h]) + ')</option>';
     }).join('');
     ssel.disabled = !list.length;
   }
@@ -1627,8 +1714,8 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
   var hsel = $('gx-hap');
   function fillHaps() {
     var t = agg('ALL'), list = Object.keys(t.haps).map(Number).sort(function (a, b) { return t.haps[b] - t.haps[a] || (G.haplotypes[a] < G.haplotypes[b] ? -1 : 1); });
-    hsel.innerHTML = '<option value="">All haplotypes</option>' + list.map(function (h) {
-      return '<option value="' + h + '">' + esc(G.haplotypes[h]) + ' (' + t.haps[h].toLocaleString('en-US') + ')</option>';
+    hsel.innerHTML = '<option value="">' + T('All haplotypes') + '</option>' + list.map(function (h) {
+      return '<option value="' + h + '">' + esc(G.haplotypes[h]) + ' (' + NUM(t.haps[h]) + ')</option>';
     }).join('');
     hsel.disabled = !list.length;
   }
@@ -1654,16 +1741,17 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
   function summary() {
     var all = agg('ALL'), c = val('ALL', 'c'), m = val('ALL', 'm'), a = val('ALL', 'a'), hd = val('ALL', 'hd');
     var nAreas = areaIds().length;
-    var parts = [['C', c, 'eastern European'], ['M', m, 'western and northern European'], ['A', a, 'African']].filter(function (x) { return x[1].status === 'ok'; })
+    var parts = [['C', c, T('eastern European')], ['M', m, T('western and northern European')], ['A', a, T('African')]].filter(function (x) { return x[1].status === 'ok'; })
       .sort(function (x, y) { return y[1].v - x[1].v; });
-    var lead = parts[0];
-    $('gx-summary').innerHTML = 'Mitochondrial DNA from <strong>' + G.source.samples.toLocaleString('en-US') + '</strong> honey bee colonies in <strong>' + (G.source.countries || G.countries.length) + '</strong> countries. ' +
-      (IS_WORLD ? (C.cont ? 'For <strong>all countries in ' + esc(C.name) + '</strong>' : 'For <strong>all countries together</strong>') : 'For <strong>' + esc(C.name) + '</strong>') + ': ' + plural(all.n, 'colony') + ' (' + YEAR_LABEL + ') from ' + plural(nAreas, IS_US ? 'state or territory' : IS_WORLD ? 'country' : 'area').replace('state or territories', 'states and territories') + '. ' +
-      (lead ? 'Most carry the <strong>' + lead[0] + '</strong> lineage (' + lead[2] + '), <strong>' + fmt(lead[0].toLowerCase(), lead[1]) + '</strong>' +
-        (parts.length > 1 ? '; ' + parts.slice(1).map(function (x) { return x[0] + ' ' + fmt(x[0].toLowerCase(), x[1]); }).join(', ') : '') + '. ' : '') +
-      (hd.status === 'ok' ? 'Haplotype diversity is <strong>' + fmt('hd', hd) + '</strong> on a scale of 0 to 1. ' : '') +
-      (IS_WORLD ? 'Click any country to see its numbers.' : 'Pick a country, then click any area to see its numbers.');
-    $('gx-note').textContent = G.source.samples.toLocaleString('en-US') + ' colonies genotyped · ' + (G.source.countries || G.countries.length) + ' countries · ' + C.name + ': ' + all.n.toLocaleString('en-US') + ' colonies, ' + YEAR_LABEL;
+    var lead = parts[0], nC = G.source.countries || G.countries.length;
+    var forV = { c: esc(C.name), n: plural(all.n, 'colony'), y: YEAR_LABEL, a: plural(nAreas, IS_US ? 'stateTerr' : IS_WORLD ? 'country' : 'area') };
+    $('gx-summary').innerHTML = T('Mitochondrial DNA from <strong>{n}</strong> honey bee colonies in <strong>{k}</strong> countries. ', { n: NUM(G.source.samples), k: NUM(nC) }) +
+      T(IS_WORLD ? (C.cont ? 'For <strong>all countries in {c}</strong>: {n} ({y}) from {a}. ' : 'For <strong>all countries together</strong>: {n} ({y}) from {a}. ') : 'For <strong>{c}</strong>: {n} ({y}) from {a}. ', forV) +
+      (lead ? T('Most carry the <strong>{l}</strong> lineage ({d}), <strong>{v}</strong>', { l: lead[0], d: lead[2], v: fmt(lead[0].toLowerCase(), lead[1]) }) +
+        (parts.length > 1 ? '; ' + parts.slice(1).map(function (x) { return x[0] + ' ' + fmt(x[0].toLowerCase(), x[1]); }).join(SEP) : '') + '. ' : '') +
+      (hd.status === 'ok' ? T('Haplotype diversity is <strong>{v}</strong> on a scale of 0 to 1. ', { v: fmt('hd', hd) }) : '') +
+      T(IS_WORLD ? 'Click any country to see its numbers.' : 'Pick a country, then click any area to see its numbers.');
+    $('gx-note').textContent = T('{n} colonies genotyped · {k} countries · {c}: {m} colonies, {y}', { n: NUM(G.source.samples), k: NUM(nC), c: C.name, m: NUM(all.n), y: YEAR_LABEL });
   }
 
   setCountry(st.country);
@@ -1689,5 +1777,7 @@ window.HIVE_WORLD_SHAPES = {"land":[[[[31.3,-22.4],[29.4,-22.2],[29.0,-21.8],[28
 })();
 
 </script>
+<script data-goatcounter="https://mohamedalburaki.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
