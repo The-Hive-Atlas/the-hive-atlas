@@ -2,7 +2,7 @@
 
 **Global honey bee health data, open and mapped.** Live at [thehiveatlas.com](https://thehiveatlas.com).
 
-The Hive Atlas brings public data on honey bee colony losses, disease, and colony monitoring into one place, on interactive maps of the United States. Click a state to see its numbers, compare it with the country, and see how things have changed over time.
+The Hive Atlas brings public data on honey bee colony losses, disease, and colony monitoring into one place, on interactive maps of the world and the United States. Click a country or state to see its numbers, compare it with the wider view, and see how things have changed over time.
 
 ## What's on the site
 
@@ -24,7 +24,7 @@ Each map page has an **About this map** tab with definitions, methods, and limit
 
 ## Citing The Hive Atlas
 
-> The Hive Atlas (2026). *Open, mapped data on U.S. honey bee health.* https://thehiveatlas.com
+> The Hive Atlas (2026). *Open, mapped data on honey bee health worldwide.* https://thehiveatlas.com
 
 Please also cite the original sources:
 
@@ -88,7 +88,7 @@ python3 pipeline/build_disease.py Adult_BDDL_cleaned.xlsx data/disease.js data/b
 
 ## Contributing data
 
-Researchers, state apiary programs, and beekeepers can share data with full credit. See the [Contribute](https://thehiveatlas.com/contribute.html) page.
+Researchers, apiary programs, and beekeepers anywhere in the world can share data with full credit. See the [Contribute](https://thehiveatlas.com/contribute.html) page.
 
 ## Contact
 
