@@ -783,6 +783,32 @@
   }
   function reduceMotion() { return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
 
+  /* ---------- References under the map ---------- */
+  var RD = window.HIVE_DISEASE_REFS || { refs: [], rows: [] };
+  function renderRefs() {
+    var box = $('dx-refs'), s = span(), months = SEASONS[st.season].months, tally = {}, leaf = {};
+    statesOf('ALL').forEach(function (a) { leaf[D.areas.indexOf(a)] = 1; });
+    RD.rows.forEach(function (r) {
+      if (!leaf[r[0]] || r[1] < s[0] || r[1] > s[1] || (months && months.indexOf(r[2]) < 0)) return;
+      tally[r[3]] = (tally[r[3]] || 0) + r[4];
+    });
+    var rank = function (k) { return k === 'study' ? 0 : k === 'unpublished' ? 1 : 2; };
+    var ids = Object.keys(tally).map(Number).sort(function (a, b) { return rank(RD.refs[a].kind) - rank(RD.refs[b].kind) || tally[b] - tally[a]; });
+    var head = '<h3 class="lx-h3">' + T('Reference') + '</h3>';
+    if (!ids.length) { box.innerHTML = head + '<p class="lx-small">' + T('No samples in this period.') + '</p>'; return; }
+    var items = ids.map(function (i) {
+      var r = RD.refs[i], d = r.doi, count = I.P ? I.P(tally[i], 'sample') : NUM(tally[i]) + ' samples';
+      var text = r.kind === 'unpublished' ? T('Unpublished data') : r.kind === 'none' ? T('No reference recorded') : esc(r.t);
+      return '<li dir="auto">' + text + '<span class="gx-refmeta">' +
+        (d ? 'DOI: <a href="https://doi.org/' + esc(encodeURI(d)) + '" target="_blank" rel="noopener" dir="ltr">' + esc(d) + '</a> · ' : r.kind === 'study' ? T('No DOI recorded · ') : '') +
+        count + '</span></li>';
+    }).join('');
+    var note = !IS_POOL ? T('Sources of the {c} data for this period, most samples first.', { c: esc(NM(V.name)) })
+      : V.cont ? T('Sources of the {c} data for this period. Pick a country to see just its references.', { c: esc(V.name) })
+      : T('Sources of the worldwide data for this period. Pick a country to see just its references.');
+    box.innerHTML = head + '<p class="lx-small">' + note + '</p><ol>' + items + '</ol>';
+  }
+
   /* ---------- Controls ---------- */
   function select(a) { st.sel = a; drawMap(); renderPanel(); markTableRow(); }
   function markTableRow() { $('dx-table').querySelectorAll('tbody tr').forEach(function (tr) { tr.classList.toggle('on', tr.getAttribute('data-code') === st.sel); }); }
@@ -791,7 +817,7 @@
     st.measure = mid; msel.value = mid; st.sortKey = null; renderAll();
     var h = document.querySelector('#dx-panel .lx-hero'); if (h) { h.classList.remove('flash'); void h.offsetWidth; h.classList.add('flash'); }
   }
-  function renderAll() { if (typeof syncShade === 'function') syncShade(); drawMap(); renderPanel(); renderTable(); }
+  function renderAll() { if (typeof syncShade === 'function') syncShade(); drawMap(); renderPanel(); renderTable(); renderRefs(); }
   function setSeg(group, value) { document.querySelectorAll('[data-seg="' + group + '"] button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === value)); }); }
   function yearOptions(sel, v) { sel.innerHTML = YEARS.slice().reverse().map(function (y) { return '<option value="' + y + '">' + y + (y === LAST && LAST_MONTH[LAST] < 12 ? ' ' + T('(through {m})', { m: MONTHS[LAST_MONTH[LAST]] }) : '') + '</option>'; }).join(''); sel.value = String(v); }
   function syncTime() {

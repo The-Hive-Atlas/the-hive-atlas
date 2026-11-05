@@ -69,7 +69,13 @@ To rebuild the disease data from the published 1984 to 2015 workbook (sheets `AD
 python3 pipeline/build_disease_world.py BRL_1984_2015_PUBLISHED_cleaned.xlsx data/disease.js data/bddl-state-year.csv ne_50m_admin_0_countries.geojson ne_10m_admin_1_states_provinces.geojson data/disease-shapes.js
 ```
 
-The two Natural Earth files are in the `geojson` folder of https://github.com/nvkelso/natural-earth-vector. A new country in the workbook must be added to the `COUNTRY` list in the script. The Disease page has Continent and Country menus like the Genetics page: the United States is drawn with state shapes, another country as its outline with one dot per province or area, and a continent or the whole world with each country colored.
+The two Natural Earth files are in the `geojson` folder of https://github.com/nvkelso/natural-earth-vector. A new country in the workbook must be added to the `COUNTRY` list in the script. Then rebuild the references listed under the map (from the workbook's Reference and DOI columns):
+
+```
+python3 pipeline/build_disease_refs.py BRL_1984_2015_PUBLISHED_cleaned.xlsx data/disease.js data/disease-refs.js
+```
+
+The Disease page has Continent and Country menus like the Genetics page: the United States is drawn with state shapes, another country as its outline with one dot per province or area, and a continent or the whole world with each country colored.
 
 The older pipeline below builds U.S. data for 1984 on from the lab spreadsheets (run the command above with `--keep-newer` afterwards to add the other countries back):
 

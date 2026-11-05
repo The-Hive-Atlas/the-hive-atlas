@@ -9,8 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&amp;family=Public+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600&amp;display=swap">
-<link rel="stylesheet" href="css/style.css?v=20261104b">
-<script src="js/i18n.js?v=20261104i"></script>
+<link rel="stylesheet" href="css/style.css?v=20261104c">
+<script src="js/i18n.js?v=20261104j"></script>
 </head>
 <body>
 <header class="site-header">
@@ -116,6 +116,7 @@
           <svg id="dx-map" class="lx-map" role="group" aria-label="Map of U.S. states"></svg>
           <div class="lx-legend" id="dx-legend"></div>
           <p class="lx-small" id="dx-colornote">Color ranges stay the same for every year, so you can compare across years.</p>
+          <div class="gx-refs" id="dx-refs" aria-live="polite"></div>
           <div class="lx-tip" id="dx-tip" hidden></div>
         </div>
         <aside class="lx-card lx-panel" id="dx-panel" aria-live="polite"></aside>
@@ -199,6 +200,7 @@
               <li><strong>Years</strong> shows one year or a range of years. A range pools every sample in those years, which steadies small states.</li>
               <li><strong>Months</strong> limits the view to one season. Mite and spore levels change a lot through the year, so comparing the same season across years or states is fairer.</li>
               <li><strong>Click a state, region, province, or country</strong> to see its numbers, how it compares with the total for the view (the U.S., the country, the continent, or the world), its pattern by month, and its trend by year. In a continent or worldwide view, the side panel has a button to open that country&rsquo;s own map. Click a bar in the trend chart to jump to that year.</li>
+              <li><strong>Reference</strong>, under the map, lists the sources cited in the lab workbook for the selected country, continent, or worldwide view, with DOI links and the number of samples behind each one. It follows the years and months you pick. Samples the workbook marks as unpublished, or gives no reference for, are listed too.</li>
               <li><strong>The table</strong> lists every state, province, or country with samples for the period. Click a heading to sort, or a row to open that state.</li>
             </ul>
           </section>
@@ -351,7 +353,8 @@
 <script src="data/state-shapes.js?v=20261102d"></script>
 <script src="data/disease-shapes.js?v=20261104a"></script>
 <script src="data/disease.js?v=20261104d"></script>
-<script src="js/disease.js?v=20261104d"></script>
+<script src="data/disease-refs.js?v=20261104a"></script>
+<script src="js/disease.js?v=20261104e"></script>
 <script data-goatcounter="https://mohamedalburaki.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </body>
