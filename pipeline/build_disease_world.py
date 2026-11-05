@@ -5,7 +5,8 @@ Usage:
     python3 pipeline/build_disease_world.py BRL_1984_2015_PUBLISHED_cleaned.xlsx data/disease.js \
         data/bddl-state-year.csv NE_50M_COUNTRIES.geojson NE_10M_ADMIN1.geojson data/disease-shapes.js
 
-    BRL_..._cleaned.xlsx         the published workbook (sheets ADULTS and BROOD; columns Month, Year,
+    BRL_..._cleaned.xlsx         the published workbook (sheets ADULTS and BROOD, plus ANTIBIOTICS for AFB
+                                 tetracycline and tylosin resistance, TE_mm and TY_mm zone sizes; columns Month, Year,
                                  State, Country, Continent, Varroa_Prevalence, Nosema_Prevalence,
                                  Tracheal_Mite_Prevalence, AFB, EFB). It covers 1984 to 2015.
     data/disease.js              the output. With --keep-newer at the end of the command, its current U.S.
@@ -62,7 +63,16 @@ COUNTRY = {
 PROVINCES = {'AB': 'Alberta', 'BC': 'British Columbia', 'MB': 'Manitoba', 'NB': 'New Brunswick', 'NL': 'Newfoundland and Labrador',
              'NS': 'Nova Scotia', 'ON': 'Ontario', 'PE': 'Prince Edward Island', 'QC': 'Quebec', 'SK': 'Saskatchewan'}
 COLS = ['area', 'year', 'month', 'samples', 'vd_n', 'vd_pos', 'nos_n', 'nos_pos', 'tm_n', 'tm_pos', 'vil_n', 'vil_sum', 'ms_n', 'ms_sum',
-        'brood_n', 'afb_pos', 'efb_pos', 'vil_sumsq', 'ms_sumsq']
+        'brood_n', 'afb_pos', 'efb_pos', 'vil_sumsq', 'ms_sumsq',
+        'te_n', 'te_sum', 'te_sumsq', 'ty_n', 'ty_sum', 'ty_sumsq']
+N = len(COLS) - 3  # counts per area, year and month
+
+
+def resistance(mm):
+    """AFB antibiotic resistance (%) from the inhibition-zone diameter in mm: 100 - 50x/42 (Alburaki et al. 2024)."""
+    if isinstance(mm, bool) or not isinstance(mm, (int, float)):
+        return None
+    return max(0.0, min(100.0, 100 - 50 * mm / 42))
 
 
 def flag(v):
@@ -89,7 +99,7 @@ def main(src, dst_js, dst_csv, ne0, ne1, dst_shapes, *flags):
         old = json.loads(old_text[old_text.index('{'):old_text.rindex('}') + 1])
 
     wb = openpyxl.load_workbook(src, read_only=True)
-    cube = defaultdict(lambda: [0] * 16)
+    cube = defaultdict(lambda: [0] * N)
     cont_of, odd, skipped = {}, Counter(), Counter()
 
     def key_of(r):
@@ -138,6 +148,25 @@ def main(src, dst_js, dst_csv, ne0, ne1, dst_shapes, *flags):
             continue
         c = cube[k]; c[11] += 1; c[12] += afb; c[13] += efb
     last_book = max(k[1] for k in cube)
+    # AFB antibiotic resistance (sheet ANTIBIOTICS): one row per AFB culture, tetracycline (TE) and tylosin (TY)
+    # zone sizes. Only the years of the adult and brood sheets are used, so the page covers one period.
+    abx = Counter()
+    if 'ANTIBIOTICS' in wb.sheetnames:
+        for r in read_sheet(wb['ANTIBIOTICS']):
+            if int(r['Year']) > last_book:
+                abx['after %d (left out)' % last_book] += 1
+                continue
+            k = key_of(r)
+            if not k:
+                continue
+            c = cube[k]
+            for name, i in (('TE_mm', 16), ('TY_mm', 19)):
+                v = resistance(r[name])
+                if v is None:
+                    continue
+                c[i] += 1; c[i + 1] += v; c[i + 2] += v * v
+                abx[name] += 1
+    print('antibiotic tests:', dict(abx))
 
     # Keep the newer U.S. years from the current site data
     kept = 0
@@ -147,7 +176,7 @@ def main(src, dst_js, dst_csv, ne0, ne1, dst_shapes, *flags):
         s = old['states'][r[0]]
         c = cube[(s, r[1], r[2])]
         vals = r[3:]  # samples, vd_n, vd_pos, nos_n, nos_pos, tm_n, tm_pos, vil_n, vil_sum, ms_n, ms_sum, brood_n, afb, efb, vil_sq, ms_sq
-        for i in range(16):
+        for i in range(min(N, len(vals))):
             c[i] += vals[i]
         kept += r[3]
 
@@ -191,7 +220,8 @@ def main(src, dst_js, dst_csv, ne0, ne1, dst_shapes, *flags):
     aidx = {a: i for i, a in enumerate(areas)}
     out = []
     for (a, y, m), c in sorted(cube.items(), key=lambda kv: (kv[0][1], aidx[kv[0][0]], kv[0][2])):
-        out.append([aidx[a], y, m] + c[:8] + [round(c[8], 2), c[9], round(c[10], 3)] + c[11:14] + [round(c[14], 2), round(c[15], 3)])
+        out.append([aidx[a], y, m] + c[:8] + [round(c[8], 2), c[9], round(c[10], 3)] + c[11:14] + [round(c[14], 2), round(c[15], 3)] +
+                   [c[16], round(c[17], 2), round(c[18], 1), c[19], round(c[20], 2), round(c[21], 1)])
     years = sorted({k[1] for k in cube})
     data = {
         'source': {'name': 'USDA ARS Bee Research Laboratory, Bee Disease Diagnostic Laboratory', 'built': date.today().isoformat(),
@@ -242,7 +272,7 @@ def main(src, dst_js, dst_csv, ne0, ne1, dst_shapes, *flags):
         'window.HIVE_DISEASE_SHAPES = ' + json.dumps({'land': land, 'countries': shapes}, separators=(',', ':')) + ';\n', encoding='utf-8')
 
     # Download: area by year
-    sy = defaultdict(lambda: [0] * 16)
+    sy = defaultdict(lambda: [0] * N)
     for (a, y, m), c in cube.items():
         t = sy[(a, y)]
         for i, v in enumerate(c):
@@ -253,14 +283,16 @@ def main(src, dst_js, dst_csv, ne0, ne1, dst_shapes, *flags):
         w.writerow(['year', 'continent', 'country', 'state', 'state_name', 'adult_samples', 'varroa_tested', 'varroa_positive', 'varroa_pct_positive',
                     'nosema_tested', 'nosema_positive', 'nosema_pct_positive', 'tracheal_tested', 'tracheal_positive', 'tracheal_pct_positive',
                     'varroa_counted', 'avg_mites_per_100_bees', 'nosema_counted', 'avg_million_spores_per_bee',
-                    'brood_samples', 'afb_positive', 'afb_pct_positive', 'efb_positive', 'efb_pct_positive'])
+                    'brood_samples', 'afb_positive', 'afb_pct_positive', 'efb_positive', 'efb_pct_positive',
+                    'tetracycline_tests', 'avg_tetracycline_resistance_pct', 'tylosin_tests', 'avg_tylosin_resistance_pct'])
         pct = lambda p, n: round(100 * p / n, 1) if n else ''
         avg = lambda s, n, d: round(s / n, d) if n else ''
         for (a, y) in sorted(sy, key=lambda k: (k[1], aidx[k[0]])):
             c, cc = sy[(a, y)], ctry[a]
             code = a if '.' not in a else ('' if a.endswith('.-') else a.split('.')[1])
             w.writerow([y, cc['cont'], cc['name'], code, data['names'][a] if code else '', c[0], c[1], c[2], pct(c[2], c[1]), c[3], c[4], pct(c[4], c[3]),
-                        c[5], c[6], pct(c[6], c[5]), c[7], avg(c[8], c[7], 2), c[9], avg(c[10], c[9], 2), c[11], c[12], pct(c[12], c[11]), c[13], pct(c[13], c[11])])
+                        c[5], c[6], pct(c[6], c[5]), c[7], avg(c[8], c[7], 2), c[9], avg(c[10], c[9], 2), c[11], c[12], pct(c[12], c[11]), c[13], pct(c[13], c[11]),
+                        c[16], avg(c[17], c[16], 1), c[19], avg(c[20], c[19], 1)])
 
     tot = lambda pred, i: sum(c[i] for k, c in cube.items() if pred(k))
     print('workbook years: %d to %d; kept %d U.S. adult samples from %d on' % (years[0], last_book, kept, last_book + 1))

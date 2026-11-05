@@ -46,7 +46,7 @@
   };
 
   /* ---------- Cube: CUBE[state][year] = [[month, 11 counts], ...] ---------- */
-  var CUBE = {}, YEARS = [], LAST_MONTH = {};
+  var CUBE = {}, YEARS = [], LAST_MONTH = {}, NC = D.cols.length - 3; // counts per row
   D.rows.forEach(function (r) {
     var s = AREA_IDS[r[0]], y = r[1];
     ((CUBE[s] = CUBE[s] || {})[y] = CUBE[s][y] || []).push([r[2], r.slice(3)]);
@@ -66,6 +66,8 @@
     { id: 'tm', label: T('Tracheal mite: percent of samples positive'), short: T('Tracheal mite'), tile: T('Tracheal mite positive'), unit: 'pct', n: 4, pos: 5, group: 'Tracheal mite' },
     { id: 'afb', label: T('American foulbrood: percent of brood samples positive'), short: T('American foulbrood'), tile: T('American foulbrood'), unit: 'pct', n: 10, pos: 11, brood: true, group: 'Foulbrood (brood samples)' },
     { id: 'efb', label: T('European foulbrood: percent of brood samples positive'), short: T('European foulbrood'), tile: T('European foulbrood'), unit: 'pct', n: 10, pos: 12, brood: true, group: 'Foulbrood (brood samples)' },
+    { id: 'te', label: T('Tetracycline: average AFB resistance (%)'), short: T('Tetracycline resistance'), tile: T('Tetracycline resistance'), unit: 'res', n: 15, sum: 16, sq: 18, brood: true, abx: true, group: 'AFB antibiotic resistance' },
+    { id: 'ty', label: T('Tylosin: average AFB resistance (%)'), short: T('Tylosin resistance'), tile: T('Tylosin resistance'), unit: 'res', n: 18, sum: 19, sq: 21, brood: true, abx: true, group: 'AFB antibiotic resistance' },
     { id: 'samples', label: T('Adult samples tested'), short: T('Adult samples'), tile: T('Adult samples'), unit: 'count', idx: 0, group: 'Samples' },
     { id: 'brood', label: T('Brood samples tested'), short: T('Brood samples'), tile: T('Brood samples'), unit: 'count', idx: 11, brood: true, group: 'Samples' }
   ];
@@ -110,13 +112,13 @@
   function agg(area, y0, y1, months) {
     var ck = (area === 'ALL' ? V.key : area) + '|' + y0 + '|' + y1 + '|' + (months ? months.join(',') : '');
     if (aggCache[ck]) return aggCache[ck];
-    var t = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    var t = new Array(NC).fill(0);
     statesOf(area).forEach(function (s) {
       var cy = CUBE[s]; if (!cy) return;
       for (var y = y0; y <= y1; y++) {
         (cy[y] || []).forEach(function (c) {
           if (months && months.indexOf(c[0]) < 0) return;
-          for (var i = 0; i < 16; i++) t[i] += c[1][i] || 0;
+          for (var i = 0; i < NC; i++) t[i] += c[1][i] || 0;
         });
       }
     });
@@ -126,6 +128,7 @@
   function valueFrom(t, mid) {
     var m = M[mid];
     var base = m.brood ? t[11] : t[0]; // adult or brood samples, whichever this measure uses
+    if (m.abx) base += t[m.n + 1];      // antibiotic tests are recorded separately from brood samples
     if (!base) return { v: null, n: 0, status: 'none' };
     if (m.unit === 'count') return { v: base, n: base, status: 'ok' };
     var n = t[m.n + 1];
@@ -144,8 +147,8 @@
   D.states.forEach(function (s) { if (!CUBE[s]) return;
     Object.keys(CUBE[s]).forEach(function (y) {
       CUBE[s][y].forEach(function (c) {
-        var row = ((NAT[y] = NAT[y] || {})[c[0]] = NAT[y][c[0]] || new Array(16).fill(0));
-        for (var i = 0; i < 16; i++) row[i] += c[1][i] || 0;
+        var row = ((NAT[y] = NAT[y] || {})[c[0]] = NAT[y][c[0]] || new Array(NC).fill(0));
+        for (var i = 0; i < NC; i++) row[i] += c[1][i] || 0;
       });
     });
   });
@@ -215,7 +218,7 @@
   function expText(mid, e, short) {
     if (!e || e.status !== 'ok') return '';
     var u = M[mid].unit;
-    var expS = u === 'pct' ? PCT(e.exp, 1) : NUM(e.exp, 1), a = NUM(Math.abs(e.diff), 1), x = NUM(e.ratio === Infinity ? 0 : e.ratio, 1);
+    var expS = u === 'pct' || u === 'res' ? PCT(e.exp, 1) : NUM(e.exp, 1), a = NUM(Math.abs(e.diff), 1), x = NUM(e.ratio === Infinity ? 0 : e.ratio, 1);
     if (short === 'cell') return u === 'pct' ? (e.diff >= 0 ? '+' : '−') + a : e.ratio === Infinity ? '>' : T('{x}×', { x: x });
     if (short) return u === 'pct' ? T(e.diff >= 0 ? '+{a} pts vs. expected {e}' : '−{a} pts vs. expected {e}', { a: a, e: expS }) : e.ratio === Infinity ? T('above expected {e}', { e: expS }) : T('{x}× expected {e}', { x: x, e: expS });
     if (u === 'pct') return T(e.diff >= 0 ? '{a} points above the seasonal expectation ({e})' : '{a} points below the seasonal expectation ({e})', { a: a, e: expS });
@@ -254,14 +257,14 @@
     if (!r || r.status !== 'ok') return null;
     var u = M[mid].unit, v = r.v;
     if (u === 'count') return NUM(Math.round(v));
-    if (u === 'pct') return PCT(v, 1);
+    if (u === 'pct' || u === 'res') return PCT(v, 1);
     if (v > 0 && v < 0.05) return '<' + NUM(0.1, 1);
     return NUM(v, 1);
   }
   function unitWord(mid) { return mid === 'vil' ? ' ' + T('mites per 100 bees') : mid === 'ms' ? ' ' + T('million spores per bee') : ''; }
   function compact(mid, v) {
     var u = M[mid].unit;
-    if (u === 'pct') return PCT(Math.round(v * 10) / 10, v % 1 ? 1 : 0);
+    if (u === 'pct' || u === 'res') return PCT(Math.round(v * 10) / 10, v % 1 ? 1 : 0);
     if (u === 'count') return v >= 1e3 ? T('{n}k', { n: NUM(Math.round(v / 100) / 10, (Math.round(v / 100) % 10) ? 1 : 0) }) : NUM(Math.round(v));
     return NUM(Math.round(v * 10) / 10, (Math.round(v * 10) % 10) ? 1 : 0);
   }
@@ -272,7 +275,7 @@
   }
   function testedNote(mid) {
     var m = M[mid], ys = m.years;
-    if (M[mid].unit === 'count' || M[mid].brood || !ys.length) return '';
+    if (M[mid].unit === 'count' || (M[mid].brood && !M[mid].abx) || !ys.length) return '';
     if (mid === 'tm' && ys.some(function (y) { return y > 2015; })) return T('The lab examined samples for tracheal mites through 2015 and in some years since ({y}).', { y: ys.filter(function (y) { return y > 2015; }).join(SEP) });
     return T(mid === 'vil' || mid === 'ms' ? 'Counts start in {y}.' : 'Tests start in {y}.', { y: ys[0] });
   }
@@ -282,7 +285,7 @@
   function niceVal(mid, v) {
     var u = M[mid].unit;
     if (u === 'count') { var mag = Math.pow(10, Math.max(0, Math.floor(Math.log10(Math.max(v, 1))) - 1)); return Math.max(1, Math.round(v / mag) * mag); }
-    if (u === 'pct') return Math.max(1, Math.round(v));
+    if (u === 'pct' || u === 'res') return Math.max(1, Math.round(v));
     return v < 1 ? Math.max(0.1, Math.round(v * 10) / 10) : v < 10 ? Math.round(v * 2) / 2 : Math.round(v);
   }
   // color ranges come from U.S. states (or regions) in every view, so a color means the same thing everywhere
@@ -304,8 +307,8 @@
     return (breakCache[ck] = out);
   }
   function aggUS(a, y) {
-    var t = new Array(16).fill(0);
-    (a.indexOf('R:') === 0 ? D.regions[a.slice(2)].states : [a]).forEach(function (s) { ((CUBE[s] || {})[y] || []).forEach(function (c) { for (var i = 0; i < 16; i++) t[i] += c[1][i] || 0; }); });
+    var t = new Array(NC).fill(0);
+    (a.indexOf('R:') === 0 ? D.regions[a.slice(2)].states : [a]).forEach(function (s) { ((CUBE[s] || {})[y] || []).forEach(function (c) { for (var i = 0; i < NC; i++) t[i] += c[1][i] || 0; }); });
     return t;
   }
   function bin(mid, v) { var b = breaks(mid), i = 0; while (i < b.length && v >= b[i]) i++; return i; }
@@ -577,7 +580,7 @@
     if (isCount(mid)) return T(sampleKind(mid) === 'brood' ? '{p} of all brood samples in {w} ({v})' : '{p} of all adult samples in {w} ({v})', { p: PCT(mine.v / us.v * 100, 1), w: where, v: fmt(mid, us) });
     var d = mine.v - us.v, amt = Math.abs(d).toFixed(1), vv = { a: NUM(Math.abs(d), 1), who: w, v: fmt(mid, us) };
     if (Number(amt) === 0) return T('About the same as {who} ({v})', vv);
-    if (M[mid].unit === 'pct') return T(amt === '1.0' ? (d > 0 ? '{a} point above {who} ({v})' : '{a} point below {who} ({v})') : (d > 0 ? '{a} points above {who} ({v})' : '{a} points below {who} ({v})'), vv);
+    if (M[mid].unit === 'pct' || M[mid].unit === 'res') return T(amt === '1.0' ? (d > 0 ? '{a} point above {who} ({v})' : '{a} point below {who} ({v})') : (d > 0 ? '{a} points above {who} ({v})' : '{a} points below {who} ({v})'), vv);
     return T(d > 0 ? '{a} above {who} ({v})' : '{a} below {who} ({v})', vv);
   }
   function expLine(area, mid, r) {
@@ -593,7 +596,7 @@
     if (isCount(mid)) return '<p class="lx-sample">' + T(kind === 'brood' ? (st.season !== 'all' ? 'Brood (comb or smear) samples the lab received and tested in these months.' : 'Brood (comb or smear) samples the lab received and tested.') : (st.season !== 'all' ? 'Adult bee samples the lab received and tested in these months.' : 'Adult bee samples the lab received and tested.')) + '</p>';
     if (r.status !== 'ok') return '<p class="lx-sample">' + T(kind === 'brood' ? '{n} brood samples were received in this period.' : '{n} adult samples were received in this period.', { n: NUM(all.v) }) + ' ' + testedNote(mid) + '</p>';
     var small = r.n < SMALL_N;
-    var txt = M[mid].unit === 'pct' ? T(kind === 'brood' ? '<b>{p}</b> of <b>{n}</b> brood samples tested positive.' : '<b>{p}</b> of <b>{n}</b> adult samples tested positive.', { p: NUM(r.pos), n: NUM(r.n) })
+    var txt = M[mid].abx ? T('Average resistance of <b>{n}</b> American foulbrood cultures tested in the lab (agar disc diffusion).', { n: NUM(r.n) }) : M[mid].unit === 'pct' ? T(kind === 'brood' ? '<b>{p}</b> of <b>{n}</b> brood samples tested positive.' : '<b>{p}</b> of <b>{n}</b> adult samples tested positive.', { p: NUM(r.pos), n: NUM(r.n) })
       : T('Average of <b>{n}</b> samples with a count, including those with none found.', { n: NUM(r.n) });
     return '<p class="lx-sample">' + (small ? '<span class="lx-smallchip">' + T('Small sample') + '</span> ' : '') + txt + (small ? ' ' + T('With this few samples, one or two colonies can swing the result a lot.') : '') + '</p>';
   }
@@ -719,8 +722,8 @@
   function niceStep(x) { var p = Math.pow(10, Math.floor(Math.log10(x))), f = x / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; }
 
   /* ---------- Table ---------- */
-  var TABLE_COLS = ['samples', 'vd', 'vil', 'nos', 'ms', 'tm', 'brood', 'afb', 'efb'].filter(function (k) { return M[k].years.length; });
-  var COL_LABEL = { samples: T('Adult samples'), vd: T('Varroa %'), vil: T('Mites / 100 bees'), nos: T('Nosema %'), ms: T('Spores (M / bee)'), tm: T('Tracheal %'), brood: T('Brood samples'), afb: T('AFB %'), efb: T('EFB %') };
+  var TABLE_COLS = ['samples', 'vd', 'vil', 'nos', 'ms', 'tm', 'brood', 'afb', 'efb', 'te', 'ty'].filter(function (k) { return M[k].years.length; });
+  var COL_LABEL = { te: T('Tetracycline res. %'), ty: T('Tylosin res. %'), samples: T('Adult samples'), vd: T('Varroa %'), vil: T('Mites / 100 bees'), nos: T('Nosema %'), ms: T('Spores (M / bee)'), tm: T('Tracheal %'), brood: T('Brood samples'), afb: T('AFB %'), efb: T('EFB %') };
   function renderTable() {
     var ex = shadeExp();
     var sk = st.sortKey || (ex ? 'exp' : st.measure);

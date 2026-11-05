@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&amp;family=Public+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600&amp;display=swap">
 <link rel="stylesheet" href="css/style.css?v=20261104a">
-<script src="js/i18n.js?v=20261104a"></script>
+<script src="js/i18n.js?v=20261104b"></script>
 </head>
 <body>
 <header class="site-header">
@@ -211,6 +211,7 @@
                 <thead><tr><th>Measure</th><th>What it shows</th><th>Unit</th></tr></thead>
                 <tbody>
                   <tr><td>Percent positive</td><td>Samples in which the parasite was found, divided by samples tested for it. Shown for Varroa, Nosema, and tracheal mites (adult samples) and for American and European foulbrood (brood samples).</td><td class="unit">% of samples</td></tr>
+                  <tr><td>AFB antibiotic resistance</td><td>For American foulbrood cultures tested against an antibiotic (tetracycline or tylosin): resistance = 100 &minus; 50&times;<em>d</em>/42, where <em>d</em> is the diameter in mm of the zone where the antibiotic stopped the bacteria from growing. A wide zone (42 mm or more) means the bacteria are mostly susceptible; a zone no wider than the disc means they grew right up to it. The map shows the average over the cultures tested.</td><td class="unit">% resistance</td></tr>
                   <tr><td>Adult samples tested</td><td>Adult bee samples the lab received and tested.</td><td class="unit">samples</td></tr>
                   <tr><td>Brood samples tested</td><td>Brood samples (comb sections or smears) the lab received and tested.</td><td class="unit">samples</td></tr>
                 </tbody>
@@ -231,6 +232,7 @@
             </ul>
             <p><strong>Brood samples</strong> are usually a section of brood comb about 2 by 2 inches, sometimes a whole frame, or a &ldquo;brood smear&rdquo; that an inspector collects in the field by swabbing diseased cells.</p>
             <ul>
+              <li><strong>Antibiotic resistance of American foulbrood:</strong> <em>Paenibacillus larvae</em> from AFB-positive samples is grown on agar with a paper disc of tetracycline (oxytetracycline) or tylosin, the two antibiotics used against AFB in the United States. The width of the clear zone around the disc shows how well the antibiotic stops the bacteria. Methods are in Alburaki et al. (2024).</li>
               <li><strong>American and European foulbrood:</strong> samples are first inspected visually. Material from diseased cells is then smeared on a slide, dried, stained with carbol fuchsin, and examined under a microscope at 1,000&times; magnification. The two diseases are told apart by the shape of the bacteria and their spores.</li>
             </ul>
             <p>Full methods are in Abban et al. (2024), Alburaki et al. (2024), and Alburaki et al. (2025), listed under <a href="#ab-sources">Sources</a>.</p>
@@ -247,6 +249,8 @@
                   <tr><td>Varroa, positive or not</td><td class="unit">1990 to 2015</td><td>Varroa was first found in the U.S. in 1987. Every sample before 1990 is recorded as negative, which most likely means it wasn&rsquo;t screened yet, so those years are treated as not tested.</td></tr>
                   <tr><td>Mites per 100 bees and spores per bee</td><td class="unit">not shown</td><td>The published 1984 to 2015 dataset records only whether each parasite was present, not how many.</td></tr>
                   <tr><td>American and European foulbrood</td><td class="unit">1984 to 2015</td><td>Every brood sample, every year.</td></tr>
+                  <tr><td>AFB resistance to tetracycline</td><td class="unit">1996 to 2015</td><td>U.S. and Canadian AFB cultures. The workbook has later tests too (2016 on); they aren&rsquo;t shown, so the page covers one period.</td></tr>
+                  <tr><td>AFB resistance to tylosin</td><td class="unit">2005 to 2015</td><td>Tested on fewer cultures than tetracycline.</td></tr>
                 </tbody>
               </table>
             </div>
@@ -346,8 +350,8 @@
 <script src="js/site.js?v=20261102d"></script>
 <script src="data/state-shapes.js?v=20261102d"></script>
 <script src="data/disease-shapes.js?v=20261104a"></script>
-<script src="data/disease.js?v=20261104b"></script>
-<script src="js/disease.js?v=20261104b"></script>
+<script src="data/disease.js?v=20261104c"></script>
+<script src="js/disease.js?v=20261104c"></script>
 <script data-goatcounter="https://mohamedalburaki.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </body>
