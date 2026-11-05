@@ -318,6 +318,10 @@ table.defs code { font-family: var(--font-mono); font-size: 0.85rem; }
   border-radius: 8px; padding: 16px 18px; overflow-wrap: anywhere;
 }
 .pub-cats { display: grid; gap: 40px; }
+.pub-list { margin: 0; padding-inline-start: 1.6em; display: grid; gap: 12px; font-size: 0.95rem; line-height: 1.55; }
+.pub-list li { padding-inline-start: 4px; overflow-wrap: anywhere; }
+.pub-list a { white-space: nowrap; }
+.pub-map { display: inline-block; margin-inline-start: 6px; padding: 1px 8px; border-radius: 999px; background: var(--honey-soft); color: var(--honey-strong); font-size: 0.75rem; font-weight: 600; vertical-align: 1px; }
 
 /* About */
 .person { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 24px; align-items: start; }
@@ -682,7 +686,8 @@ li.dx-mhead .dx-n { font-family: var(--font-body); font-size: 0.72rem; }
 .lx-map.is-globe .area:hover .shape, .lx-map.is-globe .area:focus-visible .shape { stroke: var(--ink); stroke-width: 1.2; }
 .lx-map.is-globe .area.sel .shape { stroke: var(--ink); stroke-width: 2; }
 .lx-map.is-globe .area.few .shape { stroke: var(--ink); stroke-dasharray: 2 2; stroke-width: 1; }
-#gx-panel #gx-open-country { cursor: pointer; font-family: var(--font-body); padding: 9px 16px; font-size: 0.9rem; }
+.lx-map.is-globe.is-zoom .land, .lx-map.is-globe.is-zoom .shape { vector-effect: non-scaling-stroke; }
+#gx-panel #gx-open-country, #dx-panel #dx-open-country { cursor: pointer; font-family: var(--font-body); padding: 9px 16px; font-size: 0.9rem; }
 
 /* ---------- Languages: header menu, Arabic font, right-to-left layout ---------- */
 .lang-menu { position: relative; display: inline-flex; align-items: center; flex: none; color: var(--muted); }
