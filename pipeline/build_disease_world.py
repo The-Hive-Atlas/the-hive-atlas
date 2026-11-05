@@ -149,13 +149,10 @@ def main(src, dst_js, dst_csv, ne0, ne1, dst_shapes, *flags):
         c = cube[k]; c[11] += 1; c[12] += afb; c[13] += efb
     last_book = max(k[1] for k in cube)
     # AFB antibiotic resistance (sheet ANTIBIOTICS): one row per AFB culture, tetracycline (TE) and tylosin (TY)
-    # zone sizes. Only the years of the adult and brood sheets are used, so the page covers one period.
+    # zone sizes. Every year in the sheet is kept (it runs past the adult and brood sheets, to 2026).
     abx = Counter()
     if 'ANTIBIOTICS' in wb.sheetnames:
         for r in read_sheet(wb['ANTIBIOTICS']):
-            if int(r['Year']) > last_book:
-                abx['after %d (left out)' % last_book] += 1
-                continue
             k = key_of(r)
             if not k:
                 continue

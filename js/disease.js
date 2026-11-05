@@ -57,6 +57,9 @@
   var FIRST = YEARS[0], LAST = YEARS[YEARS.length - 1];
   // newest year with data through at least November counts as the latest complete year
   var LATEST_FULL = LAST_MONTH[LAST] >= 11 ? LAST : LAST - 1;
+  // adult and brood samples end before the antibiotic tests do: open on the samples' last years
+  var SAMPLE_LAST = D.source.bookLast || LAST;
+  if (SAMPLE_LAST < LATEST_FULL) LATEST_FULL = SAMPLE_LAST;
 
   var MEASURES = [
     { id: 'vd', label: T('Varroa: percent of samples positive'), short: T('Varroa'), tile: T('Varroa positive'), unit: 'pct', n: 0, pos: 1, from: D.source.varroaFrom, group: 'Varroa mite' },
@@ -332,10 +335,12 @@
     usb.setAttribute('aria-pressed', String(st.sel === 'ALL'));
     usb.innerHTML = '<svg width="13" height="14" viewBox="0 0 34 38" aria-hidden="true"><polygon points="17,1 33,10 33,28 17,37 1,28 1,10"/></svg>' + esc(V.name) + (usv ? '<b>' + usv + '</b>' : '');
     var s = span(), notes = [];
-    if (!testedIn(st.measure, s[0], s[1])) notes.push('<strong>' + T(st.measure === 'vil' || st.measure === 'ms' ? 'No counts in this period.' : 'No tests in this period.') + '</strong> ' + testedNote(st.measure));
+    var afterSamples = s[0] > SAMPLE_LAST && !M[st.measure].abx;
+    if (!testedIn(st.measure, s[0], s[1]) && !afterSamples) notes.push('<strong>' + T(st.measure === 'vil' || st.measure === 'ms' ? 'No counts in this period.' : 'No tests in this period.') + '</strong> ' + testedNote(st.measure));
     else if (s[0] < M[st.measure].years[0]) notes.push('<strong>' + T('Partial range:') + '</strong> ' + testedNote(st.measure) + ' ' + T('Earlier years in the range add samples but no results for this measure.'));
     if (st.measure === 'tm' && testedIn('tm', s[0], s[1]) && s[1] > 2015) notes.push(testedNote('tm'));
     if (!IS_US && (st.measure === 'vil' || st.measure === 'ms')) notes.push(T('<strong>U.S. only:</strong> mite and spore counts are recorded for U.S. samples from {y} on; samples from other countries date from {z} or earlier.', { y: M[st.measure].years[0], z: D.source.bookLast }));
+    if (s[1] > SAMPLE_LAST && !M[st.measure].abx) notes.push(T('<strong>Samples end in {y}.</strong> Adult and brood samples run from {a} to {y}; later years have AFB antibiotic resistance tests only.', { a: FIRST, y: SAMPLE_LAST }));
     if (!IS_US && !viewSamples(s[0], s[1])) notes.push(T('<strong>No samples from {c} in this period.</strong> Samples from outside the United States run from {a} to {b}. Pick a range in those years.', { c: esc(areaName('ALL')), a: FIRST, b: D.source.bookLast }));
     if (shadeExp()) notes.push(T('<strong>Compared with the seasonal expectation:</strong> each area’s result next to what the lab’s samples from the same months showed nationally, over a five-year window around each year. Neutral means within the expected range for that many samples.'));
     $('dx-callout').innerHTML = notes.join(' ');
@@ -345,7 +350,8 @@
     if (cn) cn.textContent = (shadeExp() ? T('Colors compare each area with the seasonal expectation for the same period. Areas with fewer than {k} samples are outlined.', { k: SMALL_N }) : T('Color ranges stay the same for every year and every country, so you can compare across years and places.')) + ' ' + MAPNOTE;
   }
   var MAPNOTE = '';
-  function viewSamples(y0, y1) { var t = agg('ALL', y0, y1, null); return t[0] + t[11]; }
+  function sampleCount(y0, y1) { var t = agg('ALL', y0, y1, null); return t[0] + t[11]; } // adult and brood samples only
+  function viewSamples(y0, y1) { var t = agg('ALL', y0, y1, null); return t[0] + t[11] + (t[16] || 0) + (t[19] || 0); }
   // fill, bin and status for one area: { r, fill, b, few }
   function paint(area) {
     var r = area ? val(area, st.measure) : { status: 'none' };
@@ -847,7 +853,7 @@
     if (!keepTime) {
       var s = span();
       if (!viewSamples(s[0], s[1])) {
-        var ys = YEARS.filter(function (y) { return viewSamples(y, y); });
+        var ys = YEARS.filter(function (y) { return sampleCount(y, y); });
         if (ys.length) { st.mode = 'range'; st.from = ys[0]; st.to = ys[ys.length - 1]; st.year = ys[ys.length - 1]; syncTime(); }
       }
     }
@@ -902,7 +908,7 @@
   function summary() {
     var nC = COUNTRIES.length, ys, y0, y1;
     if (IS_US) { y0 = OPEN_FROM; y1 = OPEN_TO; }
-    else { ys = YEARS.filter(function (y) { return viewSamples(y, y); }); y0 = ys[0]; y1 = ys[ys.length - 1]; }
+    else { ys = YEARS.filter(function (y) { return sampleCount(y, y); }); y0 = ys[0]; y1 = ys[ys.length - 1]; }
     var g = function (m) { return valAt('ALL', m, y0, y1); };
     var parts = [];
     if (IS_US) {
@@ -925,7 +931,8 @@
     if (g('afb').status === 'ok') parts.push(T('In brood samples, <strong>{afb}</strong> had American foulbrood and <strong>{efb}</strong> had European foulbrood.', { afb: fmt('afb', g('afb')), efb: fmt('efb', g('efb')) }));
     parts.push(T('Samples come from colonies that looked sick or weak, so these rates are higher than in the average colony.') + ' ' + T(IS_POOL ? 'Click any country to see its numbers.' : IS_US ? 'Click any region or state to see its numbers.' : V.key === 'CAN' ? 'Click any province to see its numbers.' : 'Click any area to see its numbers.'));
     $('dx-summary').innerHTML = parts.join(' ');
-    $('dx-note').textContent = T(LAST_MONTH[LAST] < 12 ? '{a} adult and {b} brood samples from {n} countries, {y0} through {m} {y1}.' : '{a} adult and {b} brood samples from {n} countries, {y0} to {y1}.', { a: NUM(TOTAL_A), b: NUM(TOTAL_B), n: nC, y0: FIRST, m: MONTHS[LAST_MONTH[LAST]], y1: LAST });
+    $('dx-note').textContent = T('{a} adult and {b} brood samples from {n} countries, {y0} to {y1}.', { a: NUM(TOTAL_A), b: NUM(TOTAL_B), n: nC, y0: FIRST, y1: SAMPLE_LAST }) +
+      (M.te.years.length ? ' ' + T(LAST_MONTH[LAST] < 12 ? 'AFB antibiotic tests through {m} {y}.' : 'AFB antibiotic tests through {y}.', { m: MONTHS[LAST_MONTH[LAST]], y: LAST }) : '');
   }
 
   if (st.cont && BYKEY[st.country] && !(BYKEY[st.country].pool && BYKEY[st.country].cont === st.cont) && BYKEY[st.country].cont !== st.cont) st.country = 'CONT:' + st.cont;
