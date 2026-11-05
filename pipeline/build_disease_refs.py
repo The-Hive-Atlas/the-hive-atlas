@@ -1,14 +1,14 @@
 """Build the references shown under the Disease Surveillance map.
 
 Usage:
-    python3 pipeline/build_disease_refs.py BRL_1984_2015_PUBLISHED_cleaned.xlsx data/disease.js data/disease-refs.js
+    python3 pipeline/build_disease_refs.py BRL_1984_2026_PUBLISHED_cleaned.xlsx data/disease.js data/disease-refs.js
 
 Run it after pipeline/build_disease_world.py. It reads the Reference and DOI columns of the ADULTS, BROOD and
 ANTIBIOTICS sheets, row by row, and counts samples per area, year, month and reference. It counts the same rows as
 data/disease.js (rows left out there are left out here) and takes the area numbers from that file.
 
 Output: window.HIVE_DISEASE_REFS = { refs: [{t, doi, kind}], rows: [[area, year, month, ref, samples], ...] }.
-A blank Reference has kind "none"; "Unpublished Data" has kind "unpublished"; both are listed on the page.
+A blank Reference has kind "none"; "Unpublished" and "Unpublished Data" are one entry of kind "unpublished"; both kinds are listed on the page.
 A row in ANTIBIOTICS counts once, even when it holds both a tetracycline and a tylosin result.
 """
 import json
@@ -61,6 +61,8 @@ def main(src, site_js, dst):
         if not k:
             return
         t = ' '.join(str(r['Reference'] or '').replace('\xa0', ' ').split())
+        if t.lower() == 'unpublished':
+            t = 'Unpublished Data'
         doi = clean_doi(r['DOI'])
         if (t, doi) not in ids:
             kind = 'none' if not t else 'unpublished' if t.lower() == 'unpublished data' else 'study'

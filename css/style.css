@@ -84,6 +84,25 @@ nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap
 nav a { text-decoration: none; font-size: 0.92rem; color: var(--muted); font-weight: 500; }
 nav a:hover { color: var(--ink); }
 .menu-btn { display: none; }
+/* Drop-down menu in the header */
+.nav-drop { position: relative; }
+.nav-drop-btn { display: inline-flex; align-items: center; gap: 5px; background: none; border: 0; padding: 0; cursor: pointer; font: 500 0.92rem var(--font-body); color: var(--muted); }
+.nav-drop-btn:hover, .nav-drop.open .nav-drop-btn { color: var(--ink); }
+.nav-drop-btn svg { transition: transform 0.15s; }
+.nav-drop.open .nav-drop-btn svg { transform: rotate(180deg); }
+.nav-drop-btn[data-current] { color: var(--ink); box-shadow: inset 0 -2px 0 var(--honey); }
+nav ul.nav-sub { display: none; flex-direction: column; flex-wrap: nowrap; gap: 0; }
+.nav-drop.open .nav-sub { display: flex; }
+@media (min-width: 1041px) {
+  nav ul.nav-sub { position: absolute; top: 100%; inset-inline-start: -14px; z-index: 6; margin-top: 8px; width: max-content; max-width: 420px; padding: 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12); }
+  nav ul.nav-sub::before { content: ""; position: absolute; inset: -9px 0 auto; height: 9px; }
+  nav ul.nav-sub a { display: block; padding: 8px 10px; border-radius: 5px; }
+  nav ul.nav-sub a:hover { background: var(--bg); }
+  nav ul.nav-sub a[aria-current="page"] { box-shadow: none; background: var(--bg); }
+}
+@media (min-width: 1041px) and (hover: hover) {
+  .nav-drop:hover .nav-sub { display: flex; }
+}
 
 @media (max-width: 1040px) {
   .menu-btn {
@@ -95,6 +114,9 @@ nav a:hover { color: var(--ink); }
   nav[hidden] { display: none !important; }
   nav ul { flex-direction: column; gap: 0; padding: 8px max(16px, env(safe-area-inset-right, 0px)) 12px max(16px, env(safe-area-inset-left, 0px)); }
   nav a { display: block; padding: 10px 0; font-size: 1rem; }
+  .nav-drop-btn { width: 100%; justify-content: space-between; padding: 10px 0; font-size: 1rem; }
+  .nav-drop-btn[data-current] { box-shadow: none; color: var(--honey-strong); }
+  nav ul.nav-sub { padding: 0 0 4px; padding-inline-start: 14px; border-inline-start: 2px solid var(--line); }
 }
 @media (min-width: 1041px) { nav[hidden] { display: block !important; } }
 

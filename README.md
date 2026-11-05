@@ -9,7 +9,8 @@ The Hive Atlas brings public data on honey bee colony losses, disease, and colon
 | Page | What it shows | Source |
 |---|---|---|
 | **Colony Losses** | Quarterly colony losses, renovations, and self-reported stressors by state, 2015 to now | USDA National Agricultural Statistics Service (NASS), *Honey Bee Colonies* reports |
-| **Disease Surveillance** | Varroa, Nosema, tracheal mite, American and European foulbrood, and AFB resistance to tetracycline and tylosin from about 68,000 adult bee and brood samples from 37 countries, by continent, country, state or province, climate region, year, and month, 1984 to 2015 (antibiotic resistance tests 1996 to 2026) | USDA ARS Bee Disease Diagnostic Laboratory, Beltsville, Maryland: the published dataset of Alburaki et al. (2025) |
+| **Disease Surveillance** | Varroa, Nosema, tracheal mite, American and European foulbrood, and AFB resistance to tetracycline and tylosin from about 85,000 adult bee and brood samples from 38 countries, by continent, country, state or province, climate region, year, and month, 1984 to 2026 (mite and spore counts 2015 on; antibiotic resistance tests 1996 on). In the menu: Disease, USDA-ARS Bee Disease Diagnostic Database | USDA ARS Bee Disease Diagnostic Laboratory, Beltsville, Maryland |
+| **National Honey bee Survey** | Empty for now (`disease-survey.html`) | To be added |
 | **Colony Monitoring** | Repeated colony inspections by climate region, plus a personal report for your own records | Currently **simulated demonstration data** |
 | **Genetic Diversity** | Mitochondrial lineages (A, M, C), haplotypes, and haplotype diversity of honey bee colonies by country and area, from 8,642 colonies in 25 countries (1,111 in the United States) | Genetic_Database2026 (mitochondrial DNA genotyping, worldwide) |
 
@@ -63,16 +64,16 @@ The second and third commands rebuild the country outlines and the world map use
 
 The script reads the spreadsheet's `All populations` sheet. It publishes counts by country, area (U.S. state, or the region named in the spreadsheet), and year only; rows with no Country are left out. A new country must be added to the `COUNTRIES` list in the script (display name and ISO numeric code, used to draw its outline). The genetics page draws the United States with state shapes and other countries as a Natural Earth outline (`data/country-shapes.js`, stored in the site so nothing loads from outside) with one dot per area. Haplotype diversity is calculated on the page from the haplotype counts. All years are shown pooled.
 
-To rebuild the disease data from the published 1984 to 2015 workbook (sheets `ADULTS` and `BROOD`, every country; keep the workbook out of this repository). The site shows these years only; add `--keep-newer` at the end to also keep the newer U.S. years already in `data/disease.js`:
+To rebuild the disease data from the workbook (sheets `ADULTS`, `BROOD`, and `ANTIBIOTICS`, every country, 1984 to 2026; keep the workbook out of this repository):
 
 ```
-python3 pipeline/build_disease_world.py BRL_1984_2015_PUBLISHED_cleaned.xlsx data/disease.js data/bddl-state-year.csv ne_50m_admin_0_countries.geojson ne_10m_admin_1_states_provinces.geojson data/disease-shapes.js
+python3 pipeline/build_disease_world.py BRL_1984_2026_PUBLISHED_cleaned.xlsx data/disease.js data/bddl-state-year.csv ne_50m_admin_0_countries.geojson ne_10m_admin_1_states_provinces.geojson data/disease-shapes.js
 ```
 
-The two Natural Earth files are in the `geojson` folder of https://github.com/nvkelso/natural-earth-vector. A new country in the workbook must be added to the `COUNTRY` list in the script. Then rebuild the references listed under the map (from the workbook's Reference and DOI columns):
+The two Natural Earth files are in the `geojson` folder of https://github.com/nvkelso/natural-earth-vector. If no country is new, put `-` in place of each of them to keep the current outlines. A new country in the workbook must be added to the `COUNTRY` list in the script. Then rebuild the references listed under the map (from the workbook's Reference and DOI columns):
 
 ```
-python3 pipeline/build_disease_refs.py BRL_1984_2015_PUBLISHED_cleaned.xlsx data/disease.js data/disease-refs.js
+python3 pipeline/build_disease_refs.py BRL_1984_2026_PUBLISHED_cleaned.xlsx data/disease.js data/disease-refs.js
 ```
 
 The Disease page has Continent and Country menus like the Genetics page: the United States is drawn with state shapes, another country as its outline with one dot per province or area, and a continent or the whole world with each country colored.

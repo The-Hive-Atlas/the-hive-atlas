@@ -9,6 +9,22 @@
     btn.addEventListener('click', function () { setMenu(nav.hidden); });
   }
 
+  // Drop-down menus in the site header: opened by click or keyboard, closed by Escape or a click elsewhere
+  var drops = document.querySelectorAll('.nav-drop');
+  var setDrop = function (d, open) { d.classList.toggle('open', open); d.querySelector('.nav-drop-btn').setAttribute('aria-expanded', String(open)); };
+  drops.forEach(function (d) {
+    d.querySelector('.nav-drop-btn').addEventListener('click', function () { setDrop(d, !d.classList.contains('open')); });
+  });
+  document.addEventListener('click', function (e) {
+    drops.forEach(function (d) { if (!d.contains(e.target)) setDrop(d, false); });
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    drops.forEach(function (d) {
+      if (d.classList.contains('open')) { setDrop(d, false); d.querySelector('.nav-drop-btn').focus(); }
+    });
+  });
+
   // Copy buttons: <button class="copy-btn" data-copy="text">
   document.querySelectorAll('.copy-btn').forEach(function (b) {
     b.addEventListener('click', function () {

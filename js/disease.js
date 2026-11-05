@@ -957,8 +957,8 @@
     if (g('afb').status === 'ok') parts.push(T('In brood samples, <strong>{afb}</strong> had American foulbrood and <strong>{efb}</strong> had European foulbrood.', { afb: fmt('afb', g('afb')), efb: fmt('efb', g('efb')) }));
     parts.push(T('Samples come from colonies that looked sick or weak, so these rates are higher than in the average colony.') + ' ' + T(IS_POOL ? 'Click any country to see its numbers.' : IS_US ? 'Click any region or state to see its numbers.' : V.key === 'CAN' ? 'Click any province to see its numbers.' : 'Click any area to see its numbers.'));
     $('dx-summary').innerHTML = parts.join(' ');
-    $('dx-note').textContent = T('{a} adult and {b} brood samples from {n} countries, {y0} to {y1}.', { a: NUM(TOTAL_A), b: NUM(TOTAL_B), n: nC, y0: FIRST, y1: SAMPLE_LAST }) +
-      (M.te.years.length ? ' ' + T(LAST_MONTH[LAST] < 12 ? 'AFB antibiotic tests through {m} {y}.' : 'AFB antibiotic tests through {y}.', { m: MONTHS[LAST_MONTH[LAST]], y: LAST }) : '');
+    $('dx-note').textContent = T(SAMPLE_LAST === LAST && LAST_MONTH[LAST] < 12 ? '{a} adult and {b} brood samples from {n} countries, {y0} through {m} {y1}.' : '{a} adult and {b} brood samples from {n} countries, {y0} to {y1}.', { a: NUM(TOTAL_A), b: NUM(TOTAL_B), n: nC, y0: FIRST, y1: SAMPLE_LAST, m: MONTHS[LAST_MONTH[LAST]] }) +
+      (LAST > SAMPLE_LAST && M.te.years.length ? ' ' + T(LAST_MONTH[LAST] < 12 ? 'AFB antibiotic tests through {m} {y}.' : 'AFB antibiotic tests through {y}.', { m: MONTHS[LAST_MONTH[LAST]], y: LAST }) : '');
   }
 
   if (st.cont && BYKEY[st.country] && !(BYKEY[st.country].pool && BYKEY[st.country].cont === st.cont) && BYKEY[st.country].cont !== st.cont) st.country = 'CONT:' + st.cont;

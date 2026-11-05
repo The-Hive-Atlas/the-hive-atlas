@@ -1,14 +1,16 @@
-"""Build the Disease Surveillance data from the published BRL workbook (adult and brood sheets,
-every country), keeping the newer U.S. years from the current site data.
+"""Build the Disease Surveillance data from the BRL workbook (adult and brood sheets, every country).
 
 Usage:
-    python3 pipeline/build_disease_world.py BRL_1984_2015_PUBLISHED_cleaned.xlsx data/disease.js \
+    python3 pipeline/build_disease_world.py BRL_1984_2026_PUBLISHED_cleaned.xlsx data/disease.js \
         data/bddl-state-year.csv NE_50M_COUNTRIES.geojson NE_10M_ADMIN1.geojson data/disease-shapes.js
 
-    BRL_..._cleaned.xlsx         the published workbook (sheets ADULTS and BROOD, plus ANTIBIOTICS for AFB
+    When no country is new, put a dash in place of both geojson files. The outlines in data/disease-shapes.js
+    and the reference points already in data/disease.js are then kept.
+
+    BRL_..._cleaned.xlsx         the workbook (sheets ADULTS and BROOD, plus ANTIBIOTICS for AFB
                                  tetracycline and tylosin resistance, TE_mm and TY_mm zone sizes; columns Month, Year,
-                                 State, Country, Continent, Varroa_Prevalence, Nosema_Prevalence,
-                                 Tracheal_Mite_Prevalence, AFB, EFB). It covers 1984 to 2015.
+                                 State, Country, Continent, Varroa_Prevalence, Varroa_Infestation, Nosema_Prevalence,
+                                 Nosema_Infection, Tracheal_Mite_Prevalence, AFB, EFB). It covers 1984 to 2026.
     data/disease.js              the output. With --keep-newer at the end of the command, its current U.S.
                                  rows for years after the workbook's last year are kept (they come from
                                  the lab spreadsheets via build_disease.py). Without it (the default, as
@@ -28,7 +30,8 @@ D.states lists the U.S. codes only, as before. D.countries lists every country w
 What counts as tested (workbook):
   Varroa, Nosema, tracheal mite, AFB, EFB: 0 = negative, 1 or more = positive (a handful of cells hold
   2 to 4; with one sample per row they are read as positive). Varroa before VARROA_FROM is treated as
-  not screened. The workbook has no mite or spore counts (all "NA").
+  not screened. Varroa_Infestation (mites per 100 bees) and Nosema_Infection (million spores per bee) are
+  counted where they hold a number, which is 2015 on; "NA" means not counted.
 """
 import csv
 import json
@@ -66,6 +69,8 @@ COLS = ['area', 'year', 'month', 'samples', 'vd_n', 'vd_pos', 'nos_n', 'nos_pos'
         'brood_n', 'afb_pos', 'efb_pos', 'vil_sumsq', 'ms_sumsq',
         'te_n', 'te_sum', 'te_sumsq', 'ty_n', 'ty_sum', 'ty_sumsq']
 N = len(COLS) - 3  # counts per area, year and month
+# Label points for countries added without rerunning Natural Earth (longitude, latitude)
+LABEL_POINT = {'ARE': (54.3, 23.9)}
 
 
 def resistance(mm):
@@ -93,8 +98,9 @@ def read_sheet(ws):
 
 def main(src, dst_js, dst_csv, ne0, ne1, dst_shapes, *flags):
     keep_newer = '--keep-newer' in flags
+    reuse_geo = ne0 == '-' or ne1 == '-'
     old = {'rows': [], 'states': []}
-    if keep_newer:
+    if keep_newer or reuse_geo:
         old_text = Path(dst_js).read_text(encoding='utf-8')
         old = json.loads(old_text[old_text.index('{'):old_text.rindex('}') + 1])
 
@@ -127,6 +133,10 @@ def main(src, dst_js, dst_csv, ne0, ne1, dst_shapes, *flags):
         if not k:
             continue
         c = cube[k]; c[0] += 1
+        for name, ni, si, qi in (('Varroa_Infestation', 7, 8, 14), ('Nosema_Infection', 9, 10, 15)):
+            v = r[name]
+            if isinstance(v, (int, float)) and not isinstance(v, bool):
+                c[ni] += 1; c[si] += v; c[qi] += v * v
         for name, ni in (('Varroa_Prevalence', 1), ('Nosema_Prevalence', 3), ('Tracheal_Mite_Prevalence', 5)):
             v = r[name]
             if isinstance(v, (int, float)) and v > 1:
@@ -167,7 +177,7 @@ def main(src, dst_js, dst_csv, ne0, ne1, dst_shapes, *flags):
 
     # Keep the newer U.S. years from the current site data
     kept = 0
-    for r in old['rows']:
+    for r in old['rows'] if keep_newer else []:
         if r[1] <= last_book:
             continue
         s = old['states'][r[0]]
@@ -183,14 +193,22 @@ def main(src, dst_js, dst_csv, ne0, ne1, dst_shapes, *flags):
             print('note: %s has rows in more than one continent: %s (using %s)' % (iso, dict(cc), conts[iso]))
 
     # Natural Earth: outlines and reference points
-    ne = json.loads(Path(ne0).read_text(encoding='utf-8'))
-    feat = {f['properties']['ADM0_A3']: f for f in ne['features']}
-    adm1 = json.loads(Path(ne1).read_text(encoding='utf-8'))
-    prov_pt = {}
-    for f in adm1['features']:
-        p = f['properties']
-        if p.get('adm0_a3') == 'CAN' and p.get('postal'):
-            prov_pt[p['postal']] = (round(p['longitude'], 2), round(p['latitude'], 2))
+    feat, prov_pt = {}, {}
+    if not reuse_geo:
+        ne = json.loads(Path(ne0).read_text(encoding='utf-8'))
+        feat = {f['properties']['ADM0_A3']: f for f in ne['features']}
+        adm1 = json.loads(Path(ne1).read_text(encoding='utf-8'))
+        for f in adm1['features']:
+            p = f['properties']
+            if p.get('adm0_a3') == 'CAN' and p.get('postal'):
+                prov_pt[p['postal']] = (round(p['longitude'], 2), round(p['latitude'], 2))
+    old_ctry = {c['key']: c for c in old.get('countries', [])}
+    old_pts = old.get('points', {})
+    for iso in {k[0].split('.')[0] for k in cube if '.' in k[0]}:
+        if reuse_geo and iso not in old_ctry:
+            if iso not in LABEL_POINT:
+                raise SystemExit('%s is a new country: run again with the Natural Earth files' % iso)
+            old_ctry[iso] = {'lon': LABEL_POINT[iso][0], 'lat': LABEL_POINT[iso][1]}
 
     us_states = sorted({k[0] for k in cube if '.' not in k[0]}, key=lambda s: NAMES[s])
     isos = sorted({k[0].split('.')[0] for k in cube if '.' in k[0]}, key=lambda i: [v[1] for v in COUNTRY.values() if v[0] == i][0])
@@ -206,13 +224,18 @@ def main(src, dst_js, dst_csv, ne0, ne1, dst_shapes, *flags):
                 area_names[a] = names_by_iso[iso] if len(ids) == 1 else 'Province not recorded'
                 if len(ids) == 1 and iso in feat:
                     p = feat[iso]['properties']; area_pts[a] = [round(p['LABEL_X'], 2), round(p['LABEL_Y'], 2)]
+                elif len(ids) == 1 and reuse_geo:
+                    area_pts[a] = [old_ctry[iso]['lon'], old_ctry[iso]['lat']]
             else:
                 area_names[a] = PROVINCES[sub]
                 if sub in prov_pt:
                     area_pts[a] = list(prov_pt[sub])
+                elif a in old_pts:
+                    area_pts[a] = old_pts[a]
         lp = feat[iso]['properties'] if iso in feat else None
         countries.append({'key': iso, 'name': names_by_iso[iso], 'cont': conts[iso], 'areas': ids,
-                          'lat': round(lp['LABEL_Y'], 2) if lp else None, 'lon': round(lp['LABEL_X'], 2) if lp else None})
+                          'lat': round(lp['LABEL_Y'], 2) if lp else old_ctry.get(iso, {}).get('lat'),
+                          'lon': round(lp['LABEL_X'], 2) if lp else old_ctry.get(iso, {}).get('lon')})
     areas = us_states + [a for c in countries[1:] for a in c['areas']]
     aidx = {a: i for i, a in enumerate(areas)}
     out = []
@@ -230,13 +253,16 @@ def main(src, dst_js, dst_csv, ne0, ne1, dst_shapes, *flags):
         'cols': COLS, 'rows': out,
     }
     with open(dst_js, 'w', encoding='utf-8') as f:
-        f.write('/* BRL/BDDL adult and brood honey bee samples, counted by area, year and month, %d to %d, from the published '
+        f.write('/* BRL/BDDL adult and brood honey bee samples, counted by area, year and month, %d to %d, from the '
                 'workbook (every country)%s. Generated by pipeline/build_disease_world.py. */\n' % (years[0], last_book, '; later U.S. years from the lab spreadsheets' if kept else ''))
         f.write('window.HIVE_DISEASE = ')
         json.dump(data, f, separators=(',', ':'), ensure_ascii=False)
         f.write(';\n')
 
     # Outlines: sampled countries in more detail, other land coarser
+    if reuse_geo:
+        dst_shapes = None
+
     def rings_of(geom, tol, min_area):
         polys = [geom['coordinates']] if geom['type'] == 'Polygon' else geom['coordinates']
         res = []
@@ -261,12 +287,13 @@ def main(src, dst_js, dst_csv, ne0, ne1, dst_shapes, *flags):
         else:
             land.extend(rings_of(f['geometry'], 0.15, 0.3))
     missing = [c['name'] for c in countries if not shapes.get(c['key'])]
-    if missing:
+    if missing and dst_shapes:
         print('note: no outline for', ', '.join(missing))
-    Path(dst_shapes).write_text(
-        '/* The Hive Atlas: country outlines for the Disease Surveillance map. Natural Earth 1:50m (public domain), simplified. '
-        'Generated by pipeline/build_disease_world.py. Rings of [longitude, latitude]. */\n'
-        'window.HIVE_DISEASE_SHAPES = ' + json.dumps({'land': land, 'countries': shapes}, separators=(',', ':')) + ';\n', encoding='utf-8')
+    if dst_shapes:
+        Path(dst_shapes).write_text(
+            '/* The Hive Atlas: country outlines for the Disease Surveillance map. Natural Earth 1:50m (public domain), simplified. '
+            'Generated by pipeline/build_disease_world.py. Rings of [longitude, latitude]. */\n'
+            'window.HIVE_DISEASE_SHAPES = ' + json.dumps({'land': land, 'countries': shapes}, separators=(',', ':')) + ';\n', encoding='utf-8')
 
     # Download: area by year
     sy = defaultdict(lambda: [0] * N)
@@ -298,7 +325,7 @@ def main(src, dst_js, dst_csv, ne0, ne1, dst_shapes, *flags):
     print('countries: %d, continents: %s' % (len(countries), data['continents']))
     print('values above 1 read as positive:', dict(odd))
     print('skipped:', dict(skipped))
-    print('wrote', dst_js, Path(dst_js).stat().st_size // 1024, 'KB;', dst_shapes, Path(dst_shapes).stat().st_size // 1024, 'KB')
+    print('wrote', dst_js, Path(dst_js).stat().st_size // 1024, 'KB')
 
 
 if __name__ == '__main__':

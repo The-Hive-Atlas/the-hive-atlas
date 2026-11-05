@@ -96,6 +96,25 @@ nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap
 nav a { text-decoration: none; font-size: 0.92rem; color: var(--muted); font-weight: 500; }
 nav a:hover { color: var(--ink); }
 .menu-btn { display: none; }
+/* Drop-down menu in the header */
+.nav-drop { position: relative; }
+.nav-drop-btn { display: inline-flex; align-items: center; gap: 5px; background: none; border: 0; padding: 0; cursor: pointer; font: 500 0.92rem var(--font-body); color: var(--muted); }
+.nav-drop-btn:hover, .nav-drop.open .nav-drop-btn { color: var(--ink); }
+.nav-drop-btn svg { transition: transform 0.15s; }
+.nav-drop.open .nav-drop-btn svg { transform: rotate(180deg); }
+.nav-drop-btn[data-current] { color: var(--ink); box-shadow: inset 0 -2px 0 var(--honey); }
+nav ul.nav-sub { display: none; flex-direction: column; flex-wrap: nowrap; gap: 0; }
+.nav-drop.open .nav-sub { display: flex; }
+@media (min-width: 1041px) {
+  nav ul.nav-sub { position: absolute; top: 100%; inset-inline-start: -14px; z-index: 6; margin-top: 8px; width: max-content; max-width: 420px; padding: 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12); }
+  nav ul.nav-sub::before { content: ""; position: absolute; inset: -9px 0 auto; height: 9px; }
+  nav ul.nav-sub a { display: block; padding: 8px 10px; border-radius: 5px; }
+  nav ul.nav-sub a:hover { background: var(--bg); }
+  nav ul.nav-sub a[aria-current="page"] { box-shadow: none; background: var(--bg); }
+}
+@media (min-width: 1041px) and (hover: hover) {
+  .nav-drop:hover .nav-sub { display: flex; }
+}
 
 @media (max-width: 1040px) {
   .menu-btn {
@@ -107,6 +126,9 @@ nav a:hover { color: var(--ink); }
   nav[hidden] { display: none !important; }
   nav ul { flex-direction: column; gap: 0; padding: 8px max(16px, env(safe-area-inset-right, 0px)) 12px max(16px, env(safe-area-inset-left, 0px)); }
   nav a { display: block; padding: 10px 0; font-size: 1rem; }
+  .nav-drop-btn { width: 100%; justify-content: space-between; padding: 10px 0; font-size: 1rem; }
+  .nav-drop-btn[data-current] { box-shadow: none; color: var(--honey-strong); }
+  nav ul.nav-sub { padding: 0 0 4px; padding-inline-start: 14px; border-inline-start: 2px solid var(--line); }
 }
 @media (min-width: 1041px) { nav[hidden] { display: block !important; } }
 
@@ -809,7 +831,7 @@ svg.lx-map, svg.hexmap, .lx-map, .lx-trend svg, .mx-chart { direction: ltr; }
 @media (max-width: 480px) { .visitors-grid { grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 6px 12px; } }
 
 </style>
-<script src="js/i18n.js?v=20261104j"></script>
+<script src="js/i18n.js?v=20261105a"></script>
 </head>
 <body>
 <header class="site-header">
@@ -826,7 +848,7 @@ svg.lx-map, svg.hexmap, .lx-map, .lx-trend svg, .mx-chart { direction: ltr; }
     </a>
     <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="site-nav">Menu</button>
     <nav id="site-nav" aria-label="Main">
-      <ul><li><a href="https://thehiveatlas.com/disease.html">Disease</a></li><li><a href="https://thehiveatlas.com/genetics.html" aria-current="page">Genetics</a></li><li><a href="https://thehiveatlas.com/losses.html">Colony Losses</a></li><li><a href="https://thehiveatlas.com/monitoring.html">Monitoring</a></li><li><a href="https://thehiveatlas.com/methods.html">Methods</a></li><li><a href="https://thehiveatlas.com/contribute.html">Contribute</a></li><li><a href="https://thehiveatlas.com/publications.html">Publications</a></li><li><a href="https://thehiveatlas.com/about.html">About</a></li></ul>
+      <ul><li class="nav-drop"><button type="button" class="nav-drop-btn" aria-expanded="false" aria-controls="nav-disease"><span>Disease</span><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button><ul class="nav-sub" id="nav-disease"><li><a href="https://thehiveatlas.com/disease.html">USDA-ARS Bee Disease Diagnostic Database</a></li><li><a href="https://thehiveatlas.com/disease-survey.html">The National Honey bee Survey Database</a></li></ul></li><li><a href="https://thehiveatlas.com/genetics.html" aria-current="page">Genetics</a></li><li><a href="https://thehiveatlas.com/losses.html">Colony Losses</a></li><li><a href="https://thehiveatlas.com/monitoring.html">Monitoring</a></li><li><a href="https://thehiveatlas.com/methods.html">Methods</a></li><li><a href="https://thehiveatlas.com/contribute.html">Contribute</a></li><li><a href="https://thehiveatlas.com/publications.html">Publications</a></li><li><a href="https://thehiveatlas.com/about.html">About</a></li></ul>
     </nav>
   </div>
 </header>
@@ -1019,6 +1041,22 @@ svg.lx-map, svg.hexmap, .lx-map, .lx-trend svg, .mx-chart { direction: ltr; }
     if (window.matchMedia('(max-width: 1040px)').matches) setMenu(false);
     btn.addEventListener('click', function () { setMenu(nav.hidden); });
   }
+
+  // Drop-down menus in the site header: opened by click or keyboard, closed by Escape or a click elsewhere
+  var drops = document.querySelectorAll('.nav-drop');
+  var setDrop = function (d, open) { d.classList.toggle('open', open); d.querySelector('.nav-drop-btn').setAttribute('aria-expanded', String(open)); };
+  drops.forEach(function (d) {
+    d.querySelector('.nav-drop-btn').addEventListener('click', function () { setDrop(d, !d.classList.contains('open')); });
+  });
+  document.addEventListener('click', function (e) {
+    drops.forEach(function (d) { if (!d.contains(e.target)) setDrop(d, false); });
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    drops.forEach(function (d) {
+      if (d.classList.contains('open')) { setDrop(d, false); d.querySelector('.nav-drop-btn').focus(); }
+    });
+  });
 
   // Copy buttons: <button class="copy-btn" data-copy="text">
   document.querySelectorAll('.copy-btn').forEach(function (b) {
