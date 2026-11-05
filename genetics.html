@@ -85,6 +85,13 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .brand svg { flex: none; }
 .brand-name { font-family: var(--font-display); font-weight: 600; font-size: 1.3rem; letter-spacing: 0.01em; }
 .brand-sub { display: block; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; line-height: 1.2; }
+/* keep the tagline on one line; the logo block doesn't shrink */
+.brand { flex: none; }
+.brand-sub { white-space: nowrap; }
+@media (max-width: 600px) { .brand-sub { font-size: 0.6rem; letter-spacing: 0.02em; } }
+@media (max-width: 380px) { .brand { flex: 0 1 auto; } .brand-sub { white-space: normal; } }
+/* longer French and Spanish taglines may wrap on phones */
+@media (max-width: 600px) { :root[lang="fr"] .brand, :root[lang="es"] .brand { flex: 0 1 auto; } :root[lang="fr"] .brand-sub, :root[lang="es"] .brand-sub { white-space: normal; } }
 nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 20px; }
 nav a { text-decoration: none; font-size: 0.92rem; color: var(--muted); font-weight: 500; }
 nav a:hover { color: var(--ink); }
