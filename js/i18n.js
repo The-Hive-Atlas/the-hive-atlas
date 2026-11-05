@@ -8,7 +8,7 @@
 (function () {
   var LANGS = [['en', 'English'], ['fr', 'Français'], ['es', 'Español'], ['ar', 'العربية']];
   var CODES = LANGS.map(function (x) { return x[0]; });
-  var VERSION = '20261104e';
+  var VERSION = '20261104f';
   var L = 'en';
   // A choice made with the menu wins (one-time, survives the reload), then ?lang=, then the last choice on this device
   var picked = null;
