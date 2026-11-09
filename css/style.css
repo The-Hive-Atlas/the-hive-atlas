@@ -792,3 +792,8 @@ svg.lx-map, svg.hexmap, .lx-map, .lx-trend svg, .mx-chart { direction: ltr; }
 .visitors-foot { margin-top: 12px; }
 .visitors-foot a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 @media (max-width: 480px) { .visitors-grid { grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 6px 12px; } }
+
+/* Honey Production: download buttons under the table */
+.lx-export { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.lx-export .lx-lab { margin-inline-end: 4px; }
+.lx-export .btn { cursor: pointer; font-family: var(--font-body); padding: 8px 14px; font-size: 0.88rem; }

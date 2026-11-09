@@ -1,18 +1,17 @@
 # The Hive Atlas
 
-**Global honey bee health data, open and mapped.** Live at [thehiveatlas.com](https://thehiveatlas.com).
+**Open, mapped data on U.S. honey bee health.** Live at [thehiveatlas.com](https://thehiveatlas.com).
 
-The Hive Atlas brings public data on honey bee colony losses, disease, and colony monitoring into one place, on interactive maps of the world and the United States. Click a country or state to see its numbers, compare it with the wider view, and see how things have changed over time.
+The Hive Atlas brings public data on honey bee colony losses, disease, and colony monitoring into one place, on interactive maps of the United States. Click a state to see its numbers, compare it with the country, and see how things have changed over time.
 
 ## What's on the site
 
 | Page | What it shows | Source |
 |---|---|---|
 | **Colony Losses** | Quarterly colony losses, renovations, and self-reported stressors by state, 2015 to now | USDA National Agricultural Statistics Service (NASS), *Honey Bee Colonies* reports |
-| **Disease Surveillance** | Varroa, Nosema, tracheal mite, American and European foulbrood, and AFB resistance to tetracycline and tylosin from about 85,000 adult bee and brood samples from 38 countries, by continent, country, state or province, climate region, year, and month, 1984 to 2026 (mite and spore counts 2015 on; antibiotic resistance tests 1996 on). In the menu: Disease, USDA-ARS Bee Disease Diagnostic Database | USDA ARS Bee Disease Diagnostic Laboratory, Beltsville, Maryland |
-| **National Honey bee Survey** | Empty for now (`disease-survey.html`) | To be added |
+| **Disease Surveillance** | Varroa, Nosema, tracheal mite, and American and European foulbrood results from adult bee and brood samples, by state, climate region, year, and month, 1984 to now | USDA ARS Bee Disease Diagnostic Laboratory, Beltsville, Maryland |
 | **Colony Monitoring** | Repeated colony inspections by climate region, plus a personal report for your own records | Currently **simulated demonstration data** |
-| **Genetic Diversity** | Mitochondrial lineages (A, M, C), haplotypes, and haplotype diversity of honey bee colonies by country and area, from 8,642 colonies in 25 countries (1,111 in the United States) | Genetic_Database2026 (mitochondrial DNA genotyping, worldwide) |
+| **Genetic Diversity** | Mitochondrial lineages of U.S. honey bee populations | Coming soon |
 
 Each map page has an **About this map** tab with definitions, methods, and limits. Methods for the whole site are on the [Data & Methods](https://thehiveatlas.com/methods.html) page.
 
@@ -24,7 +23,7 @@ Each map page has an **About this map** tab with definitions, methods, and limit
 
 ## Citing The Hive Atlas
 
-> The Hive Atlas (2026). *Open, mapped data on honey bee health worldwide.* https://thehiveatlas.com
+> The Hive Atlas (2026). *Open, mapped data on U.S. honey bee health.* https://thehiveatlas.com
 
 Please also cite the original sources:
 
@@ -52,33 +51,7 @@ python3 pipeline/import_nass_release.py UNZIPPED_RELEASE_FOLDER data/nass-colony
 python3 pipeline/build_losses.py data/nass-colony-losses.csv data/colony-losses.js
 ```
 
-To update the genetic diversity data from a new version of the genetic database spreadsheet (keep the spreadsheet itself out of this repository, since it has one row per colony):
-
-```
-python3 pipeline/build_genetics.py Genetic_Database2026.xlsx data/genetics.js data/genetics-state-year.csv
-python3 pipeline/build_country_shapes.py ne_10m_admin_0_countries.geojson data/genetics.js data/country-shapes.js
-python3 pipeline/build_world_shapes.py ne_50m_admin_0_countries.geojson data/genetics.js data/world-shapes.js
-```
-
-The second and third commands rebuild the country outlines and the world map used by the "Worldwide" choice in the Country menu (only needed when a country is added); `ne_10m_admin_0_countries.geojson` and `ne_50m_admin_0_countries.geojson` are in the `geojson` folder of https://github.com/nvkelso/natural-earth-vector.
-
-The script reads the spreadsheet's `All populations` sheet. It publishes counts by country, area (U.S. state, or the region named in the spreadsheet), and year only; rows with no Country are left out. A new country must be added to the `COUNTRIES` list in the script (display name and ISO numeric code, used to draw its outline). The genetics page draws the United States with state shapes and other countries as a Natural Earth outline (`data/country-shapes.js`, stored in the site so nothing loads from outside) with one dot per area. Haplotype diversity is calculated on the page from the haplotype counts. All years are shown pooled.
-
-To rebuild the disease data from the workbook (sheets `ADULTS`, `BROOD`, and `ANTIBIOTICS`, every country, 1984 to 2026; keep the workbook out of this repository):
-
-```
-python3 pipeline/build_disease_world.py BRL_1984_2026_PUBLISHED_cleaned.xlsx data/disease.js data/bddl-state-year.csv ne_50m_admin_0_countries.geojson ne_10m_admin_1_states_provinces.geojson data/disease-shapes.js
-```
-
-The two Natural Earth files are in the `geojson` folder of https://github.com/nvkelso/natural-earth-vector. If no country is new, put `-` in place of each of them to keep the current outlines. A new country in the workbook must be added to the `COUNTRY` list in the script. Then rebuild the references listed under the map (from the workbook's Reference and DOI columns):
-
-```
-python3 pipeline/build_disease_refs.py BRL_1984_2026_PUBLISHED_cleaned.xlsx data/disease.js data/disease-refs.js
-```
-
-The Disease page has Continent and Country menus like the Genetics page: the United States is drawn with state shapes, another country as its outline with one dot per province or area, and a continent or the whole world with each country colored.
-
-The older pipeline below builds U.S. data for 1984 on from the lab spreadsheets (run the command above with `--keep-newer` afterwards to add the other countries back):
+To update the disease data from new laboratory spreadsheets (keep the spreadsheets themselves out of this repository):
 
 ```
 python3 pipeline/clean_bddl.py Adult_BDDL.xlsx Adult_BDDL_cleaned.xlsx
@@ -88,7 +61,7 @@ python3 pipeline/build_disease.py Adult_BDDL_cleaned.xlsx data/disease.js data/b
 
 ## Contributing data
 
-Researchers, apiary programs, and beekeepers anywhere in the world can share data with full credit. See the [Contribute](https://thehiveatlas.com/contribute.html) page.
+Researchers, state apiary programs, and beekeepers can share data with full credit. See the [Contribute](https://thehiveatlas.com/contribute.html) page.
 
 ## Contact
 

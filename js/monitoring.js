@@ -6,27 +6,18 @@
   'use strict';
   var D = window.HIVE_MONITOR, SH = window.HIVE_SHAPES, HEX = window.HIVE_HEX_LAYOUT;
   if (!D || !SH || !HEX) return;
-  // Language helpers (js/i18n.js); English fallbacks if it is missing
-  var I = window.I18N || { lang: 'en', T: function (s, v) { return v ? s.replace(/\{(\w+)\}/g, function (m, k) { return v[k] != null ? v[k] : m; }) : s; },
-    N: function (x, d) { d = d || 0; return Number(x).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }); },
-    PCT: function (x, d) { return Number(x).toFixed(d || 0) + '%'; }, NM: function (s) { return s; }, ISO: function (s) { return s; }, lower: function (s) { return s.toLowerCase(); }, sep: ', ' };
-  var T = I.T, NUM = I.N, PCT = I.PCT, NM = I.NM, ISO = I.ISO, SEP = I.sep;
   var NS = 'http://www.w3.org/2000/svg';
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
 
   /* ---------- Reference data ---------- */
   var NAMES = { AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California', CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', DC: 'District of Columbia', FL: 'Florida', GA: 'Georgia', HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana', IA: 'Iowa', KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine', MD: 'Maryland', MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota', MS: 'Mississippi', MO: 'Missouri', MT: 'Montana', NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey', NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio', OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina', SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont', VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming' };
-  var NAME_OF = {}; for (var nk in NAMES) NAME_OF[nk] = NM(NAMES[nk]); // display names (NAMES stays English for matching uploads)
-  Object.keys(D.regions).forEach(function (k) { D.regions[k].name = NM(D.regions[k].name); });
   var REGION_OF = {};
   Object.keys(D.regions).forEach(function (k) { D.regions[k].states.forEach(function (s) { REGION_OF[s] = k; }); });
   var REGION_KEYS = Object.keys(D.regions);
   var TYPES = ['Hobbyist', 'Sideline', 'Commercial'];
-  var TYPE_NAME = { Hobbyist: T('Hobbyist'), Sideline: T('Sideline'), Commercial: T('Commercial') };
-  var TYPE_OPS = { Hobbyist: T('hobbyist operations'), Sideline: T('sideline operations'), Commercial: T('commercial operations') };
-  var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map(function (m) { return T(m); });
-  var MONTHS_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map(function (m) { return T(m); });
+  var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var MONTHS_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   var MIN_N = 20;        // fewest inspections for a regional value
   var MIN_PEERS = 5;     // fewest operations for a peer comparison
 
@@ -51,40 +42,40 @@
   function share(test) { return function (r) { var t = test(r); return t === null ? null : t ? 1 : 0; }; }
   var BROOD_DISEASE = ['afb', 'efb', 'chalkbrood', 'sacbrood'];
   var METRICS = [
-    { id: 'varroa', label: T('Varroa mites per 100 bees'), short: T('Mites per 100 bees'), unit: 'per100', better: 'lower', group: 'Varroa', val: function (r) { return r.v == null ? null : r.v; } },
-    { id: 'over3', label: T('Washes at or above 3 mites per 100 bees'), short: T('Washes ≥ 3 mites'), unit: 'pct', better: 'lower', group: 'Varroa', val: share(function (r) { return r.v == null ? null : r.v >= 3; }) },
-    { id: 'fob', label: T('Frames of bees'), short: T('Frames of bees'), unit: 'frames', better: 'higher', group: 'Colony strength', val: function (r) { return r.fob == null ? null : r.fob; } },
-    { id: 'brood', label: T('Frames of brood'), short: T('Frames of brood'), unit: 'frames', better: 'higher', group: 'Colony strength', val: function (r) { return r.brood == null ? null : r.brood; } },
-    { id: 'pattern', label: T('Solid brood pattern (score 4 or 5)'), short: T('Solid brood pattern'), unit: 'pct', better: 'higher', group: 'Colony strength', val: share(function (r) { return r.pat == null ? null : r.pat >= 4; }) },
-    { id: 'queenright', label: T('Queenright colonies'), short: T('Queenright'), unit: 'pct', better: 'higher', group: 'Queens', val: share(function (r) { return r.queen ? (r.queen === 'seen' || r.queen === 'eggs_only' || r.queen === 'virgin') : null; }) },
-    { id: 'disease', label: T('Signs of any brood disease'), short: T('Brood disease signs'), unit: 'pct', better: 'lower', group: 'Disease signs', val: share(function (r) { return BROOD_DISEASE.some(function (f) { return r[f]; }); }) },
-    { id: 'chalkbrood', label: T('Signs of chalkbrood'), short: T('Chalkbrood'), unit: 'pct', better: 'lower', group: 'Disease signs', val: share(function (r) { return r.chalkbrood; }) },
-    { id: 'efb', label: T('Signs of European foulbrood'), short: T('EFB signs'), unit: 'pct', better: 'lower', group: 'Disease signs', val: share(function (r) { return r.efb; }) },
-    { id: 'afb', label: T('Signs of American foulbrood'), short: T('AFB signs'), unit: 'pct', better: 'lower', group: 'Disease signs', val: share(function (r) { return r.afb; }) },
-    { id: 'deformed_wings', label: T('Bees with deformed wings seen'), short: T('Deformed wings'), unit: 'pct', better: 'lower', group: 'Disease signs', val: share(function (r) { return r.deformed_wings; }) },
-    { id: 'small_hive_beetle', label: T('Small hive beetles seen'), short: T('Small hive beetle'), unit: 'pct', better: 'lower', group: 'Disease signs', val: share(function (r) { return r.small_hive_beetle; }) },
-    { id: 'treated', label: T('Inspections with a Varroa treatment'), short: T('Treated'), unit: 'pct', better: null, group: 'Management', val: share(function (r) { return r.treat ? r.treat !== 'none' : null; }) },
-    { id: 'fed', label: T('Inspections with feeding'), short: T('Fed'), unit: 'pct', better: null, group: 'Management', val: share(function (r) { return r.fed ? r.fed !== 'none' : null; }) },
-    { id: 'winter', label: T('Winter colony loss'), short: T('Winter loss'), unit: 'pct', better: 'lower', group: 'Survival', winter: true }
+    { id: 'varroa', label: 'Varroa mites per 100 bees', short: 'Mites per 100 bees', unit: 'per100', better: 'lower', group: 'Varroa', val: function (r) { return r.v == null ? null : r.v; } },
+    { id: 'over3', label: 'Washes at or above 3 mites per 100 bees', short: 'Washes ≥ 3 mites', unit: 'pct', better: 'lower', group: 'Varroa', val: share(function (r) { return r.v == null ? null : r.v >= 3; }) },
+    { id: 'fob', label: 'Frames of bees', short: 'Frames of bees', unit: 'frames', better: 'higher', group: 'Colony strength', val: function (r) { return r.fob == null ? null : r.fob; } },
+    { id: 'brood', label: 'Frames of brood', short: 'Frames of brood', unit: 'frames', better: 'higher', group: 'Colony strength', val: function (r) { return r.brood == null ? null : r.brood; } },
+    { id: 'pattern', label: 'Solid brood pattern (score 4 or 5)', short: 'Solid brood pattern', unit: 'pct', better: 'higher', group: 'Colony strength', val: share(function (r) { return r.pat == null ? null : r.pat >= 4; }) },
+    { id: 'queenright', label: 'Queenright colonies', short: 'Queenright', unit: 'pct', better: 'higher', group: 'Queens', val: share(function (r) { return r.queen ? (r.queen === 'seen' || r.queen === 'eggs_only' || r.queen === 'virgin') : null; }) },
+    { id: 'disease', label: 'Signs of any brood disease', short: 'Brood disease signs', unit: 'pct', better: 'lower', group: 'Disease signs', val: share(function (r) { return BROOD_DISEASE.some(function (f) { return r[f]; }); }) },
+    { id: 'chalkbrood', label: 'Signs of chalkbrood', short: 'Chalkbrood', unit: 'pct', better: 'lower', group: 'Disease signs', val: share(function (r) { return r.chalkbrood; }) },
+    { id: 'efb', label: 'Signs of European foulbrood', short: 'EFB signs', unit: 'pct', better: 'lower', group: 'Disease signs', val: share(function (r) { return r.efb; }) },
+    { id: 'afb', label: 'Signs of American foulbrood', short: 'AFB signs', unit: 'pct', better: 'lower', group: 'Disease signs', val: share(function (r) { return r.afb; }) },
+    { id: 'deformed_wings', label: 'Bees with deformed wings seen', short: 'Deformed wings', unit: 'pct', better: 'lower', group: 'Disease signs', val: share(function (r) { return r.deformed_wings; }) },
+    { id: 'small_hive_beetle', label: 'Small hive beetles seen', short: 'Small hive beetle', unit: 'pct', better: 'lower', group: 'Disease signs', val: share(function (r) { return r.small_hive_beetle; }) },
+    { id: 'treated', label: 'Inspections with a Varroa treatment', short: 'Treated', unit: 'pct', better: null, group: 'Management', val: share(function (r) { return r.treat ? r.treat !== 'none' : null; }) },
+    { id: 'fed', label: 'Inspections with feeding', short: 'Fed', unit: 'pct', better: null, group: 'Management', val: share(function (r) { return r.fed ? r.fed !== 'none' : null; }) },
+    { id: 'winter', label: 'Winter colony loss', short: 'Winter loss', unit: 'pct', better: 'lower', group: 'Survival', winter: true }
   ];
   var MET = {}; METRICS.forEach(function (m) { MET[m.id] = m; });
 
   var PERIODS = [
-    { id: 'all', label: T('Whole year'), months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] },
-    { id: 'spring', label: T('Spring (Mar–May)'), months: [3, 4, 5] },
-    { id: 'summer', label: T('Summer (Jun–Aug)'), months: [6, 7, 8] },
-    { id: 'fall', label: T('Fall (Sep–Nov)'), months: [9, 10, 11] },
-    { id: 'winter', label: T('Winter (Dec–Feb)'), months: [12, 1, 2] }
+    { id: 'all', label: 'Whole year', months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] },
+    { id: 'spring', label: 'Spring (Mar–May)', months: [3, 4, 5] },
+    { id: 'summer', label: 'Summer (Jun–Aug)', months: [6, 7, 8] },
+    { id: 'fall', label: 'Fall (Sep–Nov)', months: [9, 10, 11] },
+    { id: 'winter', label: 'Winter (Dec–Feb)', months: [12, 1, 2] }
   ].concat(MONTHS_LONG.map(function (n, i) { return { id: 'm' + (i + 1), label: n, months: [i + 1] }; }));
   var PER = {}; PERIODS.forEach(function (p) { PER[p.id] = p; });
 
   function fmt(mid, v) {
     if (v == null || isNaN(v)) return '–';
     var u = MET[mid].unit;
-    if (u === 'pct') { var p = v * 100; return p > 0 && p < 0.5 ? '<' + PCT(0.5, 1) : PCT(p, p < 10 && p % 1 ? 1 : 0); }
-    return NUM(v, 1);
+    if (u === 'pct') { var p = v * 100; return (p > 0 && p < 0.5 ? '<0.5' : p < 10 && p % 1 ? p.toFixed(1) : Math.round(p)) + '%'; }
+    return v.toFixed(1);
   }
-  function unitWord(mid) { var u = MET[mid].unit; return u === 'per100' ? T('mites per 100 bees') : u === 'frames' ? T('frames') : ''; }
+  function unitWord(mid) { var u = MET[mid].unit; return u === 'per100' ? 'mites per 100 bees' : u === 'frames' ? 'frames' : ''; }
 
   // Average a metric over records (alive inspections only)
   function agg(recs, mid) {
@@ -141,12 +132,12 @@
     var groups = {};
     METRICS.forEach(function (m) { if (!ids || ids.indexOf(m.id) >= 0) (groups[m.group] = groups[m.group] || []).push(m); });
     sel.innerHTML = Object.keys(groups).map(function (g) {
-      return '<optgroup label="' + T(g) + '">' + groups[g].map(function (m) { return '<option value="' + m.id + '">' + m.label + '</option>'; }).join('') + '</optgroup>';
+      return '<optgroup label="' + g + '">' + groups[g].map(function (m) { return '<option value="' + m.id + '">' + m.label + '</option>'; }).join('') + '</optgroup>';
     }).join('');
   }
   function periodOptions(sel) {
-    sel.innerHTML = '<optgroup label="' + T('Seasons') + '">' + PERIODS.slice(0, 5).map(function (p) { return '<option value="' + p.id + '">' + p.label + '</option>'; }).join('') +
-      '</optgroup><optgroup label="' + T('Months') + '">' + PERIODS.slice(5).map(function (p) { return '<option value="' + p.id + '">' + p.label + '</option>'; }).join('') + '</optgroup>';
+    sel.innerHTML = '<optgroup label="Seasons">' + PERIODS.slice(0, 5).map(function (p) { return '<option value="' + p.id + '">' + p.label + '</option>'; }).join('') +
+      '</optgroup><optgroup label="Months">' + PERIODS.slice(5).map(function (p) { return '<option value="' + p.id + '">' + p.label + '</option>'; }).join('') + '</optgroup>';
   }
 
   /* Month line chart. series: [{values: [12], cls, label}], band: {lo:[12], hi:[12]} */
@@ -157,17 +148,17 @@
     series.forEach(function (s) { s.values.forEach(function (v) { if (v != null) max = Math.max(max, v); }); });
     if (opts.band) opts.band.hi.forEach(function (v) { if (v != null) max = Math.max(max, v); });
     if (opts.threshold) max = Math.max(max, opts.threshold * 1.15);
-    if (!max) { box.innerHTML = '<p class="lx-small">' + T('No data for this selection.') + '</p>'; return; }
+    if (!max) { box.innerHTML = '<p class="lx-small">No data for this selection.</p>'; return; }
     var pct = MET[mid].unit === 'pct';
     var step = niceStep(max / 4), top = Math.ceil(max / step) * step;
     var x = function (i) { return ml + (i + 0.5) * (W - ml - mr) / 12; };
     var y = function (v) { return mt + (H - mt - mb) * (1 - v / top); };
-    var s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(opts.aria || T('Seasonal chart')) + '">'];
+    var s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(opts.aria || 'Seasonal chart') + '">'];
     for (var t = 0; t <= top + 1e-9; t += step) {
       s.push('<line class="grid" x1="' + ml + '" x2="' + (W - mr) + '" y1="' + y(t).toFixed(1) + '" y2="' + y(t).toFixed(1) + '"/>');
-      s.push('<text class="ytick" x="' + (ml - 6) + '" y="' + y(t).toFixed(1) + '">' + (pct ? PCT(Math.round(t * 100)) : NUM(Math.round(t * 10) / 10, (Math.round(t * 10) % 10) ? 1 : 0)) + '</text>');
+      s.push('<text class="ytick" x="' + (ml - 6) + '" y="' + y(t).toFixed(1) + '">' + (pct ? Math.round(t * 100) + '%' : (Math.round(t * 10) / 10)) + '</text>');
     }
-    MONTHS.forEach(function (mn, i) { s.push('<text class="xtick" x="' + x(i).toFixed(1) + '" y="' + (H - 8) + '">' + (I.lang === 'ar' ? (i % 3 === 0 ? mn : '') : mn[0] + (i % 3 === 0 ? mn.slice(1) : '')) + '</text>'); });
+    MONTHS.forEach(function (mn, i) { s.push('<text class="xtick" x="' + x(i).toFixed(1) + '" y="' + (H - 8) + '">' + mn[0] + (i % 3 === 0 ? mn.slice(1) : '') + '</text>'); });
     if (opts.band) {
       var segs = [], cur = [];
       for (var i = 0; i < 12; i++) {
@@ -234,9 +225,9 @@
     return (breakCache[ck] = out);
   }
   function bin(mid, v) { var b = breaks(mid), i = 0; while (i < b.length && v >= b[i]) i++; return i; }
-  function legendLabel(mid, v) { return MET[mid].unit === 'pct' ? PCT(Math.round(v * 100)) : NUM(v, 1); }
+  function legendLabel(mid, v) { return MET[mid].unit === 'pct' ? Math.round(v * 100) + '%' : v.toFixed(1); }
 
-  function regionName(k) { return k === 'US' ? T('All regions') : D.regions[k].name; }
+  function regionName(k) { return k === 'US' ? 'All regions' : D.regions[k].name; }
 
   function drawMap() {
     while (svg.firstChild) svg.removeChild(svg.firstChild);
@@ -265,7 +256,7 @@
       g.setAttribute('class', 'area' + (rs.sel === rk ? ' sel' : ''));
       g.setAttribute('data-code', code);
       g.setAttribute('tabindex', '0'); g.setAttribute('role', 'button');
-      g.setAttribute('aria-label', T('{s}, {r} region: {v}', { s: NAME_OF[code], r: regionName(rk), v: ok ? fmt(rs.metric, rv.v) : rv && rv.n ? T('too few inspections') : T('no monitoring data') }));
+      g.setAttribute('aria-label', NAMES[code] + ', ' + regionName(rk) + ' region: ' + (ok ? fmt(rs.metric, rv.v) : rv && rv.n ? 'too few inspections' : 'no monitoring data'));
       var shape = document.createElementNS(NS, hex ? 'polygon' : 'path');
       if (hex) { if (!geo[code]) return; shape.setAttribute('points', geo[code].poly); } else shape.setAttribute('d', SH.states[code]);
       shape.setAttribute('class', 'shape');
@@ -285,24 +276,24 @@
     });
     svg.querySelectorAll('.area.sel').forEach(function (n) { svg.appendChild(n); });
     var m = MET[rs.metric];
-    $('mx-maptitle').textContent = m.label + ' · ' + (m.winter ? T('Fall to spring') : PER[rs.period].label);
+    $('mx-maptitle').textContent = m.label + ' · ' + (m.winter ? 'Fall to spring' : PER[rs.period].label);
     var b = breaks(rs.metric), items = [];
     for (var i = 0; i <= b.length; i++) {
-      var lab = i === 0 ? T('Under {v}', { v: legendLabel(rs.metric, b[0]) }) : i === b.length ? T('{v} or more', { v: legendLabel(rs.metric, b[i - 1]) }) : ISO(legendLabel(rs.metric, b[i - 1]) + '–' + legendLabel(rs.metric, b[i]));
+      var lab = i === 0 ? 'Under ' + legendLabel(rs.metric, b[0]) : i === b.length ? legendLabel(rs.metric, b[i - 1]) + ' or more' : legendLabel(rs.metric, b[i - 1]) + '–' + legendLabel(rs.metric, b[i]);
       items.push('<span><i style="background:var(--c' + i + ')"></i>' + lab + '</span>');
     }
-    items.push('<span><i class="hatch"></i>' + T('Fewer than {k} inspections', { k: MIN_N }) + '</span>');
-    items.push('<span><i style="background:var(--nodata)"></i>' + T('No data yet') + '</span>');
+    items.push('<span><i class="hatch"></i>Fewer than ' + MIN_N + ' inspections</span>');
+    items.push('<span><i style="background:var(--nodata)"></i>No data yet</span>');
     $('mx-legend').innerHTML = items.join('');
     var notes = [];
-    if (m.group === 'Disease signs') notes.push(T('<strong>Field observations:</strong> signs noted during inspections, not lab-confirmed diagnoses.'));
-    if (m.winter) notes.push(T('<strong>Winter loss</strong> follows colonies alive in fall to their first inspection the next spring, so the season filter doesn’t apply.'));
+    if (m.group === 'Disease signs') notes.push('<strong>Field observations:</strong> signs noted during inspections, not lab-confirmed diagnoses.');
+    if (m.winter) notes.push('<strong>Winter loss</strong> follows colonies alive in fall to their first inspection the next spring, so the season filter doesn’t apply.');
     $('mx-callout').innerHTML = notes.join(' ');
     $('mx-callout').hidden = !notes.length;
   }
   function showTip(code, e, el) {
     var rk = REGION_OF[code], rv = regionValue(rk, rs.metric, rs);
-    tip.innerHTML = '<strong>' + esc(regionName(rk)) + '</strong><span>' + (rv.n >= MIN_N ? fmt(rs.metric, rv.v) + ' · ' + T(MET[rs.metric].winter ? '{n} colonies' : '{n} inspections', { n: NUM(rv.n) }) : rv.n ? T('Too few inspections') : T('No data yet')) + '</span>';
+    tip.innerHTML = '<strong>' + esc(regionName(rk)) + '</strong><span>' + (rv.n >= MIN_N ? fmt(rs.metric, rv.v) + ' · ' + rv.n.toLocaleString('en-US') + (MET[rs.metric].winter ? ' colonies' : ' inspections') : rv.n ? 'Too few inspections' : 'No data yet') + '</span>';
     tip.hidden = false;
     if (e) moveTip(e);
     else if (el) { var cr = mapCard.getBoundingClientRect(), er = el.getBoundingClientRect(); place(er.left + er.width / 2 - cr.left, er.top - cr.top); }
@@ -317,34 +308,34 @@
     var ops = {}, cols = {}; recs.forEach(function (r) { ops[r.op] = 1; cols[r.op + r.apiary + r.colony] = 1; });
     var nOps = Object.keys(ops).length, nCols = Object.keys(cols).length;
     var h = [];
-    h.push('<div class="lx-panel-head"><h2>' + esc(regionName(rk)) + '</h2>' + (rk !== 'US' ? '<button type="button" class="lx-link" id="mx-to-us">' + T('View all regions') + '</button>' : '') + '</div>');
-    h.push('<p class="lx-sub">' + (rk === 'US' ? T('All states with monitoring data') : D.regions[rk].states.map(function (s) { return s; }).join(SEP)) + '</p>');
-    h.push('<p class="lx-sub" style="margin-top:-8px">' + (m.winter ? T('Fall to spring') : PER[rs.period].label) + ' · ' + (rs.year === 'all' ? T('All years') : rs.year) + ' · ' + (rs.type === 'all' ? T('All operation types') : TYPE_OPS[rs.type].charAt(0).toUpperCase() + TYPE_OPS[rs.type].slice(1)) + '</p>');
+    h.push('<div class="lx-panel-head"><h2>' + esc(regionName(rk)) + '</h2>' + (rk !== 'US' ? '<button type="button" class="lx-link" id="mx-to-us">View all regions</button>' : '') + '</div>');
+    h.push('<p class="lx-sub">' + (rk === 'US' ? 'All states with monitoring data' : D.regions[rk].states.map(function (s) { return s; }).join(', ')) + '</p>');
+    h.push('<p class="lx-sub" style="margin-top:-8px">' + (m.winter ? 'Fall to spring' : PER[rs.period].label) + ' · ' + (rs.year === 'all' ? 'All years' : rs.year) + ' · ' + (rs.type === 'all' ? 'All operation types' : rs.type + ' operations') + '</p>');
     if (!recs.length) {
-      h.push('<p class="lx-notice">' + T('No monitoring data from this region yet. Inspectors, researchers, and beekeepers here can <a href="contribute.html">contribute data</a>.') + '</p>');
+      h.push('<p class="lx-notice">No monitoring data from this region yet. Inspectors, researchers, and beekeepers here can <a href="contribute.html">contribute data</a>.</p>');
       panel.innerHTML = h.join(''); wirePanel(); return;
     }
     var ok = main.n >= MIN_N;
     var cmp = '';
     if (rk !== 'US' && ok && nat.v != null) {
       var d = main.v - nat.v;
-      var cv = { a: NUM(Math.abs(MET[rs.metric].unit === 'pct' ? d * 100 : d), 1), who: T('all regions'), v: fmt(rs.metric, nat.v) };
-      cmp = MET[rs.metric].unit === 'pct' ? T(d >= 0 ? '{a} points above {who} ({v})' : '{a} points below {who} ({v})', cv) : T(d >= 0 ? '{a} above {who} ({v})' : '{a} below {who} ({v})', cv);
+      cmp = MET[rs.metric].unit === 'pct' ? Math.abs(d * 100).toFixed(1) + ' points ' + (d >= 0 ? 'above' : 'below') + ' all regions (' + fmt(rs.metric, nat.v) + ')'
+        : Math.abs(d).toFixed(1) + ' ' + (d >= 0 ? 'above' : 'below') + ' all regions (' + fmt(rs.metric, nat.v) + ')';
     }
-    h.push('<div class="lx-hero"><p class="lx-k">' + m.label + '</p><p class="lx-big">' + (ok ? fmt(rs.metric, main.v) : '<span class="lx-na">' + T(m.winter ? 'Fewer than {k} colonies' : 'Fewer than {k} inspections', { k: MIN_N }) + '</span>') + '</p>' +
+    h.push('<div class="lx-hero"><p class="lx-k">' + m.label + '</p><p class="lx-big">' + (ok ? fmt(rs.metric, main.v) : '<span class="lx-na">Fewer than ' + MIN_N + ' ' + (m.winter ? 'colonies' : 'inspections') + '</span>') + '</p>' +
       (cmp ? '<p class="lx-cmp">' + cmp + '</p>' : '') +
-      '<p class="lx-rank">' + T(m.winter ? '{n} colonies followed through winter' : '{n} inspections', { n: NUM(main.n) }) + ' · ' + T('{n} colonies', { n: NUM(nCols) }) + ' · ' + T('{n} operations', { n: NUM(nOps) }) + '</p></div>');
+      '<p class="lx-rank">' + (m.winter ? main.n.toLocaleString('en-US') + ' colonies followed through winter' : main.n.toLocaleString('en-US') + ' inspections') + ' · ' + nCols + ' colonies · ' + nOps + ' operations</p></div>');
     var tiles = ['varroa', 'over3', 'fob', 'queenright', 'disease', 'winter'].filter(function (x) { return x !== rs.metric; }).slice(0, 3);
     h.push('<div class="lx-tiles">' + tiles.map(function (t) {
       var r = regionValue(rk, t, rs);
-      return '<div class="lx-tile"><p class="lx-k">' + MET[t].short + '</p><p class="lx-v">' + (r.n >= MIN_N ? fmt(t, r.v) : '<span class="lx-na">' + T('n/a') + '</span>') + '</p></div>';
+      return '<div class="lx-tile"><p class="lx-k">' + MET[t].short + '</p><p class="lx-v">' + (r.n >= MIN_N ? fmt(t, r.v) : '<span class="lx-na">n/a</span>') + '</p></div>';
     }).join('') + '</div>');
     // Queen status
     var alive = recs.filter(function (r) { return r.alive && r.queen; }), q = {};
     alive.forEach(function (r) { q[r.queen] = (q[r.queen] || 0) + 1; });
-    var qOrder = [['seen', T('Queen seen')], ['eggs_only', T('Eggs, queen not seen')], ['virgin', T('Virgin queen')], ['queenless', T('Queenless')], ['drone_layer', T('Drone layer')]];
+    var qOrder = [['seen', 'Queen seen'], ['eggs_only', 'Eggs, queen not seen'], ['virgin', 'Virgin queen'], ['queenless', 'Queenless'], ['drone_layer', 'Drone layer']];
     if (alive.length) {
-      h.push('<div class="lx-block"><h3 class="lx-h3">' + T('Queen status') + '</h3><div class="mx-stack">' + qOrder.map(function (o, i) { return q[o[0]] ?
+      h.push('<div class="lx-block"><h3 class="lx-h3">Queen status</h3><div class="mx-stack">' + qOrder.map(function (o, i) { return q[o[0]] ?
         '<span class="q' + i + '" style="width:' + (q[o[0]] / alive.length * 100).toFixed(2) + '%" title="' + o[1] + ' ' + Math.round(q[o[0]] / alive.length * 100) + '%"></span>' : ''; }).join('') +
         '</div><ul class="mx-keys">' + qOrder.map(function (o, i) { return q[o[0]] ?
         '<li><i class="q' + i + '"></i>' + o[1] + ' <b>' + fmtShare(q[o[0]] / alive.length) + '</b></li>' : ''; }).join('') + '</ul></div>');
@@ -353,37 +344,37 @@
     var tr = {}, nt = 0;
     recs.forEach(function (r) { if (r.alive && r.treat && r.treat !== 'none') { tr[r.treat] = (tr[r.treat] || 0) + 1; nt++; } });
     if (nt) {
-      var names = { oxalic: T('Oxalic acid'), amitraz: T('Amitraz'), formic: T('Formic acid'), thymol: T('Thymol'), hop_acids: T('Hop beta acids'), other: T('Other') };
+      var names = { oxalic: 'Oxalic acid', amitraz: 'Amitraz', formic: 'Formic acid', thymol: 'Thymol', hop_acids: 'Hop beta acids', other: 'Other' };
       var keys = Object.keys(tr).sort(function (a, b) { return tr[b] - tr[a]; });
-      h.push('<div class="lx-block"><h3 class="lx-h3">' + T('Varroa treatments recorded') + '</h3><p class="lx-small">' + T('{n} treatments, as a share of all treatments in this selection.', { n: NUM(nt) }) + '</p><ul class="lx-stress">' +
+      h.push('<div class="lx-block"><h3 class="lx-h3">Varroa treatments recorded</h3><p class="lx-small">' + nt.toLocaleString('en-US') + ' treatments, as a share of all treatments in this selection.</p><ul class="lx-stress">' +
         keys.map(function (k) { return '<li><span class="lx-sname">' + names[k] + '</span><span class="lx-track"><span class="lx-fill" style="width:' + (tr[k] / nt * 100).toFixed(1) + '%"></span></span><span class="lx-sval">' + Math.round(tr[k] / nt * 100) + '%</span></li>'; }).join('') + '</ul></div>');
     }
     panel.innerHTML = h.join('');
     wirePanel();
   }
-  function fmtShare(x) { var p = x * 100; return p > 0 && p < 1 ? '<' + PCT(1) : PCT(Math.round(p)); }
+  function fmtShare(x) { var p = x * 100; return (p > 0 && p < 1 ? '<1' : Math.round(p)) + '%'; }
   function wirePanel() { var b = $('mx-to-us'); if (b) b.addEventListener('click', function () { selectRegion('US'); }); }
 
   function renderSeasonal() {
     var m = MET[rs.metric], box = $('mx-season');
-    if (m.winter) { box.innerHTML = '<p class="lx-small">' + T('Winter loss is measured once per winter, so it has no monthly pattern. Pick another measure to see the seasonal curve.') + '</p>'; $('mx-season-read').textContent = ''; return; }
+    if (m.winter) { box.innerHTML = '<p class="lx-small">Winter loss is measured once per winter, so it has no monthly pattern. Pick another measure to see the seasonal curve.</p>'; $('mx-season-read').textContent = ''; return; }
     var series = [], others = [];
     function monthly(rk) {
       return MONTHS.map(function (_, i) { var r = regionValue(rk, rs.metric, { type: rs.type, year: rs.year, period: 'm' + (i + 1) }); return r.n >= MIN_N ? r.v : null; });
     }
     REGION_KEYS.forEach(function (rk) { if (rk !== rs.sel) { var v = monthly(rk); if (v.some(function (x) { return x != null; })) others.push({ values: v, cls: 'other' }); } });
-    var nat = { values: monthly('US'), cls: 'nat', label: T('All regions') };
+    var nat = { values: monthly('US'), cls: 'nat', label: 'All regions' };
     series = others.concat([nat]);
     if (rs.sel !== 'US') series.push({ values: monthly(rs.sel), cls: 'sel', dots: true, label: regionName(rs.sel) });
-    $('mx-season-title').textContent = T('{m} by month', { m: m.short });
+    $('mx-season-title').textContent = m.short + ' by month';
     var ro = $('mx-season-read');
-    ro.innerHTML = (rs.sel !== 'US' ? '<span class="mx-key sel"></span>' + esc(regionName(rs.sel)) + ' ' : '') + '<span class="mx-key nat"></span>' + T('All regions') + ' <span class="mx-key other"></span>' + T('Other regions. Hover a month for values.');
+    ro.innerHTML = (rs.sel !== 'US' ? '<span class="mx-key sel"></span>' + esc(regionName(rs.sel)) + ' ' : '') + '<span class="mx-key nat"></span>All regions <span class="mx-key other"></span>Other regions. Hover a month for values.';
     monthChart(box, rs.metric, series, {
-      threshold: rs.metric === 'varroa' ? 3 : null, thresholdLabel: T('3 mites per 100 bees'),
-      aria: T('{m} by month for each region', { m: m.short }), readout: ro,
+      threshold: rs.metric === 'varroa' ? 3 : null, thresholdLabel: '3 mites per 100 bees',
+      aria: m.short + ' by month for each region', readout: ro,
       describe: function (i) {
         var a = rs.sel !== 'US' ? series[series.length - 1].values[i] : null, b = nat.values[i];
-        return '<strong>' + MONTHS_LONG[i] + ':</strong> ' + (rs.sel !== 'US' ? esc(regionName(rs.sel)) + ' ' + fmt(rs.metric, a) + SEP : '') + T('all regions') + ' ' + fmt(rs.metric, b);
+        return '<strong>' + MONTHS_LONG[i] + ':</strong> ' + (rs.sel !== 'US' ? esc(regionName(rs.sel)) + ' ' + fmt(rs.metric, a) + ', ' : '') + 'all regions ' + fmt(rs.metric, b);
       }
     });
   }
@@ -393,13 +384,13 @@
     REGION_KEYS.forEach(function (rk) { var r = regionValue(rk, rs.metric, rs); if (r.n) rows.push({ rk: rk, v: r.v, n: r.n }); });
     rows.sort(function (a, b) { return (b.n >= MIN_N) - (a.n >= MIN_N) || b.v - a.v; });
     var max = 0; rows.forEach(function (r) { if (r.n >= MIN_N) max = Math.max(max, r.v); });
-    $('mx-rank-title').textContent = T('Regions compared');
-    $('mx-rank-note').textContent = (m.winter ? T('Fall to spring') : PER[rs.period].label) + '. ' + T(m.better === 'lower' ? 'Highest first; lower is better.' : m.better === 'higher' ? 'Highest first; higher is better.' : 'Highest first.') + ' ' + T('Click a region to select it.');
+    $('mx-rank-title').textContent = 'Regions compared';
+    $('mx-rank-note').textContent = (m.winter ? 'Fall to spring' : PER[rs.period].label) + '. Highest first' + (m.better ? '; ' + m.better + ' is better' : '') + '. Click a region to select it.';
     $('mx-rank').innerHTML = rows.map(function (r) {
       var ok = r.n >= MIN_N;
       return '<li class="' + (r.rk === rs.sel ? 'on' : '') + '" data-rk="' + r.rk + '" tabindex="0" role="button"><span class="lx-sname">' + esc(D.regions[r.rk].name) + '</span>' +
         '<span class="lx-track"><span class="lx-fill" style="width:' + (ok && max ? r.v / max * 100 : 0).toFixed(1) + '%"></span></span>' +
-        '<span class="lx-sval">' + (ok ? fmt(rs.metric, r.v) : T('few')) + '</span><span class="mx-n">' + NUM(r.n) + '</span></li>';
+        '<span class="lx-sval">' + (ok ? fmt(rs.metric, r.v) : 'few') + '</span><span class="mx-n">' + r.n.toLocaleString('en-US') + '</span></li>';
     }).join('');
     $('mx-rank').querySelectorAll('li').forEach(function (li) {
       var go = function () { selectRegion(li.getAttribute('data-rk')); };
@@ -413,8 +404,8 @@
 
   metricOptions($('mx-metric')); $('mx-metric').value = rs.metric;
   periodOptions($('mx-period')); $('mx-period').value = rs.period;
-  $('mx-year').innerHTML = '<option value="all">' + T('All years') + '</option>' + YEARS.map(function (y) { return '<option value="' + y + '">' + y + '</option>'; }).join('');
-  $('mx-type').innerHTML = '<option value="all">' + T('All operation types') + '</option>' + TYPES.map(function (t) { return '<option value="' + t + '">' + TYPE_NAME[t] + '</option>'; }).join('');
+  $('mx-year').innerHTML = '<option value="all">All years</option>' + YEARS.map(function (y) { return '<option value="' + y + '">' + y + '</option>'; }).join('');
+  $('mx-type').innerHTML = '<option value="all">All operation types</option>' + TYPES.map(function (t) { return '<option value="' + t + '">' + t + '</option>'; }).join('');
   $('mx-metric').addEventListener('change', function () { rs.metric = this.value; $('mx-period').disabled = !!MET[rs.metric].winter; renderRegional(); });
   $('mx-period').addEventListener('change', function () { rs.period = this.value; renderRegional(); });
   $('mx-year').addEventListener('change', function () { rs.year = this.value; renderRegional(); });
@@ -489,19 +480,19 @@
 
   function importCSV(text, fileName) {
     var rows = parseCSV(text), issues = { skipped: {}, unknownCols: [], warnings: [] };
-    if (rows.length < 2) return fail(T('The file has no data rows. Add your inspections below the header row (on the Inspections tab if you’re using the Excel template).'));
+    if (rows.length < 2) return fail('The file has no data rows. Add your inspections below the header row (on the Inspections tab if you\u2019re using the Excel template).');
     var head = rows[0].map(normHead);
     var idx = {}; head.forEach(function (h, i) { if (KNOWN.indexOf(h) >= 0 && idx[h] == null) idx[h] = i; else if (KNOWN.indexOf(h) < 0 && h) issues.unknownCols.push(rows[0][i].trim()); });
     var missing = ['inspection_date', 'state', 'colony_id'].filter(function (c) { return idx[c] == null; });
-    if (missing.length) return fail(T('The file is missing required columns: {c}. Use the template column names, or copy the header row from the template.', { c: missing.join(', ') }));
-    if (idx.varroa_mites == null && idx.varroa_per_100 == null) issues.warnings.push(T('No Varroa column found, so mite comparisons are left out.'));
+    if (missing.length) return fail('The file is missing required columns: ' + missing.join(', ') + '. Use the template column names, or copy the header row from the template.');
+    if (idx.varroa_mites == null && idx.varroa_per_100 == null) issues.warnings.push('No Varroa column found, so mite comparisons are left out.');
     function g(r, c) { return idx[c] == null ? '' : (r[idx[c]] || '').trim(); }
     var recs = [];
     function skip(reason) { issues.skipped[reason] = (issues.skipped[reason] || 0) + 1; }
     rows.slice(1).forEach(function (r) {
-      var d = parseDate(g(r, 'inspection_date')); if (!d || isNaN(d)) return skip(T('Date not recognized (use YYYY-MM-DD)'));
-      var st = stateCode(g(r, 'state')); if (!st) return skip(T('State not recognized'));
-      var col = g(r, 'colony_id'); if (!col) return skip(T('Missing colony ID'));
+      var d = parseDate(g(r, 'inspection_date')); if (!d || isNaN(d)) return skip('Date not recognized (use YYYY-MM-DD)');
+      var st = stateCode(g(r, 'state')); if (!st) return skip('State not recognized');
+      var col = g(r, 'colony_id'); if (!col) return skip('Missing colony ID');
       var aliveRaw = g(r, 'colony_alive');
       var rec = { op: g(r, 'operation_id') || 'My operation', type: typeName(g(r, 'operation_type')), sub: g(r, 'submitted_by'), state: st, region: REGION_OF[st],
         apiary: g(r, 'apiary_id') || 'A1', colony: col, date: d, y: d.getFullYear(), m: d.getMonth() + 1, alive: aliveRaw === '' ? true : yes(aliveRaw) || /alive|live/i.test(aliveRaw) };
@@ -516,7 +507,7 @@
         else if (per != null && !isNaN(per)) rec.v = per;
         else if (mites != null && !isNaN(mites)) rec.v = mites / (bees && bees > 0 ? bees : 300) * 100;
         else rec.v = null;
-        if (rec.v != null && (rec.v < 0 || rec.v > 100)) { rec.v = null; skip(T('Varroa value out of range (kept the rest of the row)')); }
+        if (rec.v != null && (rec.v < 0 || rec.v > 100)) { rec.v = null; skip('Varroa value out of range (kept the rest of the row)'); }
         ['afb', 'efb', 'chalkbrood', 'sacbrood', 'deformed_wings', 'small_hive_beetle'].forEach(function (f) { rec[f] = yes(g(r, f)); });
         var t = g(r, 'treatment').toLowerCase(); rec.treat = TREAT_ALIAS[t] || (t ? 'other' : 'none');
         var fd = g(r, 'fed').toLowerCase(); rec.fed = !fd || fd === 'no' || fd === 'none' ? 'none' : fd;
@@ -524,7 +515,7 @@
       }
       recs.push(rec);
     });
-    if (!recs.length) return fail(T('None of the rows could be read.') + ' ' + Object.keys(issues.skipped).map(function (k) { return k + ' (' + T('{n} rows', { n: issues.skipped[k] }) + ')'; }).join('; '));
+    if (!recs.length) return fail('None of the rows could be read. ' + Object.keys(issues.skipped).map(function (k) { return k + ' (' + issues.skipped[k] + ' rows)'; }).join('; '));
     my.recs = recs; my.file = fileName; my.issues = issues; my.typeOverride = null;
     var ops = {}; recs.forEach(function (r) { (ops[r.op] = ops[r.op] || { id: r.op, n: 0, type: r.type, state: r.state, region: r.region }).n++; });
     my.ops = Object.keys(ops).map(function (k) { return ops[k]; }).sort(function (a, b) { return b.n - a.n; });
@@ -555,17 +546,17 @@
     for (var i = 0; i < order.length; i++) { var p = peersFor(order[i]); if (p.length >= MIN_PEERS || i === order.length - 1) { my.used = order[i]; return p; } }
   }
   function compareLabel() {
-    var o = myOp(), t = myType(), rn = o.region ? D.regions[o.region].name : T('your region'), tv = { t: t ? TYPE_OPS[t] : '', r: rn };
-    return T({ region_type: t ? '{t} in the {r}' : 'operations in the {r}', region: 'operations of any type in the {r}', type: t ? '{t} in every region' : 'operations in every region', all: 'operations in every region' }[my.used], tv);
+    var o = myOp(), t = myType(), rn = o.region ? D.regions[o.region].name : 'your region';
+    return { region_type: t ? t.toLowerCase() + ' operations in the ' + rn : 'operations in the ' + rn, region: 'operations of any type in the ' + rn, type: t ? t.toLowerCase() + ' operations in every region' : 'operations in every region', all: 'operations in every region' }[my.used];
   }
   var REPORT_METRICS = [
-    { id: 'varroa', period: 'fall', note: T('Fall average') },
-    { id: 'over3', period: 'all', note: T('All inspections') },
-    { id: 'fob', period: 'summer', note: T('Summer average') },
-    { id: 'queenright', period: 'all', note: T('All inspections') },
-    { id: 'pattern', period: 'all', note: T('All inspections') },
-    { id: 'disease', period: 'all', note: T('All inspections') },
-    { id: 'winter', period: null, note: T('Colonies alive in fall') }
+    { id: 'varroa', period: 'fall', note: 'Fall average' },
+    { id: 'over3', period: 'all', note: 'All inspections' },
+    { id: 'fob', period: 'summer', note: 'Summer average' },
+    { id: 'queenright', period: 'all', note: 'All inspections' },
+    { id: 'pattern', period: 'all', note: 'All inspections' },
+    { id: 'disease', period: 'all', note: 'All inspections' },
+    { id: 'winter', period: null, note: 'Colonies alive in fall' }
   ];
   function opValue(recs, mid, period) {
     var m = MET[mid];
@@ -585,42 +576,42 @@
     var o = myOp(), mine = myRecs(), peers = peerOps();
     // controls
     var opSel = $('mx-op');
-    opSel.innerHTML = my.ops.map(function (x) { return '<option value="' + esc(x.id) + '">' + esc(x.id) + ' (' + T('{n} rows', { n: NUM(x.n) }) + ')</option>'; }).join('');
+    opSel.innerHTML = my.ops.map(function (x) { return '<option value="' + esc(x.id) + '">' + esc(x.id) + ' (' + x.n + ' rows)</option>'; }).join('');
     opSel.value = my.op; $('mx-op-wrap').hidden = my.ops.length < 2;
     $('mx-type-wrap').hidden = !!o.type;
     $('mx-compare').value = my.compare; $('mx-ryear').value = my.year;
     // header
     var cols = {}, dates = mine.map(function (r) { cols[r.apiary + '|' + r.colony] = 1; return r.date; }).sort(function (a, b) { return a - b; });
     var fmtD = function (d) { return MONTHS[d.getMonth()] + ' ' + d.getFullYear(); };
-    $('mx-me').innerHTML = '<h2>' + esc(o.id) + '</h2><p class="lx-sub">' + esc(NAME_OF[o.state] || o.state) + ' · ' + (o.region ? esc(T('{r} region', { r: D.regions[o.region].name })) : T('No region')) + ' · ' + (myType() ? TYPE_NAME[myType()] : T('Operation type not given')) +
-      '</p><p class="mx-mefacts"><span>' + T('<b>{n}</b> colonies', { n: NUM(Object.keys(cols).length) }) + '</span><span>' + T('<b>{n}</b> inspections', { n: NUM(mine.length) }) + '</span><span><b>' + ISO(fmtD(dates[0]) + '–' + fmtD(dates[dates.length - 1])) + '</b></span><span>' + T('Compared with <b>{n}</b> {g}', { n: NUM(peers.length), g: esc(compareLabel()) }) + '</span></p>';
+    $('mx-me').innerHTML = '<h2>' + esc(o.id) + '</h2><p class="lx-sub">' + esc(NAMES[o.state] || o.state) + ' · ' + (o.region ? esc(D.regions[o.region].name) + ' region' : 'No region') + ' · ' + (myType() ? myType() : 'Operation type not given') +
+      '</p><p class="mx-mefacts"><span><b>' + Object.keys(cols).length + '</b> colonies</span><span><b>' + mine.length.toLocaleString('en-US') + '</b> inspections</span><span><b>' + fmtD(dates[0]) + '–' + fmtD(dates[dates.length - 1]) + '</b></span><span>Compared with <b>' + peers.length + '</b> ' + esc(compareLabel()) + '</span></p>';
     var few = peers.length < MIN_PEERS, fell = my.compare === 'auto' && my.used !== 'region_type';
-    var t = myType(), rn = o.region ? D.regions[o.region].name : T('your region');
+    var t = myType(), rn = o.region ? D.regions[o.region].name : 'your region';
     $('mx-fewpeers').hidden = !(few || fell);
-    $('mx-fewpeers').innerHTML = few ? T(peers.length === 1 ? 'Only {n} operation matches this comparison group, too few for a fair comparison. Try a broader group in <b>Compare with</b>.' : 'Only {n} operations match this comparison group, too few for a fair comparison. Try a broader group in <b>Compare with</b>.', { n: peers.length }) :
-      fell ? T(t ? 'There aren’t {k} or more {t} in the {r} yet, so you’re compared with {g}.' : 'There aren’t {k} or more operations in the {r} yet, so you’re compared with {g}.', { k: MIN_PEERS, t: t ? TYPE_OPS[t] : '', r: esc(rn), g: esc(compareLabel()) }) : '';
+    $('mx-fewpeers').innerHTML = few ? 'Only ' + peers.length + ' operation' + (peers.length === 1 ? '' : 's') + ' match this comparison group, too few for a fair comparison. Try a broader group in <b>Compare with</b>.' :
+      fell ? 'There aren\u2019t ' + MIN_PEERS + ' or more ' + (t ? t.toLowerCase() + ' ' : '') + 'operations in the ' + esc(rn) + ' yet, so you\u2019re compared with ' + esc(compareLabel()) + '.' : '';
     // compare cards
     $('mx-cards').innerHTML = REPORT_METRICS.map(function (rm) {
       var m = MET[rm.id], you = opValue(mine, rm.id, rm.period);
       var pv = peers.map(function (p) { return opValue(p.recs, rm.id, rm.period).v; }).filter(function (v) { return v != null; }).sort(function (a, b) { return a - b; });
       var med = quantile(pv, 0.5), lo = quantile(pv, 0.25), hi = quantile(pv, 0.75);
       var body;
-      if (you.v == null) body = '<p class="mx-none">' + T(rm.id === 'winter' ? 'Not enough of your inspections for this measure (needs colonies inspected in fall and again the next spring).' : 'Not enough of your inspections for this measure.') + '</p>';
-      else if (pv.length < MIN_PEERS) body = '<p class="mx-none">' + T('Not enough comparable operations.') + '</p>';
+      if (you.v == null) body = '<p class="mx-none">Not enough of your inspections for this measure' + (rm.id === 'winter' ? ' (needs colonies inspected in fall and again the next spring).' : '.') + '</p>';
+      else if (pv.length < MIN_PEERS) body = '<p class="mx-none">Not enough comparable operations.</p>';
       else {
         var below = pv.filter(function (v) { return v < you.v; }).length, ties = pv.filter(function (v) { return v === you.v; }).length;
         var pctBelow = (below + ties / 2) / pv.length;
         var better = m.better === 'lower' ? 1 - pctBelow : pctBelow;
         var cls = better >= 0.75 ? 'good' : better >= 0.25 ? 'mid' : 'warn';
-        var word = T(better >= 0.75 ? 'Better than most' : better >= 0.25 ? 'Typical' : 'Worse than most');
+        var word = better >= 0.75 ? 'Better than most' : better >= 0.25 ? 'Typical' : 'Worse than most';
         var mx = Math.max(pv[pv.length - 1], you.v) * 1.08 || 1;
         var X = function (v) { return (v / mx * 100).toFixed(2) + '%'; };
         body = '<div class="mx-strip" aria-hidden="true"><span class="mx-iqr" style="left:' + X(lo) + ';width:calc(' + X(hi) + ' - ' + X(lo) + ')"></span><span class="mx-med" style="left:' + X(med) + '"></span>' +
           pv.map(function (v) { return '<i style="left:' + X(v) + '"></i>'; }).join('') + '<b class="mx-you ' + cls + '" style="left:' + X(you.v) + '"></b></div>' +
-          '<p class="mx-verdict"><span class="mx-chip ' + cls + '">' + word + '</span> ' + (pv.length < 20 ? T('Better than {a} of {n} comparable operations', { a: Math.round(better * pv.length), n: pv.length }) : T('Better than {p} of {n} comparable operations', { p: PCT(Math.round(better * 100)), n: pv.length })) + '</p>';
+          '<p class="mx-verdict"><span class="mx-chip ' + cls + '">' + word + '</span> ' + (pv.length < 20 ? 'Better than ' + Math.round(better * pv.length) + ' of ' + pv.length + ' comparable operations' : 'Better than ' + Math.round(better * 100) + '% of ' + pv.length + ' comparable operations') + '</p>';
       }
-      return '<div class="mx-card"><div class="mx-cardtop"><div><p class="lx-k">' + m.label + '</p><p class="mx-scope">' + rm.note + (m.better ? ' · ' + T(m.better === 'lower' ? 'lower is better' : 'higher is better') : '') + '</p></div></div>' +
-        '<div class="mx-vals"><div><span>' + T('You') + '</span><b>' + fmt(rm.id, you.v) + '</b></div><div><span>' + T('Typical peer') + '</span><b>' + (pv.length >= MIN_PEERS ? fmt(rm.id, med) : '–') + '</b></div></div>' + body + '</div>';
+      return '<div class="mx-card"><div class="mx-cardtop"><div><p class="lx-k">' + m.label + '</p><p class="mx-scope">' + rm.note + (m.better ? ' · ' + (m.better === 'lower' ? 'lower' : 'higher') + ' is better' : '') + '</p></div></div>' +
+        '<div class="mx-vals"><div><span>You</span><b>' + fmt(rm.id, you.v) + '</b></div><div><span>Typical peer</span><b>' + (pv.length >= MIN_PEERS ? fmt(rm.id, med) : '–') + '</b></div></div>' + body + '</div>';
     }).join('');
     renderMyChart(mine, peers);
     renderCheck(mine);
@@ -630,7 +621,7 @@
 
   function renderMyChart(mine, peers) {
     var mid = my.metric;
-    $('mx-mychart-title').textContent = T('{m} by month, you and comparable operations', { m: MET[mid].short });
+    $('mx-mychart-title').textContent = MET[mid].short + ' by month, you and comparable operations';
     var youV = MONTHS.map(function (_, i) { var r = agg(filterRecs(mine, { year: my.year, period: 'm' + (i + 1) }), mid); return r.n >= 3 ? r.v : null; });
     var med = [], lo = [], hi = [], counts = [];
     for (var i = 0; i < 12; i++) {
@@ -640,10 +631,10 @@
       med.push(ok ? quantile(pv, 0.5) : null); lo.push(ok ? quantile(pv, 0.25) : null); hi.push(ok ? quantile(pv, 0.75) : null);
     }
     var ro = $('mx-mychart-read');
-    ro.innerHTML = '<span class="mx-key sel"></span>' + T('You') + ' <span class="mx-key nat"></span>' + T('Typical peer (median)') + ' <span class="mx-key band"></span>' + T('Middle half of peers. Hover a month for values.');
+    ro.innerHTML = '<span class="mx-key sel"></span>You <span class="mx-key nat"></span>Typical peer (median) <span class="mx-key band"></span>Middle half of peers. Hover a month for values.';
     monthChart($('mx-mychart'), mid, [{ values: med, cls: 'nat' }, { values: youV, cls: 'sel', dots: true }], {
-      band: { lo: lo, hi: hi }, threshold: mid === 'varroa' ? 3 : null, thresholdLabel: T('3 mites per 100 bees'), readout: ro, aria: T('Your monthly values compared with peers'),
-      describe: function (i) { return '<strong>' + MONTHS_LONG[i] + ':</strong> ' + T(lo[i] != null ? 'you {a}, typical peer {b} (middle half {lo}–{hi}, {n} operations)' : 'you {a}, typical peer {b}', { a: fmt(mid, youV[i]), b: fmt(mid, med[i]), lo: fmt(mid, lo[i]), hi: fmt(mid, hi[i]), n: counts[i] }); }
+      band: { lo: lo, hi: hi }, threshold: mid === 'varroa' ? 3 : null, thresholdLabel: '3 mites per 100 bees', readout: ro, aria: 'Your monthly values compared with peers',
+      describe: function (i) { return '<strong>' + MONTHS_LONG[i] + ':</strong> you ' + fmt(mid, youV[i]) + ', typical peer ' + fmt(mid, med[i]) + (lo[i] != null ? ' (middle half ' + fmt(mid, lo[i]) + '–' + fmt(mid, hi[i]) + ', ' + counts[i] + ' operations)' : ''); }
     });
   }
 
@@ -655,23 +646,23 @@
     Object.keys(latest).forEach(function (k) { if (!latest[k].alive && latest[k].date < new Date(lastDate0.getTime() - 60 * 86400000)) delete latest[k]; });
     var items = Object.keys(latest).map(function (k) {
       var r = latest[k], flags = [], sev = 0;
-      if (!r.alive) { flags.push(['warn', T('Dead out')]); sev += 1; }
+      if (!r.alive) { flags.push(['warn', 'Dead out']); sev += 1; }
       else {
-        if (r.afb) { flags.push(['bad', T('AFB signs: contact your state apiarist')]); sev += 10; }
-        if (r.efb) { flags.push(['bad', T('EFB signs')]); sev += 6; }
-        if (r.v != null && r.v >= 3) { flags.push([r.v >= 6 ? 'bad' : 'warn', fmt('varroa', r.v) + ' ' + T('mites per 100 bees')]); sev += r.v >= 6 ? 5 : 3; }
-        if (r.queen === 'queenless' || r.queen === 'drone_layer') { flags.push(['warn', T(r.queen === 'queenless' ? 'Queenless' : 'Drone layer')]); sev += 4; }
-        if (r.deformed_wings) { flags.push(['warn', T('Deformed wings')]); sev += 2; }
-        if (r.pat != null && r.pat <= 2) { flags.push(['warn', T('Spotty brood')]); sev += 2; }
-        if (r.chalkbrood || r.sacbrood) { flags.push(['note', T(r.chalkbrood ? 'Chalkbrood' : 'Sacbrood')]); sev += 1; }
+        if (r.afb) { flags.push(['bad', 'AFB signs: contact your state apiarist']); sev += 10; }
+        if (r.efb) { flags.push(['bad', 'EFB signs']); sev += 6; }
+        if (r.v != null && r.v >= 3) { flags.push([r.v >= 6 ? 'bad' : 'warn', fmt('varroa', r.v) + ' mites per 100 bees']); sev += r.v >= 6 ? 5 : 3; }
+        if (r.queen === 'queenless' || r.queen === 'drone_layer') { flags.push(['warn', r.queen === 'queenless' ? 'Queenless' : 'Drone layer']); sev += 4; }
+        if (r.deformed_wings) { flags.push(['warn', 'Deformed wings']); sev += 2; }
+        if (r.pat != null && r.pat <= 2) { flags.push(['warn', 'Spotty brood']); sev += 2; }
+        if (r.chalkbrood || r.sacbrood) { flags.push(['note', r.chalkbrood ? 'Chalkbrood' : 'Sacbrood']); sev += 1; }
       }
       return { r: r, flags: flags, sev: sev };
     }).filter(function (x) { return x.flags.length; }).sort(function (a, b) { return b.sev - a.sev; });
     var lastDate = mine.reduce(function (a, r) { return r.date > a ? r.date : a; }, new Date(0));
-    $('mx-check-note').textContent = items.length ? T('{a} of {n} colonies had something flagged at their most recent inspection.', { a: items.length, n: Object.keys(latest).length }) : T('Nothing was flagged at each colony’s most recent inspection.');
-    $('mx-check').innerHTML = items.length ? '<table class="lx-table mx-table"><thead><tr><th>' + T('Colony') + '</th><th>' + T('Apiary') + '</th><th>' + T('Last inspected') + '</th><th>' + T('Flags') + '</th></tr></thead><tbody>' + items.map(function (x) {
+    $('mx-check-note').textContent = items.length ? items.length + ' of ' + Object.keys(latest).length + ' colonies had something flagged at their most recent inspection.' : 'Nothing was flagged at each colony’s most recent inspection.';
+    $('mx-check').innerHTML = items.length ? '<table class="lx-table mx-table"><thead><tr><th>Colony</th><th>Apiary</th><th>Last inspected</th><th>Flags</th></tr></thead><tbody>' + items.map(function (x) {
       var d = x.r.date;
-      return '<tr><th scope="row">' + esc(x.r.colony) + '</th><td>' + esc(x.r.apiary) + '</td><td>' + (I.lang === 'en' ? MONTHS[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() : d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear()) + (d < new Date(lastDate.getTime() - 60 * 86400000) ? ' <span class="mx-stale">' + T('older') + '</span>' : '') + '</td><td class="mx-flags">' +
+      return '<tr><th scope="row">' + esc(x.r.colony) + '</th><td>' + esc(x.r.apiary) + '</td><td>' + MONTHS[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() + (d < new Date(lastDate.getTime() - 60 * 86400000) ? ' <span class="mx-stale">older</span>' : '') + '</td><td class="mx-flags">' +
         x.flags.map(function (f) { return '<span class="mx-flag ' + f[0] + '">' + esc(f[1]) + '</span>'; }).join('') + '</td></tr>';
     }).join('') + '</tbody></table>' : '';
   }
@@ -695,24 +686,24 @@
     peers.forEach(function (p) { all = all.concat(p.recs); });
     var pr = treatResponse(all);
     var used = {}; mine.forEach(function (r) { if (r.alive && r.treat && r.treat !== 'none') used[r.treat] = (used[r.treat] || 0) + 1; });
-    var names = { oxalic: T('oxalic acid'), amitraz: T('amitraz'), formic: T('formic acid'), thymol: T('thymol'), hop_acids: T('hop beta acids'), other: T('other products') };
+    var names = { oxalic: 'oxalic acid', amitraz: 'amitraz', formic: 'formic acid', thymol: 'thymol', hop_acids: 'hop beta acids', other: 'other products' };
     var list = Object.keys(used).sort(function (a, b) { return used[b] - used[a]; }).map(function (k) { return names[k] + ' (' + used[k] + ')'; });
-    var pctTxt = function (x) { return PCT(Math.round(Math.max(-1, x) * 100)); };
-    $('mx-treat').innerHTML = !list.length ? '<p class="lx-small">' + T('No Varroa treatments recorded in your file.') + '</p>' :
-      '<p>' + T(list.length > 1 ? 'You recorded <b>{n}</b> products: {list}.' : 'You recorded <b>{n}</b> product: {list}.', { n: list.length, list: list.join(SEP) }) + '</p>' +
-      (you.n >= 3 ? '<p>' + T('At the next wash after a treatment, your mite counts were down by a median of <b>{p}</b> ({n} treated colonies with a wash before and after).', { p: pctTxt(you.med), n: you.n }) +
-        (pr.n >= 10 ? ' ' + T('For comparable operations: <b>{p}</b>.', { p: pctTxt(pr.med) }) : '') + '</p>' :
-        '<p class="lx-small">' + T('Not enough treated colonies with a wash before and after treatment to measure the drop (needs 3 or more).') + '</p>') +
-      '<p class="lx-small">' + T('Measured from a wash taken on the day of treatment to the next wash 2 to 10 weeks later. Products, timing, and brood levels all affect results, so treat this as a rough check rather than an efficacy test.') + '</p>';
+    var pctTxt = function (x) { return Math.round(Math.max(-1, x) * 100) + '%'; };
+    $('mx-treat').innerHTML = !list.length ? '<p class="lx-small">No Varroa treatments recorded in your file.</p>' :
+      '<p>You recorded <b>' + list.length + '</b> product' + (list.length > 1 ? 's' : '') + ': ' + list.join(', ') + '.</p>' +
+      (you.n >= 3 ? '<p>At the next wash after a treatment, your mite counts were down by a median of <b>' + pctTxt(you.med) + '</b> (' + you.n + ' treated colonies with a wash before and after).' +
+        (pr.n >= 10 ? ' For comparable operations: <b>' + pctTxt(pr.med) + '</b>.' : '') + '</p>' :
+        '<p class="lx-small">Not enough treated colonies with a wash before and after treatment to measure the drop (needs 3 or more).</p>') +
+      '<p class="lx-small">Measured from a wash taken on the day of treatment to the next wash 2 to 10 weeks later. Products, timing, and brood levels all affect results, so treat this as a rough check rather than an efficacy test.</p>';
   }
   function renderDataCheck(mine) {
     var is = my.issues, skipped = Object.keys(is.skipped);
     var dead = mine.filter(function (r) { return !r.alive; }).length, washes = mine.filter(function (r) { return r.v != null; }).length;
     $('mx-datacheck').innerHTML = '<ul class="mx-dc">' +
-      '<li>' + T('<b>{n}</b> rows read from <b>{f}</b>', { n: NUM(my.recs.length), f: esc(my.file) }) + (my.ops.length > 1 ? ' (' + T('{n} operations', { n: my.ops.length }) + ')' : '') + '</li>' +
-      '<li>' + T('<b>{w}</b> Varroa washes and <b>{d}</b> dead-out records for {o}', { w: washes, d: dead, o: esc(my.op) }) + '</li>' +
-      (skipped.length ? skipped.map(function (k) { return '<li class="warn">' + T(is.skipped[k] > 1 ? '{n} rows' : '{n} row', { n: is.skipped[k] }) + ': ' + esc(k) + '</li>'; }).join('') : '<li>' + T('No rows skipped') + '</li>') +
-      (is.unknownCols.length ? '<li class="warn">' + T('Columns not used: {c}', { c: is.unknownCols.map(esc).join(', ') }) + '</li>' : '') +
+      '<li><b>' + my.recs.length.toLocaleString('en-US') + '</b> rows read from <b>' + esc(my.file) + '</b>' + (my.ops.length > 1 ? ' (' + my.ops.length + ' operations)' : '') + '</li>' +
+      '<li><b>' + washes + '</b> Varroa washes and <b>' + dead + '</b> dead-out records for ' + esc(my.op) + '</li>' +
+      (skipped.length ? skipped.map(function (k) { return '<li class="warn">' + is.skipped[k] + ' row' + (is.skipped[k] > 1 ? 's' : '') + ': ' + esc(k) + '</li>'; }).join('') : '<li>No rows skipped</li>') +
+      (is.unknownCols.length ? '<li class="warn">Columns not used: ' + is.unknownCols.map(esc).join(', ') + '</li>' : '') +
       is.warnings.map(function (w) { return '<li class="warn">' + esc(w) + '</li>'; }).join('') + '</ul>';
   }
 
@@ -720,32 +711,32 @@
   metricOptions($('mx-mymetric'), ['varroa', 'over3', 'fob', 'brood', 'pattern', 'queenright', 'disease', 'deformed_wings', 'small_hive_beetle', 'treated']);
   $('mx-mymetric').value = my.metric;
   $('mx-mymetric').addEventListener('change', function () { my.metric = this.value; renderMyChart(myRecs(), peerOps()); });
-  $('mx-ryear').innerHTML = '<option value="all">' + T('All years') + '</option>' + YEARS.map(function (y) { return '<option value="' + y + '">' + y + '</option>'; }).join('');
+  $('mx-ryear').innerHTML = '<option value="all">All years</option>' + YEARS.map(function (y) { return '<option value="' + y + '">' + y + '</option>'; }).join('');
   $('mx-ryear').addEventListener('change', function () { my.year = this.value; renderReport(); });
   $('mx-compare').addEventListener('change', function () { my.compare = this.value; renderReport(); });
   $('mx-op').addEventListener('change', function () { my.op = this.value; renderReport(); });
-  $('mx-mytype').innerHTML = '<option value="">' + T('Choose…') + '</option>' + TYPES.map(function (t) { return '<option value="' + t + '">' + TYPE_NAME[t] + '</option>'; }).join('');
+  $('mx-mytype').innerHTML = '<option value="">Choose…</option>' + TYPES.map(function (t) { return '<option value="' + t + '">' + t + '</option>'; }).join('');
   $('mx-mytype').addEventListener('change', function () { my.typeOverride = this.value || null; renderReport(); });
 
   function readFile(file) {
     if (!file) return;
-    if (file.size > 20 * 1024 * 1024) { var e = $('mx-upload-error'); e.textContent = T('That file is over 20 MB. Split it into smaller files and try again.'); e.hidden = false; return; }
+    if (file.size > 20 * 1024 * 1024) { var e = $('mx-upload-error'); e.textContent = 'That file is over 20 MB. Split it into smaller files and try again.'; e.hidden = false; return; }
     var fr = new FileReader();
     if (/\.xlsx?$/i.test(file.name)) {
       // Excel: read the Inspections sheet (or the first sheet) and treat it as CSV
-      if (!window.XLSX) { var e2 = $('mx-upload-error'); e2.textContent = T('Excel files need an internet connection to open here. Save the Inspections tab as CSV and try again.'); e2.hidden = false; return; }
+      if (!window.XLSX) { var e2 = $('mx-upload-error'); e2.textContent = 'Excel files need an internet connection to open here. Save the Inspections tab as CSV and try again.'; e2.hidden = false; return; }
       fr.onload = function () {
         try {
           var wb = window.XLSX.read(new Uint8Array(fr.result), { type: 'array', cellDates: true });
           var name = wb.SheetNames.filter(function (n) { return n.toLowerCase() === 'inspections'; })[0] || wb.SheetNames[0];
-          importCSV(window.XLSX.utils.sheet_to_csv(wb.Sheets[name], { dateNF: 'yyyy-mm-dd', blankrows: false }), file.name + (name !== wb.SheetNames[0] || name.toLowerCase() === 'inspections' ? ' (' + T('{s} sheet', { s: name }) + ')' : ''));
-        } catch (err) { var e3 = $('mx-upload-error'); e3.textContent = T('That Excel file couldn’t be read. Try saving the Inspections tab as CSV.'); e3.hidden = false; }
+          importCSV(window.XLSX.utils.sheet_to_csv(wb.Sheets[name], { dateNF: 'yyyy-mm-dd', blankrows: false }), file.name + (name !== wb.SheetNames[0] || name.toLowerCase() === 'inspections' ? ' (' + name + ' sheet)' : ''));
+        } catch (err) { var e3 = $('mx-upload-error'); e3.textContent = 'That Excel file couldn\u2019t be read. Try saving the Inspections tab as CSV.'; e3.hidden = false; }
       };
       fr.readAsArrayBuffer(file);
       return;
     }
     fr.onload = function () { importCSV(String(fr.result), file.name); };
-    fr.onerror = function () { var e = $('mx-upload-error'); e.textContent = T('The file couldn’t be read. Try saving it again as CSV.'); e.hidden = false; };
+    fr.onerror = function () { var e = $('mx-upload-error'); e.textContent = 'The file couldn’t be read. Try saving it again as CSV.'; e.hidden = false; };
     fr.readAsText(file);
   }
   $('mx-file').addEventListener('change', function () { readFile(this.files[0]); this.value = ''; });
@@ -753,7 +744,7 @@
   ['dragenter', 'dragover'].forEach(function (ev) { dz.addEventListener(ev, function (e) { e.preventDefault(); dz.classList.add('over'); }); });
   ['dragleave', 'drop'].forEach(function (ev) { dz.addEventListener(ev, function (e) { e.preventDefault(); dz.classList.remove('over'); }); });
   dz.addEventListener('drop', function (e) { if (e.dataTransfer && e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0]); });
-  $('mx-example').addEventListener('click', function () { importCSV(D.exampleUpload, T('example file (made-up operation)')); });
+  $('mx-example').addEventListener('click', function () { importCSV(D.exampleUpload, 'example file (made-up operation)'); });
   $('mx-upload-again').addEventListener('click', function () { my.recs = null; renderReport(); });
   // template header for copying
   var header = KNOWN.filter(function (k) { return k !== 'varroa_per_100'; }).join(',');
@@ -761,7 +752,7 @@
   $('mx-copy-template').setAttribute('data-copy', header);
   $('mx-copy-template').addEventListener('click', function () {
     var b = this;
-    try { navigator.clipboard.writeText(header).then(function () { b.textContent = T('Copied'); setTimeout(function () { b.textContent = T('Copy header row'); }, 1600); }, selectTemplate); } catch (e) { selectTemplate(); }
+    try { navigator.clipboard.writeText(header).then(function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy header row'; }, 1600); }, selectTemplate); } catch (e) { selectTemplate(); }
   });
   function selectTemplate() { var r = document.createRange(); r.selectNodeContents($('mx-template')); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); }
 
@@ -799,7 +790,7 @@
 
   /* ---------- Start ---------- */
   var stats = { ops: D.ops.length, recs: REF.length };
-  $('mx-demo-count').textContent = T('{a} simulated operations and {b} simulated inspections', { a: NUM(stats.ops), b: NUM(stats.recs) });
+  $('mx-demo-count').textContent = stats.ops + ' simulated operations and ' + stats.recs.toLocaleString('en-US') + ' simulated inspections';
   renderRegional();
   renderReport();
   showTab(hashTab());

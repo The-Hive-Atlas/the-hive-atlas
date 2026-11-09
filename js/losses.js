@@ -4,18 +4,6 @@
   var L = window.HIVE_LOSSES, SH = window.HIVE_SHAPES, HEX = window.HIVE_HEX_LAYOUT;
   if (!L || !SH || !HEX) return;
 
-  // Language helpers (js/i18n.js); English fallbacks if it is missing
-  var I = window.I18N || { lang: 'en', T: function (s, v) { return v ? s.replace(/\{(\w+)\}/g, function (m, k) { return v[k] != null ? v[k] : m; }) : s; },
-    N: function (x, d) { d = d || 0; return Number(x).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }); },
-    PCT: function (x, d) { return Number(x).toFixed(d || 0) + '%'; }, NM: function (s) { return s; }, ISO: function (s) { return s; }, lower: function (s) { return s.toLowerCase(); }, sep: ', ' };
-  var T = I.T, NUM = I.N, PCT = I.PCT, NM = I.NM, ISO = I.ISO, SEP = I.sep;
-  var LOC = ({ fr: 'fr-FR', es: 'es-ES', ar: 'ar' })[I.lang] || 'en-US';
-  for (var nk in L.names) L.names[nk] = NM(L.names[nk]);
-  // Quarter names in the page language
-  var QLONG = ['', T('January–March'), T('April–June'), T('July–September'), T('October–December')];
-  var QABBR = ['', T('Jan–Mar'), T('Apr–Jun'), T('Jul–Sep'), T('Oct–Dec')];
-  L.periods.forEach(function (p) { p.label = QLONG[p.q] + ' ' + p.year; p.short = QABBR[p.q] + ' ' + p.year; });
-
   var NS = 'http://www.w3.org/2000/svg';
   var F = {}; L.fields.forEach(function (f, i) { F[f] = i; });
   var STATES = Object.keys(SH.states).sort(function (a, b) { return L.names[a] < L.names[b] ? -1 : 1; });
@@ -24,22 +12,21 @@
   var YEARS = [];
   SURVEYED.forEach(function (p) { if (YEARS.indexOf(p.year) < 0) YEARS.push(p.year); });
   var QPERYEAR = {}; SURVEYED.forEach(function (p) { (QPERYEAR[p.year] = QPERYEAR[p.year] || []).push(p); });
-  var QSHORT = ['', T('Jan'), T('Apr'), T('Jul'), T('Oct')], QEND = ['', T('Mar'), T('Jun'), T('Sep'), T('Dec')];
+  var QSHORT = ['', 'Jan', 'Apr', 'Jul', 'Oct'], QEND = ['', 'Mar', 'Jun', 'Sep', 'Dec'];
 
   var MEASURES = [
-    { id: 'pct_lost', label: T('Percent of colonies lost'), yearLabel: T('Average quarterly loss (not annual)'), short: T('% lost'), unit: 'pct', agg: 'mean', group: 'Losses' },
-    { id: 'colonies_lost', label: T('Colonies lost'), yearLabel: T('Colonies lost in the year'), short: T('Colonies lost'), unit: 'count', agg: 'sum', group: 'Losses' },
-    { id: 'pct_renovated', label: T('Percent of colonies renovated'), yearLabel: T('Average quarterly renovation'), short: T('% renovated'), unit: 'pct', agg: 'mean', group: 'Losses' },
-    { id: 'colonies_start', label: T('Colonies at start of quarter'), yearLabel: T('Colonies on January 1'), short: T('Colonies'), unit: 'count', agg: 'first', group: 'Losses' },
-    { id: 'varroa', label: T('Colonies affected by Varroa mites'), short: T('Varroa'), unit: 'pct1', agg: 'mean', group: 'Stressors' },
-    { id: 'other_pests', label: T('Colonies affected by other pests and parasites'), short: T('Other pests'), unit: 'pct1', agg: 'mean', group: 'Stressors' },
-    { id: 'diseases', label: T('Colonies affected by diseases'), short: T('Diseases'), unit: 'pct1', agg: 'mean', group: 'Stressors' },
-    { id: 'pesticides', label: T('Colonies affected by pesticides'), short: T('Pesticides'), unit: 'pct1', agg: 'mean', group: 'Stressors' },
-    { id: 'other', label: T('Colonies affected by other causes'), short: T('Other causes'), unit: 'pct1', agg: 'mean', group: 'Stressors' },
-    { id: 'unknown', label: T('Colonies affected by unknown causes'), short: T('Unknown'), unit: 'pct1', agg: 'mean', group: 'Stressors' }
+    { id: 'pct_lost', label: 'Percent of colonies lost', yearLabel: 'Average quarterly loss (not annual)', short: '% lost', unit: 'pct', agg: 'mean', group: 'Losses' },
+    { id: 'colonies_lost', label: 'Colonies lost', yearLabel: 'Colonies lost in the year', short: 'Colonies lost', unit: 'count', agg: 'sum', group: 'Losses' },
+    { id: 'pct_renovated', label: 'Percent of colonies renovated', yearLabel: 'Average quarterly renovation', short: '% renovated', unit: 'pct', agg: 'mean', group: 'Losses' },
+    { id: 'colonies_start', label: 'Colonies at start of quarter', yearLabel: 'Colonies on January 1', short: 'Colonies', unit: 'count', agg: 'first', group: 'Losses' },
+    { id: 'varroa', label: 'Colonies affected by Varroa mites', short: 'Varroa', unit: 'pct1', agg: 'mean', group: 'Stressors' },
+    { id: 'other_pests', label: 'Colonies affected by other pests and parasites', short: 'Other pests', unit: 'pct1', agg: 'mean', group: 'Stressors' },
+    { id: 'diseases', label: 'Colonies affected by diseases', short: 'Diseases', unit: 'pct1', agg: 'mean', group: 'Stressors' },
+    { id: 'pesticides', label: 'Colonies affected by pesticides', short: 'Pesticides', unit: 'pct1', agg: 'mean', group: 'Stressors' },
+    { id: 'other', label: 'Colonies affected by other causes', short: 'Other causes', unit: 'pct1', agg: 'mean', group: 'Stressors' },
+    { id: 'unknown', label: 'Colonies affected by unknown causes', short: 'Unknown', unit: 'pct1', agg: 'mean', group: 'Stressors' }
   ];
-  var TREND = { pct_lost: T('Percent lost'), pct_renovated: T('Percent renovated') };
-  var M = {}; MEASURES.forEach(function (m) { M[m.id] = m; m.trend = TREND[m.id] || m.short; });
+  var M = {}; MEASURES.forEach(function (m) { M[m.id] = m; });
   var STRESSORS = ['varroa', 'other_pests', 'diseases', 'pesticides', 'other', 'unknown'];
   var TABLE_COLS = ['colonies_start', 'colonies_lost', 'pct_lost', 'pct_renovated', 'varroa', 'diseases', 'pesticides'];
 
@@ -89,9 +76,9 @@
     return last;
   })();
   var WINDOWS = {
-    common: { label: T('{a} to {b}', { a: SURVEYED[0].short, b: COMMON_END.short }), long: T('{a} to {b}, when most states were published', { a: SURVEYED[0].label, b: COMMON_END.label }),
+    common: { label: SURVEYED[0].short + ' to ' + COMMON_END.short, long: SURVEYED[0].label + ' to ' + COMMON_END.label + ', when most states were published',
       periods: SURVEYED.filter(function (p) { return p.year * 10 + p.q <= COMMON_END.year * 10 + COMMON_END.q; }) },
-    full: { label: T('Each state’s full record'), long: T('every quarter each state was published, {a} to {b}', { a: SURVEYED[0].short, b: SURVEYED[SURVEYED.length - 1].short }), periods: SURVEYED }
+    full: { label: 'Each state\u2019s full record', long: 'every quarter each state was published, ' + SURVEYED[0].short + ' to ' + SURVEYED[SURVEYED.length - 1].short, periods: SURVEYED }
   };
   function seasons(code, mid, win) {
     var out = [];
@@ -143,13 +130,13 @@
     if (!q) {
       var lastQ = Object.keys(QD.periods).sort().pop() || '';
       var first = String(st.mode === 'quarter' ? key : st.mode === 'year' ? key + '-Q1' : 'x');
-      return '<p class="lx-sample">' + T(first > lastQ ? 'NASS hasn’t released sample sizes for this period yet. They come out in its yearly quality report.' : 'NASS didn’t publish sample sizes for this period. They start in 2019.') + '</p>';
+      return '<p class="lx-sample">' + (first > lastQ ? 'NASS hasn\u2019t released sample sizes for this period yet. They come out in its yearly quality report.' : 'NASS didn\u2019t publish sample sizes for this period. They start in 2019.') + '</p>';
     }
     var small = q.respondents != null && q.respondents < SMALL_N;
-    var qv = { s: NUM(q.sample), r: q.respondents != null ? NUM(q.respondents) : '', n: q.nq, of: q.of };
-    var txt = q.single ? T(q.respondents != null ? 'Based on <b>{s}</b> operations sampled; about <b>{r}</b> responded.' : 'Based on <b>{s}</b> operations sampled.', qv)
-      : T(q.respondents != null ? 'Typically <b>{s}</b> operations sampled per quarter, about <b>{r}</b> responding ({n} of {of} quarters have published sample sizes).' : 'Typically <b>{s}</b> operations sampled per quarter ({n} of {of} quarters have published sample sizes).', qv);
-    return '<p class="lx-sample">' + (small ? '<span class="lx-smallchip">' + T('Small sample') + '</span> ' : '') + txt + (small ? ' ' + T('Estimates from this few operations can swing a lot, and a few large operations can drive the result.') : '') + '</p>';
+    var txt = q.single ? 'Based on <b>' + q.sample.toLocaleString('en-US') + '</b> operations sampled' + (q.respondents != null ? '; about <b>' + q.respondents.toLocaleString('en-US') + '</b> responded.' : '.')
+      : 'Typically <b>' + q.sample.toLocaleString('en-US') + '</b> operations sampled per quarter' + (q.respondents != null ? ', about <b>' + q.respondents.toLocaleString('en-US') + '</b> responding' : '') +
+        ' (' + q.nq + ' of ' + q.of + ' quarters have published sample sizes).';
+    return '<p class="lx-sample">' + (small ? '<span class="lx-smallchip">Small sample</span> ' : '') + txt + (small ? ' Estimates from this few operations can swing a lot, and a few large operations can drive the result.' : '') + '</p>';
   }
 
   /* ---------- Labels and formatting ---------- */
@@ -157,37 +144,37 @@
     var qs = QPERYEAR[y];
     if (qs.length === 4) return String(y);
     if (qs[0].q === 1 && qs[qs.length - 1].q === qs.length) return y + ' (' + QSHORT[1] + '–' + QEND[qs.length] + ')';
-    return T('{y} ({n} quarters)', { y: y, n: qs.length });
+    return y + ' (' + qs.length + ' quarters)';
   }
-  function keyLabel(k) { return typeof k === 'number' ? yearLabel(k) : WINDOWS[k] ? T('whole survey, {w}', { w: WINDOWS[k].label }) : PBY[k].label; }
+  function keyLabel(k) { return typeof k === 'number' ? yearLabel(k) : WINDOWS[k] ? 'whole survey, ' + WINDOWS[k].label : PBY[k].label; }
   function keyShort(k) { return typeof k === 'number' ? yearLabel(k) : WINDOWS[k] ? WINDOWS[k].label : PBY[k].short; }
-  var SURVEY_LABEL = { pct_lost: T('Average quarterly loss (not annual)'), colonies_lost: T('Average colonies lost per quarter'), pct_renovated: T('Average quarterly renovation'), colonies_start: T('Average colonies at start of quarter') };
+  var SURVEY_LABEL = { pct_lost: 'Average quarterly loss (not annual)', colonies_lost: 'Average colonies lost per quarter', pct_renovated: 'Average quarterly renovation', colonies_start: 'Average colonies at start of quarter' };
   function measureLabel(mid) {
     var m = M[mid];
-    if (st.mode === 'survey') return SURVEY_LABEL[mid] || T('{m} (average)', { m: m.label });
+    if (st.mode === 'survey') return SURVEY_LABEL[mid] || m.label + ' (average)';
     return st.mode === 'year' && m.yearLabel ? m.yearLabel : m.label;
   }
 
   function fmt(mid, r) {
     if (!r || r.status !== 'ok') return null;
     var v = r.v, u = M[mid].unit;
-    if (u === 'count') return NUM(Math.round(v));
-    if (r.corrected) return PCT(v, 1) + '\u2020';
-    if (r.lt || (v > 0 && v < 0.5)) return '<' + PCT(0.5, 1);
+    if (u === 'count') return Math.round(v).toLocaleString('en-US');
+    if (r.corrected) return v.toFixed(1) + '%\u2020';
+    if (r.lt || (v > 0 && v < 0.5)) return '<0.5%';
     var dec = (u === 'pct1' || st.mode !== 'quarter') ? 1 : 0;
-    return PCT(v, dec);
+    return v.toFixed(dec) + '%';
   }
   function compact(mid, v) {
-    if (M[mid].unit !== 'count') return PCT(Math.round(v * 10) / 10, (Math.round(v * 10) % 10) ? 1 : 0);
-    if (v >= 1e6) return T('{n}M', { n: NUM(Math.round(v / 1e5) / 10, (Math.round(v / 1e5) % 10) ? 1 : 0) });
-    if (v >= 1e3) return T('{n}k', { n: NUM(Math.round(v / 1e3)) });
-    return NUM(Math.round(v));
+    if (M[mid].unit !== 'count') return (Math.round(v * 10) / 10) + '%';
+    if (v >= 1e6) return (Math.round(v / 1e5) / 10) + 'M';
+    if (v >= 1e3) return Math.round(v / 1e3) + 'k';
+    return String(Math.round(v));
   }
   function statusText(code, r, key) {
-    if (r.status === 'grouped') return T('Included in Other States');
-    if (r.status === 'nosurvey') return T('No survey this quarter');
-    if (r.status === 'partial') return st.mode === 'survey' ? T('Too few quarters published') : T('Not published for every quarter of {y}', { y: key });
-    return T('Not published');
+    if (r.status === 'grouped') return 'Included in Other States';
+    if (r.status === 'nosurvey') return 'No survey this quarter';
+    if (r.status === 'partial') return st.mode === 'survey' ? 'Too few quarters published' : 'Not published for every quarter of ' + key;
+    return 'Not published';
   }
 
   /* ---------- Color scale: same ranges for every period in a view ---------- */
@@ -250,7 +237,7 @@
       g.setAttribute('tabindex', '0');
       g.setAttribute('role', 'button');
       var shown = fmt(st.measure, r);
-      g.setAttribute('aria-label', L.names[code] + SEP + (shown ? shown : statusText(code, r, st.key)));
+      g.setAttribute('aria-label', L.names[code] + ', ' + (shown ? shown : statusText(code, r, st.key)));
       var shape;
       var b = r.status === 'ok' ? bin(st.measure, r.v) : -1;
       var fill = b >= 0 ? binColor(b) : r.status === 'grouped' ? 'var(--nodata)' : 'url(#lx-hatch)';
@@ -293,14 +280,14 @@
     });
     var selG = svg.querySelector('.area.sel');
     if (selG) svg.appendChild(selG);
-    $('lx-maptitle').textContent = measureLabel(st.measure) + SEP + keyLabel(st.key);
+    $('lx-maptitle').textContent = measureLabel(st.measure) + ', ' + keyLabel(st.key);
     var usb = $('lx-us'), usv = fmt(st.measure, val('US', st.measure, st.key));
     usb.setAttribute('aria-pressed', String(st.sel === 'US'));
-    usb.innerHTML = '<svg width="13" height="14" viewBox="0 0 34 38" aria-hidden="true"><polygon points="17,1 33,10 33,28 17,37 1,28 1,10"/></svg>' + L.names.US + (usv ? '<b>' + usv + '</b>' : '');
+    usb.innerHTML = '<svg width="13" height="14" viewBox="0 0 34 38" aria-hidden="true"><polygon points="17,1 33,10 33,28 17,37 1,28 1,10"/></svg>United States' + (usv ? '<b>' + usv + '</b>' : '');
     var notes = [];
-    if (st.mode === 'survey') notes.push(T('<strong>Whole survey:</strong> each season is averaged across {w}, then the four seasons are averaged, so missing quarters don’t tilt the result.', { w: st.key === 'common' ? WINDOWS.common.label : T('the state’s published years') }) + ' ' + T(M[st.measure].unit === 'count' ? 'Values are per quarter.' : 'Not an annual rate.'));
-    if (st.mode === 'year' && M[st.measure].agg === 'mean') notes.push(T(st.measure === 'pct_lost' ? '<strong>Average of the year’s quarters,</strong> not an annual loss rate.' : '<strong>Average of the year’s quarters,</strong> not an annual rate.'));
-    if (M[st.measure].group === 'Stressors') notes.push(T('<strong>Self-reported:</strong> beekeepers report colonies affected by each stressor. Not lab-confirmed, and “affected” doesn’t mean lost.'));
+    if (st.mode === 'survey') notes.push('<strong>Whole survey:</strong> each season is averaged across ' + (st.key === 'common' ? WINDOWS.common.label : 'the state\u2019s published years') + ', then the four seasons are averaged, so missing quarters don\u2019t tilt the result. ' + (M[st.measure].unit === 'count' ? 'Values are per quarter.' : 'Not an annual rate.'));
+    if (st.mode === 'year' && M[st.measure].agg === 'mean') notes.push('<strong>Average of the year\u2019s quarters,</strong> not an annual ' + (st.measure === 'pct_lost' ? 'loss ' : '') + 'rate.');
+    if (M[st.measure].group === 'Stressors') notes.push('<strong>Self-reported:</strong> beekeepers report colonies affected by each stressor. Not lab-confirmed, and \u201caffected\u201d doesn\u2019t mean lost.');
     $('lx-callout').innerHTML = notes.join(' ');
     $('lx-callout').hidden = !notes.length;
     drawLegend();
@@ -327,11 +314,11 @@
   function drawLegend() {
     var b = breaks(st.measure), items = [], mid = st.measure;
     for (var i = 0; i <= b.length; i++) {
-      var lab = i === 0 ? T('Under {v}', { v: compact(mid, b[0]) }) : i === b.length ? T('{v} or more', { v: compact(mid, b[i - 1]) }) : ISO(compact(mid, b[i - 1]) + '–' + compact(mid, b[i]));
+      var lab = i === 0 ? 'Under ' + compact(mid, b[0]) : i === b.length ? compact(mid, b[i - 1]) + ' or more' : compact(mid, b[i - 1]) + '–' + compact(mid, b[i]);
       items.push('<span><i style="background:' + binColor(i) + '"></i>' + lab + '</span>');
     }
-    items.push('<span><i style="background:var(--nodata)"></i>' + T('In Other States') + '</span>');
-    items.push('<span><i class="hatch"></i>' + T('Not available') + '</span>');
+    items.push('<span><i style="background:var(--nodata)"></i>In Other States</span>');
+    items.push('<span><i class="hatch"></i>Not available</span>');
     $('lx-legend').innerHTML = items.join('');
   }
 
@@ -348,14 +335,13 @@
     var mine = val(code, mid, key), us = val('US', mid, key);
     if (mine.status !== 'ok' || us.status !== 'ok') return '';
     if (M[mid].unit === 'count') {
-      if (mid === 'colonies_start' || mid === 'colonies_lost') return T('{p} of the U.S. total ({v})', { p: PCT(mine.v / us.v * 100, 1), v: fmt(mid, us) });
+      if (mid === 'colonies_start' || mid === 'colonies_lost') return (mine.v / us.v * 100).toFixed(1) + '% of the U.S. total (' + fmt(mid, us) + ')';
       return '';
     }
     var d = mine.v - us.v, dec = (M[mid].unit === 'pct1' || st.mode !== 'quarter') ? 1 : 0;
     var amt = Math.abs(d).toFixed(dec);
-    var vv = { a: NUM(Math.abs(d), dec), who: T('the U.S.'), v: fmt(mid, us) };
-    if (Number(amt) === 0) return T('About the same as {who} ({v})', vv);
-    return T(Number(amt) === 1 ? (d > 0 ? '{a} point above {who} ({v})' : '{a} point below {who} ({v})') : (d > 0 ? '{a} points above {who} ({v})' : '{a} points below {who} ({v})'), vv);
+    if (Number(amt) === 0) return 'About the same as the U.S. (' + fmt(mid, us) + ')';
+    return amt + (Number(amt) === 1 ? ' point ' : ' points ') + (d > 0 ? 'above' : 'below') + ' the U.S. (' + fmt(mid, us) + ')';
   }
 
   function previousKey(key) {
@@ -372,33 +358,33 @@
     var isState = code !== 'US' && code !== 'OTH';
     if (isState && probe.status === 'grouped' && probeLoss.status === 'grouped') {
       useCode = 'OTH';
-      notice = '<p class="lx-notice">' + T('NASS doesn’t publish {s} separately for {k}. Its colonies are counted in <strong>Other States</strong>, shown below.', { s: L.names[code], k: keyLabel(key) }) + '</p>';
+      notice = '<p class="lx-notice">NASS doesn’t publish ' + L.names[code] + ' separately for ' + keyLabel(key) + '. Its colonies are counted in <strong>Other States</strong>, shown below.</p>';
     }
     var html = [];
     html.push('<div class="lx-panel-head"><h2>' + L.names[code] + '</h2>' +
-      (code !== 'US' ? '<button type="button" class="lx-link" id="lx-to-us">' + T('View {c}', { c: L.names.US }) + '</button>' : '') + '</div>');
-    html.push('<p class="lx-sub">' + keyLabel(key).replace(/^./, function (c) { return c.toUpperCase(); }) + ' · ' + T('Operations with 5 or more colonies') + '</p>');
+      (code !== 'US' ? '<button type="button" class="lx-link" id="lx-to-us">View United States</button>' : '') + '</div>');
+    html.push('<p class="lx-sub">' + keyLabel(key).replace(/^./, function (c) { return c.toUpperCase(); }) + ' · Operations with 5 or more colonies</p>');
     html.push(notice);
     // Corrected values shown in this quarter's panel
     if (st.mode === 'quarter') {
       var cors = ['pct_lost', 'pct_renovated'].map(function (m) { return val(useCode, m, key).corrected; }).filter(Boolean);
-      cors.forEach(function (c) { html.push('<p class="lx-notice lx-corr"><strong>\u2020 ' + T('Corrected value.') + '</strong> ' + T(c.reason) + ' ' + T('NASS has not corrected it as of the latest release.') + '</p>'); });
+      cors.forEach(function (c) { html.push('<p class="lx-notice lx-corr"><strong>\u2020 Corrected value.</strong> ' + c.reason + ' NASS has not corrected it as of the latest release.</p>'); });
     }
-    if (useCode === 'OTH' && notice) html.push('<h3 class="lx-h3">' + L.names.OTH + '</h3>');
+    if (useCode === 'OTH' && notice) html.push('<h3 class="lx-h3">Other States</h3>');
 
     var heroR = val(useCode, st.measure, key), heroShown = fmt(st.measure, heroR);
     var rk = rankOf(useCode, st.measure, key);
     html.push('<div class="lx-hero"><p class="lx-k">' + measureLabel(st.measure) + '</p>' +
       '<p class="lx-big">' + (heroShown || '<span class="lx-na">' + statusText(useCode, heroR, key) + '</span>') + '</p>' +
       (compareLine(useCode, st.measure, key) ? '<p class="lx-cmp">' + compareLine(useCode, st.measure, key) + '</p>' : '') +
-      (rk ? '<p class="lx-rank">' + T('Rank {r} of {of} published states (1 is the highest)', { r: rk.rank, of: rk.of }) + '</p>' : '') + qualityLine(useCode, key) +
-      (useCode !== 'US' && M[st.measure].unit !== 'count' && compareLine(useCode, st.measure, key) ? '<p class="lx-foot">' + T('State percents divide by the state’s peak colony count; the U.S. divides by colonies at the start of the quarter, so states tend to read a little lower.') + '</p>' : '') + '</div>');
+      (rk ? '<p class="lx-rank">Rank ' + rk.rank + ' of ' + rk.of + ' published states (1 is the highest)</p>' : '') + qualityLine(useCode, key) +
+      (useCode !== 'US' && M[st.measure].unit !== 'count' && compareLine(useCode, st.measure, key) ? '<p class="lx-foot">State percents divide by the state\u2019s peak colony count; the U.S. divides by colonies at the start of the quarter, so states tend to read a little lower.</p>' : '') + '</div>');
 
     var tiles = ['pct_lost', 'colonies_lost', 'pct_renovated', 'colonies_start'].filter(function (m) { return m !== st.measure; });
     html.push('<div class="lx-tiles' + (tiles.length === 4 ? ' four' : '') + '">' + tiles.map(function (m) {
       var r = val(useCode, m, key), s = fmt(m, r), k2 = rankOf(useCode, m, key);
-      return '<button type="button" class="lx-tile" data-measure="' + m + '" title="' + T('Color the map by {m}', { m: I.lower(measureLabel(m)) }) + '"><span class="lx-k">' + measureLabel(m) + '</span><span class="lx-v">' + (s || '<span class="lx-na">' + T('n/a') + '</span>') + '</span>' +
-        (k2 ? '<span class="lx-rank">' + T('Rank {r} of {of}', { r: k2.rank, of: k2.of }) + '</span>' : '') + '<span class="lx-show">' + T('Show on map') + '</span></button>';
+      return '<button type="button" class="lx-tile" data-measure="' + m + '" title="Color the map by ' + measureLabel(m).toLowerCase() + '"><span class="lx-k">' + measureLabel(m) + '</span><span class="lx-v">' + (s || '<span class="lx-na">n/a</span>') + '</span>' +
+        (k2 ? '<span class="lx-rank">Rank ' + k2.rank + ' of ' + k2.of + '</span>' : '') + '<span class="lx-show">Show on map</span></button>';
     }).join('') + '</div>');
 
     // By season
@@ -408,15 +394,16 @@
     var ssn = sc === code ? own : seasons(useCode, st.measure, win), ssu = seasons('US', st.measure, win);
     var smax = seasonScale(st.measure, win);
     if (smax) {
-      var SNAME = QABBR;
+      var SNAME = ['', 'Jan\u2013Mar', 'Apr\u2013Jun', 'Jul\u2013Sep', 'Oct\u2013Dec'];
       var fmtS = function (x) { if (x.v == null) return null; var keep = st.mode; st.mode = 'survey'; var t = fmt(st.measure, { v: x.v, status: 'ok' }); st.mode = keep; return t; };
-      html.push('<div class="lx-block"><h3 class="lx-h3">' + T('By season') + (sc !== useCode ? ': ' + L.names[sc] : '') + '</h3><p class="lx-small">' + T('Typical {m} in each quarter of the year, averaged over {w}.', { m: I.lower(M[st.measure].trend), w: win === 'common' ? WINDOWS.common.label : T('every published year') }) + (sc !== 'US' && M[st.measure].unit !== 'count' ? ' ' + T('The dark tick marks the U.S.') : '') +
-        ' ' + T('Bars use the same scale for every state, 0 to {t}.', { t: compact(st.measure, smax) }) + '</p><ul class="lx-stress lx-seasons">' +
+      html.push('<div class="lx-block"><h3 class="lx-h3">By season' + (sc !== useCode ? ': ' + L.names[sc] : '') + '</h3><p class="lx-small">Typical ' + M[st.measure].short.replace(/^%/, 'percent').toLowerCase() + ' in each quarter of the year, averaged over ' +
+        (win === 'common' ? WINDOWS.common.label : 'every published year') + '.' + (sc !== 'US' && M[st.measure].unit !== 'count' ? ' The dark tick marks the U.S.' : '') +
+        ' Bars use the same scale for every state, 0 to ' + compact(st.measure, smax) + '.</p><ul class="lx-stress lx-seasons">' +
         ssn.map(function (x, i) {
-          var u = ssu[i], mark = (sc !== 'US' && M[st.measure].unit !== 'count' && u.v != null) ? '<b class="lx-usmark" style="left:' + (u.v / smax * 100).toFixed(1) + '%" title="' + L.names.US + ' ' + fmtS(u) + '"></b>' : '';
+          var u = ssu[i], mark = (sc !== 'US' && M[st.measure].unit !== 'count' && u.v != null) ? '<b class="lx-usmark" style="left:' + (u.v / smax * 100).toFixed(1) + '%" title="U.S. ' + fmtS(u) + '"></b>' : '';
           var ok = x.v != null && x.n >= MIN_PER_SEASON;
           return '<li><span class="lx-sname">' + SNAME[x.q] + '</span><span class="lx-track"><span class="lx-fill" style="width:' + (ok ? Math.max(0.6, x.v / smax * 100) : 0).toFixed(1) + '%"></span>' + mark + '</span>' +
-            '<span class="lx-sval" title="' + T('{n} of {of} quarters published', { n: x.n, of: x.of }) + '">' + (ok ? fmtS(x) : T('few')) + '</span></li>';
+            '<span class="lx-sval" title="' + x.n + ' of ' + x.of + ' quarters published">' + (ok ? fmtS(x) : 'few') + '</span></li>';
         }).join('') + '</ul></div>');
     }
 
@@ -424,28 +411,27 @@
     var srows = STRESSORS.map(function (m) {
       var r = val(useCode, m, key), us = val('US', m, key), s = fmt(m, r);
       var w = r.status === 'ok' ? Math.max(0.6, Math.min(100, r.v)) : 0;
-      var mark = (useCode !== 'US' && us.status === 'ok') ? '<b class="lx-usmark" style="left:' + Math.min(100, us.v) + '%" title="' + L.names.US + ' ' + fmt(m, us) + '"></b>' : '';
-      return '<li class="lx-pick' + (m === st.measure ? ' on' : '') + '" data-measure="' + m + '" role="button" tabindex="0" aria-pressed="' + (m === st.measure) + '" title="' + T('Color the map by {m}', { m: I.lower(M[m].label) }) + '"><span class="lx-sname">' + M[m].short + '</span>' +
+      var mark = (useCode !== 'US' && us.status === 'ok') ? '<b class="lx-usmark" style="left:' + Math.min(100, us.v) + '%" title="U.S. ' + fmt(m, us) + '"></b>' : '';
+      return '<li class="lx-pick' + (m === st.measure ? ' on' : '') + '" data-measure="' + m + '" role="button" tabindex="0" aria-pressed="' + (m === st.measure) + '" title="Color the map by ' + M[m].label.toLowerCase() + '"><span class="lx-sname">' + M[m].short + '</span>' +
         '<span class="lx-track"><span class="lx-fill" style="width:' + w + '%"></span>' + mark + '</span>' +
-        '<span class="lx-sval">' + (s || T('n/a')) + '</span></li>';
+        '<span class="lx-sval">' + (s || 'n/a') + '</span></li>';
     }).join('');
-    html.push('<div class="lx-block"><h3 class="lx-h3">' + T('Colony health stressors') + '</h3>' +
-      '<p class="lx-small"><strong class="lx-tag">' + T('Self-reported') + '</strong> ' + T(st.mode === 'year' ? 'Percent of colonies beekeepers reported as affected, averaged across quarters.' : st.mode === 'survey' ? 'Percent of colonies beekeepers reported as affected, averaged by season.' : 'Percent of colonies beekeepers reported as affected.') + ' ' + T('Affected doesn’t mean lost, and a colony can have more than one stressor, so these don’t add up to 100%.') +
-      (useCode !== 'US' ? ' ' + T('The dark tick marks the U.S.') : '') + ' ' + T('Click a stressor to map it.') + '</p><ul class="lx-stress">' + srows + '</ul></div>');
+    html.push('<div class="lx-block"><h3 class="lx-h3">Colony health stressors</h3>' +
+      '<p class="lx-small"><strong class="lx-tag">Self-reported</strong> Percent of colonies beekeepers reported as affected' + (st.mode === 'year' ? ', averaged across quarters' : st.mode === 'survey' ? ', averaged by season' : '') + '. Affected doesn\u2019t mean lost, and a colony can have more than one stressor, so these don\u2019t add up to 100%.' +
+      (useCode !== 'US' ? ' The dark tick marks the U.S.' : '') + ' Click a stressor to map it.</p><ul class="lx-stress">' + srows + '</ul></div>');
 
     // Year-ago comparison
     var pk = previousKey(key);
     if (pk !== null) {
       var now = val(useCode, st.measure, key), then = val(useCode, st.measure, pk);
       if (now.status === 'ok' && then.status === 'ok') {
-        html.push('<p class="lx-yoy">' + T(st.mode === 'year' ? 'In {k}: <strong>{a}</strong>, compared with <strong>{b}</strong> now.' : 'A year earlier, in {k}: <strong>{a}</strong>, compared with <strong>{b}</strong> now.', { k: st.mode === 'year' ? yearLabel(pk) : keyLabel(pk), a: fmt(st.measure, then), b: fmt(st.measure, now) }) + '</p>');
+        html.push('<p class="lx-yoy">' + (st.mode === 'year' ? 'In ' + yearLabel(pk) : 'A year earlier, in ' + keyLabel(pk)) + ': <strong>' + fmt(st.measure, then) + '</strong>, compared with <strong>' + fmt(st.measure, now) + '</strong> now.</p>');
       }
     }
 
     // Trend chart
-    var dash = useCode !== 'US';
-    html.push('<div class="lx-block"><h3 class="lx-h3">' + T(st.mode === 'year' ? '{m} by year' : '{m} by quarter', { m: M[st.measure].trend }) + '</h3>' +
-      '<div class="lx-trend" id="lx-trend"></div><p class="lx-small" id="lx-readout">' + T(st.mode === 'survey' ? (dash ? 'Darker bars are the quarters in this average, and the dashed line is the U.S.' : 'Darker bars are the quarters in this average.') : st.mode === 'year' ? (dash ? 'The darker bar is the selected year, and the dashed line is the U.S.' : 'The darker bar is the selected year.') : (dash ? 'The darker bar is the selected quarter, and the dashed line is the U.S.' : 'The darker bar is the selected quarter.')) + ' ' + T('Hover a bar to see its value, or click it to jump there.') + '</p></div>');
+    html.push('<div class="lx-block"><h3 class="lx-h3">' + M[st.measure].short.replace(/^%/, 'Percent') + ' by ' + (st.mode === 'year' ? 'year' : 'quarter') + '</h3>' +
+      '<div class="lx-trend" id="lx-trend"></div><p class="lx-small" id="lx-readout">' + (st.mode === 'survey' ? 'Darker bars are the quarters in this average' : 'The darker bar is the selected ' + (st.mode === 'year' ? 'year' : 'quarter')) + (useCode !== 'US' ? ', and the dashed line is the U.S.' : '.') + ' Hover a bar to see its value, or click it to jump there.</p></div>');
 
     panel.innerHTML = html.join('');
     var toUs = $('lx-to-us'); if (toUs) toUs.addEventListener('click', function () { select('US'); });
@@ -465,10 +451,10 @@
     var rows = ks.map(function (k) { return { k: k, r: val(code, mid, k), us: val('US', mid, k) }; });
     var max = 0;
     rows.forEach(function (d) { if (d.r.status === 'ok') max = Math.max(max, d.r.v); if (code !== 'US' && d.us.status === 'ok' && M[mid].unit !== 'count') max = Math.max(max, d.us.v); });
-    if (!max) { box.innerHTML = '<p class="lx-small">' + T('No values to chart for this selection.') + '</p>'; return; }
+    if (!max) { box.innerHTML = '<p class="lx-small">No values to chart for this selection.</p>'; return; }
     var step = niceStep(max / 4), top = Math.ceil(max / step) * step;
     var bw = (W - ml - mr) / ks.length, y = function (v) { return mt + (H - mt - mb) * (1 - v / top); };
-    var s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + T('{m} over time for {s}', { m: M[mid].trend, s: L.names[code] }) + '">'];
+    var s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + M[mid].short + ' over time for ' + L.names[code] + '">'];
     for (var t = 0; t <= top + 1e-9; t += step) {
       s.push('<line class="grid" x1="' + ml + '" x2="' + (W - mr) + '" y1="' + y(t).toFixed(1) + '" y2="' + y(t).toFixed(1) + '"/>');
       s.push('<text class="ytick" x="' + (ml - 6) + '" y="' + y(t).toFixed(1) + '">' + compact(mid, t) + '</text>');
@@ -505,7 +491,7 @@
       var d = rows[+h.getAttribute('data-i')];
       h.addEventListener('mouseenter', function () {
         var a = fmt(mid, d.r), b = fmt(mid, d.us);
-        readout.textContent = keyLabel(d.k) + ': ' + (a || statusText(code, d.r, d.k)) + (code !== 'US' && b ? ' (' + L.names.US + ' ' + b + ')' : '');
+        readout.textContent = keyLabel(d.k) + ': ' + (a || statusText(code, d.r, d.k)) + (code !== 'US' && b ? ' (U.S. ' + b + ')' : '');
       });
       h.addEventListener('mouseleave', function () { readout.textContent = base; });
       h.addEventListener('click', function () { if (st.mode === 'survey') setMode('quarter', d.k); else setKey(d.k); });
@@ -519,12 +505,12 @@
   /* ---------- Table ---------- */
   function renderTable() {
     var key = st.key, sk = st.sortKey || (TABLE_COLS.indexOf(st.measure) >= 0 ? st.measure : 'pct_lost');
-    var head = '<tr><th scope="col" data-k="name" class="' + (sk === 'name' ? 'sorted' : '') + '">' + T('State') + (sk === 'name' ? (st.sortDir < 0 ? ' ↓' : ' ↑') : '') + '</th>' +
+    var head = '<tr><th scope="col" data-k="name" class="' + (sk === 'name' ? 'sorted' : '') + '">State' + (sk === 'name' ? (st.sortDir < 0 ? ' ↓' : ' ↑') : '') + '</th>' +
       TABLE_COLS.map(function (m) {
         var sv = st.mode === 'survey', yr = st.mode === 'year';
-        var lab = T({ colonies_start: yr ? 'Colonies Jan 1' : sv ? 'Avg. colonies at start' : 'Colonies at start', colonies_lost: sv ? 'Avg. colonies lost' : 'Colonies lost', pct_lost: yr || sv ? 'Avg. % lost' : '% lost', pct_renovated: yr || sv ? 'Avg. % renovated' : '% renovated', varroa: 'Varroa', diseases: 'Diseases', pesticides: 'Pesticides' }[m]);
+        var lab = { colonies_start: yr ? 'Colonies Jan 1' : sv ? 'Avg. colonies at start' : 'Colonies at start', colonies_lost: sv ? 'Avg. colonies lost' : 'Colonies lost', pct_lost: yr || sv ? 'Avg. % lost' : '% lost', pct_renovated: yr || sv ? 'Avg. % renovated' : '% renovated', varroa: 'Varroa', diseases: 'Diseases', pesticides: 'Pesticides' }[m];
         return '<th scope="col" class="num' + (sk === m ? ' sorted' : '') + '" data-k="' + m + '">' + lab + (sk === m ? (st.sortDir < 0 ? ' ↓' : ' ↑') : '') + '</th>';
-      }).join('') + '<th scope="col" class="num' + (sk === 'sampled' ? ' sorted' : '') + '" data-k="sampled" title="' + T(st.mode === 'quarter' ? 'Operations NASS sampled' : 'Operations NASS sampled, typical per quarter') + '">' + T(st.mode === 'quarter' ? 'Sampled' : 'Sampled / qtr') + (sk === 'sampled' ? (st.sortDir < 0 ? ' ↓' : ' ↑') : '') + '</th></tr>';
+      }).join('') + '<th scope="col" class="num' + (sk === 'sampled' ? ' sorted' : '') + '" data-k="sampled" title="Operations NASS sampled' + (st.mode === 'quarter' ? '' : ', typical per quarter') + '">' + (st.mode === 'quarter' ? 'Sampled' : 'Sampled / qtr') + (sk === 'sampled' ? (st.sortDir < 0 ? ' ↓' : ' ↑') : '') + '</th></tr>';
     var states = STATES.filter(function (c) {
       return TABLE_COLS.some(function (m) { return val(c, m, key).status === 'ok'; });
     });
@@ -543,16 +529,16 @@
         TABLE_COLS.map(function (m) { var s = fmt(m, val(c, m, key)); return '<td class="num">' + (s || '<span class="lx-na">–</span>') + '</td>'; }).join('') +
         (function () { var q = qualityFor(c, key); if (!q) return '<td class="num"><span class="lx-na">–</span></td>';
           var small = q.respondents != null && q.respondents < SMALL_N;
-          return '<td class="num' + (small ? ' lx-few' : '') + '"' + (small ? ' title="' + T('About {n} operations responded', { n: NUM(q.respondents) }) + '"' : '') + '>' + NUM(q.sample) + (small ? ' <span class="lx-fewmark" aria-label="' + T('small sample') + '">!</span>' : '') + '</td>'; })() + '</tr>';
+          return '<td class="num' + (small ? ' lx-few' : '') + '"' + (small ? ' title="About ' + q.respondents + ' operations responded"' : '') + '>' + q.sample.toLocaleString('en-US') + (small ? ' <span class="lx-fewmark" aria-label="small sample">!</span>' : '') + '</td>'; })() + '</tr>';
     }
     var body = row('US', 'pin') + states.map(function (c) { return row(c, ''); }).join('');
     if (!f && TABLE_COLS.some(function (m) { return val('OTH', m, key).status === 'ok'; })) body += row('OTH', 'pin pin-bottom');
     $('lx-table').innerHTML = '<thead>' + head + '</thead><tbody>' + body + '</tbody>';
     var nPub = STATES.filter(function (c) { return val(c, 'colonies_start', key).status === 'ok' || val(c, 'pct_lost', key).status === 'ok'; }).length;
-    $('lx-tabletitle').textContent = T('All published states') + SEP + keyLabel(key);
-    $('lx-tablenote').textContent = (nPub ? T(st.mode === 'survey' ? '{n} states have enough published quarters for a whole-survey average.' : '{n} states are published separately for this period; Other States combines the rest.', { n: nPub }) + ' ' + T('Click a heading to sort, or a row to see that state.') : T('No state data was published for this period.')) +
-      ' ' + T('U.S. percents use colonies at the start of the quarter; state percents use each state’s peak.') + (st.mode === 'year' ? ' ' + T('Year percents are averages of the quarters.') : st.mode === 'survey' ? ' ' + T('Whole-survey values are season-balanced averages per quarter.') : '') + ' ' + T('Stressors are self-reported. A ! in the Sampled column means fewer than {k} operations responded.', { k: SMALL_N }) +
-      (st.mode === 'quarter' && L.corrections[key] ? ' ' + T('† marks a percent recalculated from NASS’s own counts because the published value contradicts them; open that state for details.') : '');
+    $('lx-tabletitle').textContent = 'All published states, ' + keyLabel(key);
+    $('lx-tablenote').textContent = (nPub ? nPub + (st.mode === 'survey' ? ' states have enough published quarters for a whole-survey average.' : ' states are published separately for this period; Other States combines the rest.') + ' Click a heading to sort, or a row to see that state.' : 'No state data was published for this period.') +
+      ' U.S. percents use colonies at the start of the quarter; state percents use each state\u2019s peak.' + (st.mode === 'year' ? ' Year percents are averages of the quarters.' : st.mode === 'survey' ? ' Whole-survey values are season-balanced averages per quarter.' : '') + ' Stressors are self-reported. A ! in the Sampled column means fewer than ' + SMALL_N + ' operations responded.' +
+      (st.mode === 'quarter' && L.corrections[key] ? ' \u2020 marks a percent recalculated from NASS\u2019s own counts because the published value contradicts them; open that state for details.' : '');
     $('lx-table').querySelectorAll('th[data-k]').forEach(function (th) {
       th.addEventListener('click', function () {
         var k = th.getAttribute('data-k');
@@ -583,7 +569,7 @@
   function fillPeriods() {
     var sel = $('lx-period'), ks = st.mode === 'survey' ? keys() : keys().slice().reverse();
     sel.innerHTML = ks.map(function (k) {
-      var lab = st.mode === 'year' ? yearLabel(k) : st.mode === 'survey' ? WINDOWS[k].label : PBY[k].label + (PBY[k].survey ? '' : ' ' + T('(no survey)'));
+      var lab = st.mode === 'year' ? yearLabel(k) : st.mode === 'survey' ? WINDOWS[k].label : PBY[k].label + (PBY[k].survey ? '' : ' (no survey)');
       return '<option value="' + k + '">' + lab + '</option>';
     }).join('');
     sel.value = String(st.key);
@@ -611,7 +597,7 @@
   var groups = {};
   MEASURES.forEach(function (m) { (groups[m.group] = groups[m.group] || []).push(m); });
   msel.innerHTML = Object.keys(groups).map(function (g) {
-    return '<optgroup label="' + T(g) + '">' + groups[g].map(function (m) { return '<option value="' + m.id + '">' + m.label + '</option>'; }).join('') + '</optgroup>';
+    return '<optgroup label="' + g + '">' + groups[g].map(function (m) { return '<option value="' + m.id + '">' + m.label + '</option>'; }).join('') + '</optgroup>';
   }).join('');
   msel.value = st.measure;
   msel.addEventListener('change', function () { st.measure = msel.value; st.sortKey = null; renderAll(); });
@@ -660,10 +646,12 @@
     var hi = pub[0], lo = pub[pub.length - 1];
     var topS = STRESSORS.slice().sort(function (a, b) { return us(b).v - us(a).v; })[0];
     var fmtQ = function (m, r) { var keep = st.mode; st.mode = 'quarter'; var s = fmt(m, r); st.mode = keep; return s; };
-    $('lx-summary').innerHTML = T('In {q}, U.S. beekeeping operations with five or more colonies lost <strong>{p}</strong> of their colonies, about <strong>{n}</strong>. Among the {k} states NASS published separately, losses were highest in <strong>{hi}</strong> ({hv}) and lowest in <strong>{lo}</strong> ({lv}). {s} was the most common stressor, affecting <strong>{sv}</strong> of colonies. Click any state on the map, or pick one from the table, to see its numbers.',
-      { q: latest.label, p: fmtQ('pct_lost', us('pct_lost')), n: fmtQ('colonies_lost', us('colonies_lost')), k: pub.length, hi: L.names[hi], hv: fmtQ('pct_lost', valQ(hi, 'pct_lost', k)), lo: L.names[lo], lv: fmtQ('pct_lost', valQ(lo, 'pct_lost', k)), s: M[topS].short, sv: fmtQ(topS, us(topS)) });
-    var rel = L.source.release ? new Date(L.source.release + 'T12:00:00').toLocaleDateString(LOC, { year: 'numeric', month: 'long', day: 'numeric' }) : '';
-    $('lx-note').textContent = T(rel ? 'NASS data from {a} through {b}. Latest report released {d}.' : 'NASS data from {a} through {b}.', { a: SURVEYED[0].label, b: latest.label, d: rel });
+    $('lx-summary').innerHTML = 'In ' + latest.label + ', U.S. beekeeping operations with five or more colonies lost <strong>' + fmtQ('pct_lost', us('pct_lost')) +
+      '</strong> of their colonies, about <strong>' + fmtQ('colonies_lost', us('colonies_lost')) + '</strong>. Among the ' + pub.length + ' states NASS published separately, losses were highest in <strong>' +
+      L.names[hi] + '</strong> (' + fmtQ('pct_lost', valQ(hi, 'pct_lost', k)) + ') and lowest in <strong>' + L.names[lo] + '</strong> (' + fmtQ('pct_lost', valQ(lo, 'pct_lost', k)) +
+      '). ' + M[topS].short + ' was the most common stressor, affecting <strong>' + fmtQ(topS, us(topS)) + '</strong> of colonies. Click any state on the map, or pick one from the table, to see its numbers.';
+    var rel = L.source.release ? new Date(L.source.release + 'T12:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '';
+    $('lx-note').textContent = 'NASS data from ' + SURVEYED[0].label + ' through ' + latest.label + (rel ? '. Latest report released ' + rel + '.' : '.');
   })();
 
   document.querySelectorAll('.ab-window').forEach(function (el) { el.textContent = COMMON_END.label; });
@@ -705,7 +693,7 @@
   });
   window.addEventListener('hashchange', function () { if (isAboutHash(location.hash.slice(1))) showTab('about', false); });
   var built = $('lx-built');
-  if (built && L.source.built) built.textContent = T('Data last updated on this site {d}.', { d: new Date(L.source.built + 'T12:00:00').toLocaleDateString(LOC, { year: 'numeric', month: 'long', day: 'numeric' }) });
+  if (built && L.source.built) built.textContent = 'Data last updated on this site ' + new Date(L.source.built + 'T12:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) + '.';
   showTab(isAboutHash(location.hash.slice(1)) ? 'about' : 'map', false);
   if (location.hash.slice(1).indexOf('ab-') === 0) { var target = document.getElementById(location.hash.slice(1)); if (target) target.scrollIntoView(); }
 })();
