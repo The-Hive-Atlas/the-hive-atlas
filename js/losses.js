@@ -10,7 +10,7 @@
     PCT: function (x, d) { return Number(x).toFixed(d || 0) + '%'; }, NM: function (s) { return s; }, ISO: function (s) { return s; }, lower: function (s) { return s.toLowerCase(); }, sep: ', ' };
   var T = I.T, NUM = I.N, PCT = I.PCT, NM = I.NM, ISO = I.ISO, SEP = I.sep;
   var LOC = ({ fr: 'fr-FR', es: 'es-ES', ar: 'ar' })[I.lang] || 'en-US';
-  for (var nk in L.names) L.names[nk] = NM(L.names[nk]);
+  var EN_NAMES = {}; for (var nk in L.names) { EN_NAMES[nk] = L.names[nk]; L.names[nk] = NM(L.names[nk]); }
   // Quarter names in the page language
   var QLONG = ['', T('January–March'), T('April–June'), T('July–September'), T('October–December')];
   var QABBR = ['', T('Jan–Mar'), T('Apr–Jun'), T('Jul–Sep'), T('Oct–Dec')];
@@ -447,12 +447,17 @@
     html.push('<div class="lx-block"><h3 class="lx-h3">' + T(st.mode === 'year' ? '{m} by year' : '{m} by quarter', { m: M[st.measure].trend }) + '</h3>' +
       '<div class="lx-trend" id="lx-trend"></div><p class="lx-small" id="lx-readout">' + T(st.mode === 'survey' ? (dash ? 'Darker bars are the quarters in this average, and the dashed line is the U.S.' : 'Darker bars are the quarters in this average.') : st.mode === 'year' ? (dash ? 'The darker bar is the selected year, and the dashed line is the U.S.' : 'The darker bar is the selected year.') : (dash ? 'The darker bar is the selected quarter, and the dashed line is the U.S.' : 'The darker bar is the selected quarter.')) + ' ' + T('Hover a bar to see its value, or click it to jump there.') + '</p></div>');
 
+    // Download the clicked state's own quarters when it has any; Other States only if it was never published
+    var dlCode = SURVEYED.some(function (p) { return rawRow(code, p.id) !== undefined; }) ? code : useCode;
+    html.push('<p class="lx-small"><button type="button" class="lx-link" id="lx-dl-state">' + T('Download {s} history (CSV)', { s: L.names[dlCode] }) + '</button></p>');
+
     panel.innerHTML = html.join('');
     var toUs = $('lx-to-us'); if (toUs) toUs.addEventListener('click', function () { select('US'); });
     panel.querySelectorAll('[data-measure]').forEach(function (el) {
       el.addEventListener('click', function () { setMeasure(el.getAttribute('data-measure')); });
       el.addEventListener('keydown', function (e) { if (el.tagName !== 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); setMeasure(el.getAttribute('data-measure')); } });
     });
+    $('lx-dl-state').addEventListener('click', function () { downloadState(dlCode); });
     drawTrend(useCode);
   }
 
@@ -567,6 +572,74 @@
     });
   }
   function reduceMotion() { return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+
+  /* ---------- Downloads (column names stay in English so files open the same in any spreadsheet) ---------- */
+  var CITE = 'Source: USDA National Agricultural Statistics Service, Honey Bee Colonies reports. Compiled by The Hive Atlas, https://thehiveatlas.com/losses.html';
+  var DL_FIELDS = ['colonies_start', 'colonies_lost', 'pct_lost', 'pct_renovated', 'varroa', 'other_pests', 'diseases', 'pesticides', 'other', 'unknown'];
+  var DL_HEAD = ['colonies_start', 'colonies_lost', 'pct_lost', 'pct_renovated', 'pct_varroa', 'pct_other_pests', 'pct_diseases', 'pct_pesticides', 'pct_other_causes', 'pct_unknown_causes'];
+  function csvCell(v) { v = v == null ? '' : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+  function saveCSV(name, header, rows, notes) {
+    var lines = notes.map(function (n) { return '# ' + n; });
+    lines.push(header.map(csvCell).join(','));
+    rows.forEach(function (r) { lines.push(r.map(csvCell).join(',')); });
+    var blob = new Blob(['﻿' + lines.join('\r\n') + '\r\n'], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+  // A number, or "<0.5" where NASS published (Z), less than half of one percent
+  function dlValue(mid, r) {
+    if (!r || r.status !== 'ok') return '';
+    if (r.lt) return '<0.5';
+    var d = M[mid].unit === 'count' ? 0 : 1;
+    return Math.round(r.v * Math.pow(10, d)) / Math.pow(10, d);
+  }
+  function dlStatus(code, getter, key) {
+    var a = getter(code, 'colonies_start', key), b = getter(code, 'pct_lost', key);
+    var r = a.status === 'ok' ? a : b;
+    return { ok: 'published', grouped: 'in Other States', nosurvey: 'no survey', partial: st.mode === 'survey' ? 'too few quarters' : 'not every quarter published', na: 'not published' }[r.status] || r.status;
+  }
+  function correctedFields(code, pid) {
+    var c = L.corrections && L.corrections[pid] && L.corrections[pid][code];
+    return c ? Object.keys(c).join(' ') : '';
+  }
+  function periodName(key) {
+    if (st.mode === 'year') return String(key);
+    if (st.mode === 'survey') return 'whole survey ' + (key === 'common' ? WINDOWS.common.periods[0].id + ' to ' + COMMON_END.id : 'full record');
+    return key;
+  }
+  $('lx-dl-view').addEventListener('click', function () {
+    var key = st.key, f = st.filter.trim().toLowerCase();
+    var states = STATES.filter(function (c) { return TABLE_COLS.some(function (m) { return val(c, m, key).status === 'ok'; }); });
+    if (f) states = states.filter(function (c) { return L.names[c].toLowerCase().indexOf(f) >= 0 || c.toLowerCase() === f; });
+    var codes = ['US'].concat(states);
+    if (!f && TABLE_COLS.some(function (m) { return val('OTH', m, key).status === 'ok'; })) codes.push('OTH');
+    var rows = codes.map(function (c) {
+      var q = qualityFor(c, key);
+      return [EN_NAMES[c], c, periodName(key)].concat(DL_FIELDS.map(function (m) { return dlValue(m, val(c, m, key)); }))
+        .concat([q ? q.sample : '', q && q.respondents != null ? q.respondents : '', st.mode === 'quarter' ? correctedFields(c, key) : '']);
+    });
+    var how = st.mode === 'year' ? 'Year values: colonies_start is January 1; colonies_lost is the sum of the quarters; percents are averages of the quarters (not annual rates).'
+      : st.mode === 'survey' ? 'Whole-survey values: each season is averaged across the years, then the four seasons are averaged. Values are per quarter.'
+      : 'One quarter of data.';
+    saveCSV('hive-atlas-colony-losses-' + periodName(key).replace(/\s+/g, '-') + '.csv',
+      ['state', 'state_abbr', 'period'].concat(DL_HEAD).concat([st.mode === 'quarter' ? 'operations_sampled' : 'operations_sampled_typical_per_quarter', st.mode === 'quarter' ? 'operations_responded' : 'operations_responded_typical_per_quarter', 'corrected_fields']),
+      rows, [CITE, how, 'U.S. percents divide by colonies at the start of the quarter; state percents divide by the state\'s peak colony count. Stressor percents are self-reported.',
+        '<0.5 means NASS published (Z), less than half of one percent. corrected_fields lists percents recalculated from NASS\'s own counts (see About this map > Corrections).',
+        'States not listed were not published separately; they are counted in Other States.']);
+  });
+  function downloadState(code) {
+    var rows = SURVEYED.map(function (p) {
+      var qd = QD.periods[p.id] && QD.periods[p.id][code];
+      return [EN_NAMES[code], code, p.id, p.year, p.q].concat(DL_FIELDS.map(function (m) { return dlValue(m, valQ(code, m, p.id)); }))
+        .concat([qd && qd[0] != null ? qd[0] : '', qd && qd[1] != null ? qd[1] : '', correctedFields(code, p.id), dlStatus(code, valQ, p.id)]);
+    });
+    saveCSV('hive-atlas-colony-losses-' + code + '.csv',
+      ['state', 'state_abbr', 'period', 'year', 'quarter'].concat(DL_HEAD).concat(['operations_sampled', 'response_rate_pct', 'corrected_fields', 'status']),
+      rows, [CITE, 'Every surveyed quarter. Quarters with status "in Other States" were not published separately for this state.',
+        '<0.5 means NASS published (Z), less than half of one percent. Sample sizes start in 2019.']);
+  }
 
   /* ---------- Controls ---------- */
   function select(code) { st.sel = code; drawMap(); renderPanel(); markTableRow(); }

@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&amp;family=Public+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600&amp;display=swap">
 <link rel="stylesheet" href="css/style.css?v=20261109a">
-<script src="js/i18n.js?v=20261109b"></script>
+<script src="js/i18n.js?v=20261110a"></script>
 </head>
 <body>
 <header class="site-header">
@@ -108,6 +108,12 @@
         <div class="table-scroll lx-tablescroll">
           <table class="lx-table" id="lx-table"></table>
         </div>
+        <div class="lx-export">
+          <span class="lx-lab">Download</span>
+          <button type="button" class="btn" id="lx-dl-view">This table (CSV)</button>
+          <a class="btn" href="data/nass-colony-losses.csv" download>All states, all quarters (CSV)</a>
+          <a class="btn" href="data/nass-quality.csv" download>Sample sizes (CSV)</a>
+        </div>
       </div>
 
       <p class="lx-small">Want the definitions, the year formula, and why some states are grouped? <button type="button" class="lx-link" data-open-about>Read about this map</button></p>
@@ -130,6 +136,7 @@
             <li><a href="#ab-samples">Sample sizes</a></li>
             <li><a href="#ab-corrections">Corrections</a></li>
             <li><a href="#ab-colors">Colors and ranks</a></li>
+            <li><a href="#ab-download">Downloads</a></li>
             <li><a href="#ab-limits">Limits</a></li>
             <li><a href="#ab-sources">Sources</a></li>
           </ul>
@@ -267,6 +274,17 @@
             <p>Gray means the state is counted in Other States. Striped means NASS did not publish that number, for example in April&ndash;June 2019, or for a year when the state was not published every quarter.</p>
           </section>
 
+          <section class="doc-section prose" id="ab-download">
+            <h2>Downloads</h2>
+            <ul>
+              <li><strong>This table (CSV)</strong> saves the table under the map for the period you&rsquo;re viewing, with every measure and stressor, plus NASS&rsquo;s sample sizes where they exist.</li>
+              <li><strong>State history (CSV)</strong>, in each state panel, saves every surveyed quarter for that state, including the quarters it was counted in Other States.</li>
+              <li><strong>All states, all quarters (CSV)</strong> is the complete cleaned dataset, one row per state per quarter, with the NASS release each value came from.</li>
+              <li><strong>Sample sizes (CSV)</strong> lists the operations NASS sampled and the response rates by state and quarter, from 2019 on.</li>
+            </ul>
+            <p>The complete dataset keeps values as NASS published them, with a flag for each value NASS reported as less than half of one percent. The table and state downloads use the corrected values shown on the map and list which values were corrected (see <a href="#ab-corrections">Corrections</a>). Please cite USDA NASS as the source and The Hive Atlas as the compiler.</p>
+          </section>
+
           <section class="doc-section prose" id="ab-limits">
             <h2>Limits to keep in mind</h2>
             <ul>
@@ -313,7 +331,7 @@
 <script src="data/state-shapes.js?v=20261102c"></script>
 <script src="data/colony-losses.js?v=20261102c"></script>
 <script src="data/colony-quality.js?v=20261102c"></script>
-<script src="js/losses.js?v=20261104a"></script>
+<script src="js/losses.js?v=20261110a"></script>
 <script data-goatcounter="https://mohamedalburaki.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </body>
