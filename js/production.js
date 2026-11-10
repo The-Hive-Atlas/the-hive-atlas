@@ -335,14 +335,16 @@
     html.push('<div class="lx-block"><h3 class="lx-h3">' + T('{m} by year', { m: M[st.measure].label }) + '</h3>' +
       '<div class="lx-trend" id="lx-trend"></div><p class="lx-small" id="lx-readout">' + T(st.mode === 'avg' ? (dash ? 'Darker bars are the years in this average, and the dashed line is the U.S.' : 'Darker bars are the years in this average.') : (dash ? 'The darker bar is the selected year, and the dashed line is the U.S.' : 'The darker bar is the selected year.')) + ' ' + T('Hover a bar to see its value, or click it to jump there.') + '</p></div>');
 
-    html.push('<p class="lx-small"><button type="button" class="lx-link" id="lx-dl-state">' + T('Download {s} history (CSV)', { s: H.names[useCode] }) + '</button></p>');
+    // Download the clicked state's own years when it has any; Other States only if it was never published
+    var dlCode = H.values[code] && Object.keys(H.values[code]).length ? code : useCode;
+    html.push('<p class="lx-small"><button type="button" class="lx-link" id="lx-dl-state">' + T('Download {s} history (CSV)', { s: H.names[dlCode] }) + '</button></p>');
 
     panel.innerHTML = html.join('');
     var toUs = $('lx-to-us'); if (toUs) toUs.addEventListener('click', function () { select('US'); });
     panel.querySelectorAll('[data-measure]').forEach(function (el) {
       el.addEventListener('click', function () { setMeasure(el.getAttribute('data-measure')); });
     });
-    $('lx-dl-state').addEventListener('click', function () { downloadState(useCode); });
+    $('lx-dl-state').addEventListener('click', function () { downloadState(dlCode); });
     drawTrend(useCode);
   }
 
