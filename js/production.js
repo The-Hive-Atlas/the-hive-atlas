@@ -583,17 +583,19 @@
   fillPeriods();
   renderAll();
 
-  /* ---------- Tabs: Map / About this map ---------- */
-  var tabs = [$('tab-map'), $('tab-about')];
+  /* ---------- Tabs: State chart / Map / About this map ---------- */
+  var tabs = [$('tab-chart'), $('tab-map'), $('tab-about')].filter(Boolean);
   function isAboutHash(h) { return h === 'about' || h.indexOf('ab-') === 0; }
+  function tabOf(h) { return isAboutHash(h) ? 'about' : h === 'map' || !$('tab-chart') ? 'map' : 'chart'; }
+  var shown = null;
   function showTab(name, scroll) {
-    var about = name === 'about';
-    $('about').hidden = !about;
-    $('lx-view').hidden = about;
-    $('tab-map').setAttribute('aria-selected', String(!about));
-    $('tab-about').setAttribute('aria-selected', String(about));
-    $('tab-map').tabIndex = about ? -1 : 0;
-    $('tab-about').tabIndex = about ? 0 : -1;
+    $('about').hidden = name !== 'about';
+    $('lx-view').hidden = name !== 'map';
+    if ($('nx-view')) $('nx-view').hidden = name !== 'chart';
+    tabs.forEach(function (t) { var on = t.getAttribute('data-tab') === name; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
+    // The state-shape labels are measured when drawn, so redraw the map once it is visible
+    if (name === 'map' && shown !== null && shown !== 'map') renderAll();
+    shown = name;
     if (scroll) {
       var top = document.querySelector('.lx-tabs').getBoundingClientRect().top + window.scrollY - 90;
       if (window.scrollY > top) window.scrollTo({ top: top, behavior: 'auto' });
@@ -601,12 +603,15 @@
   }
   tabs.forEach(function (t, i) {
     t.addEventListener('click', function () {
-      var name = i === 1 ? 'about' : 'map';
+      var name = t.getAttribute('data-tab');
       showTab(name, false);
-      try { history.replaceState(null, '', name === 'about' ? '#about' : location.pathname + location.search); } catch (e) {}
+      try { history.replaceState(null, '', name === 'about' ? '#about' : name === 'map' && $('tab-chart') ? '#map' : location.pathname + location.search); } catch (e) {}
     });
     t.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { var o = tabs[1 - i]; o.focus(); o.click(); }
+      var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (!d) return;
+      if (document.documentElement.dir === 'rtl') d = -d;
+      var o = tabs[(i + d + tabs.length) % tabs.length]; o.focus(); o.click();
     });
   });
   document.querySelectorAll('[data-open-about]').forEach(function (b) {
@@ -615,9 +620,9 @@
       try { history.replaceState(null, '', '#about'); } catch (e) {}
     });
   });
-  window.addEventListener('hashchange', function () { if (isAboutHash(location.hash.slice(1))) showTab('about', false); });
+  window.addEventListener('hashchange', function () { showTab(tabOf(location.hash.slice(1)), false); });
   var built = $('lx-built');
   if (built && H.source.built) built.textContent = T('Data last updated on this site {d}.', { d: new Date(H.source.built + 'T12:00:00').toLocaleDateString(LOC, { year: 'numeric', month: 'long', day: 'numeric' }) });
-  showTab(isAboutHash(location.hash.slice(1)) ? 'about' : 'map', false);
+  showTab(tabOf(location.hash.slice(1)), false);
   if (location.hash.slice(1).indexOf('ab-') === 0) { var target = document.getElementById(location.hash.slice(1)); if (target) target.scrollIntoView(); }
 })();

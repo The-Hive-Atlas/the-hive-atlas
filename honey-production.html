@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&amp;family=Public+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600&amp;display=swap">
 <link rel="stylesheet" href="css/style.css?v=20261109a">
+<link rel="stylesheet" href="css/nass-charts.css?v=20261111a">
 <script src="js/i18n.js?v=20261110a"></script>
 </head>
 <body>
@@ -39,13 +40,16 @@
       <h1>Honey production</h1>
       <p class="lede" id="lx-summary">Yearly honey production, yield per colony, prices, and stocks reported by U.S. beekeeping operations, by state.</p>
       <div class="lx-tabs" role="tablist" aria-label="Honey production">
-        <button type="button" role="tab" id="tab-map" aria-selected="true" aria-controls="lx-view">Map</button>
-        <button type="button" role="tab" id="tab-about" aria-selected="false" aria-controls="about">About this map</button>
+        <button type="button" role="tab" id="tab-chart" data-tab="chart" aria-selected="true" aria-controls="nx-view">State chart</button>
+        <button type="button" role="tab" id="tab-map" data-tab="map" aria-selected="false" aria-controls="lx-view" tabindex="-1">Map</button>
+        <button type="button" role="tab" id="tab-about" data-tab="about" aria-selected="false" aria-controls="about" tabindex="-1">About this map</button>
       </div>
     </div>
   </section>
 
-  <section id="lx-view" role="tabpanel" aria-labelledby="tab-map">
+  <section id="nx-view" role="tabpanel" aria-labelledby="tab-chart" data-source="honey"></section>
+
+  <section id="lx-view" role="tabpanel" aria-labelledby="tab-map" hidden>
     <div class="wrap lx-wrap">
       <div class="lx-controls">
         <div class="lx-ctl">
@@ -284,7 +288,8 @@
 <script src="js/site.js?v=20261105a"></script>
 <script src="data/state-shapes.js?v=20261102c"></script>
 <script src="data/honey-production.js?v=20261109a"></script>
-<script src="js/production.js?v=20261110a"></script>
+<script src="js/production.js?v=20261111a"></script>
+<script src="js/nass-charts.js?v=20261111a"></script>
 <script data-goatcounter="https://mohamedalburaki.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </body>
