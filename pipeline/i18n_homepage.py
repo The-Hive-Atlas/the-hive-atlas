@@ -1,6 +1,5 @@
 """French, Spanish, Arabic and Chinese text for the November 2026 homepage update (index.html):
-the new opening paragraph, "Five ways to explore", the U.S. Trends sentence on the Colony Losses card,
-and the new Honey Production card.
+the new opening paragraph, "Five ways to explore", and the new Honey Production card.
 
 Run once after editing to merge these entries into js/lang/fr.js, es.js, ar.js and zh.js:
     python3 pipeline/i18n_homepage.py
@@ -24,11 +23,6 @@ STATIC = {
         "Cinco formas de explorar",
         "خمس طرق للاستكشاف",
         "五种探索方式"),
-    "How many colonies U.S. beekeepers lost each quarter, state by state, and which stressors they reported, from USDA surveys since 2015. A U.S. Trends tab adds national figures on sudden colony loss and on small operations (2015–2017).": (
-        "Combien de colonies les apiculteurs américains ont perdues chaque trimestre, État par État, et quels facteurs de stress ils ont signalés, d’après les enquêtes de l’USDA depuis 2015. Un onglet Tendances des États-Unis ajoute des chiffres nationaux sur la perte soudaine de colonies et sur les petites exploitations (2015–2017).",
-        "Cuántas colonias perdieron los apicultores de EE. UU. cada trimestre, estado por estado, y qué factores de estrés declararon, según las encuestas del USDA desde 2015. Una pestaña Tendencias de EE. UU. añade cifras nacionales sobre la pérdida repentina de colonias y sobre las explotaciones pequeñas (2015–2017).",
-        "عدد الطوائف التي فقدها النحالون في الولايات المتحدة كل ربع سنة، ولاية بولاية، وعوامل الإجهاد التي أبلغوا عنها، من مسوح وزارة الزراعة الأمريكية منذ 2015. ويضيف تبويب اتجاهات الولايات المتحدة أرقامًا وطنية عن الفقد المفاجئ للطوائف وعن المناحل الصغيرة (2015–2017).",
-        "美国养蜂人每季度在各州损失了多少蜂群，以及他们报告了哪些压力因素，数据来自 2015 年以来的美国农业部调查。“美国趋势”选项卡还提供全国层面的突发性蜂群损失和小型养蜂经营户（2015–2017 年）数据。"),
     "How much honey U.S. beekeepers produced each year, state by state, with yield per colony, prices, and year-end stocks from USDA surveys since 1987. A U.S. Trends tab adds income from pollination and other hive products, and honey prices by color.": (
         "La quantité de miel produite chaque année par les apiculteurs américains, État par État, avec le rendement par colonie, les prix et les stocks de fin d’année, d’après les enquêtes de l’USDA depuis 1987. Un onglet Tendances des États-Unis ajoute les revenus de la pollinisation et des autres produits de la ruche, ainsi que les prix du miel selon la couleur.",
         "Cuánta miel produjeron cada año los apicultores de EE. UU., estado por estado, con el rendimiento por colonia, los precios y las existencias de fin de año, según las encuestas del USDA desde 1987. Una pestaña Tendencias de EE. UU. añade los ingresos por polinización y otros productos de la colmena, y los precios de la miel por color.",
