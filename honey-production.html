@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&amp;family=Public+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600&amp;display=swap">
 <link rel="stylesheet" href="css/style.css?v=20261109a">
-<link rel="stylesheet" href="css/nass-charts.css?v=20261111a">
+<link rel="stylesheet" href="css/nass-charts.css?v=20261111b">
 <script src="js/i18n.js?v=20261110a"></script>
 </head>
 <body>
@@ -36,98 +36,17 @@
 <main>
   <section class="page-head lx-head">
     <div class="wrap">
-      <p class="lx-note" id="lx-note">NASS honey production data.</p>
-      <h1>Honey production</h1>
-      <p class="lede" id="lx-summary">Yearly honey production, yield per colony, prices, and stocks reported by U.S. beekeeping operations, by state.</p>
+      <p class="lx-note" id="lx-note">Data from the USDA National Agricultural Statistics Service (NASS).</p>
+      <h1>Honey Production</h1>
+      <p class="lede" id="lx-summary">Yearly honey production, yield per colony, prices, and stocks reported by U.S. beekeeping operations to the USDA National Agricultural Statistics Service (NASS), by state.</p>
       <div class="lx-tabs" role="tablist" aria-label="Honey production">
-        <button type="button" role="tab" id="tab-chart" data-tab="chart" aria-selected="true" aria-controls="nx-view">State chart</button>
-        <button type="button" role="tab" id="tab-map" data-tab="map" aria-selected="false" aria-controls="lx-view" tabindex="-1">Map</button>
-        <button type="button" role="tab" id="tab-about" data-tab="about" aria-selected="false" aria-controls="about" tabindex="-1">About this map</button>
+        <button type="button" role="tab" id="tab-chart" data-tab="chart" aria-selected="true" aria-controls="nx-view">State Chart</button>
+        <button type="button" role="tab" id="tab-about" data-tab="about" aria-selected="false" aria-controls="about" tabindex="-1">About This Data</button>
       </div>
     </div>
   </section>
 
   <section id="nx-view" role="tabpanel" aria-labelledby="tab-chart" data-source="honey"></section>
-
-  <section id="lx-view" role="tabpanel" aria-labelledby="tab-map" hidden>
-    <div class="wrap lx-wrap">
-      <div class="lx-controls">
-        <div class="lx-ctl">
-          <span class="lx-lab" id="lab-style">Map style</span>
-          <div class="seg" data-seg="style" role="group" aria-labelledby="lab-style">
-            <button type="button" data-v="hex" aria-pressed="true">Hexagons</button>
-            <button type="button" data-v="shapes" aria-pressed="false">State shapes</button>
-          </div>
-        </div>
-        <div class="lx-ctl lx-grow">
-          <label class="lx-lab" for="lx-measure">Color the map by</label>
-          <select id="lx-measure"></select>
-        </div>
-        <div class="lx-ctl">
-          <span class="lx-lab" id="lab-mode">Time period</span>
-          <div class="lx-time">
-            <div class="seg" data-seg="mode" role="group" aria-labelledby="lab-mode">
-              <button type="button" data-v="year" aria-pressed="true">Year</button>
-              <button type="button" data-v="avg" aria-pressed="false">Multi-year average</button>
-            </div>
-            <div class="lx-period">
-              <button type="button" class="step" id="lx-prev" aria-label="Previous period">‹</button>
-              <select id="lx-period" aria-label="Period"></select>
-              <button type="button" class="step" id="lx-next" aria-label="Next period">›</button>
-            </div>
-          </div>
-        </div>
-        <div class="lx-ctl">
-          <span class="lx-lab" id="lab-dollars">Prices and values</span>
-          <div class="seg" data-seg="dollars" role="group" aria-labelledby="lab-dollars">
-            <button type="button" data-v="real" aria-pressed="true" id="lx-real-btn">In 2025 dollars</button>
-            <button type="button" data-v="nominal" aria-pressed="false">As reported</button>
-          </div>
-        </div>
-        <div class="lx-ctl">
-          <label class="lx-lab" for="lx-goto">Go to a state</label>
-          <input id="lx-goto" type="text" list="lx-statelist" placeholder="e.g. Maryland or MD" autocomplete="off">
-          <datalist id="lx-statelist"></datalist>
-        </div>
-      </div>
-
-      <div class="lx-main">
-        <div class="lx-card lx-mapcard" id="lx-mapcard">
-          <h2 class="lx-cardtitle" id="lx-maptitle">Honey per colony</h2>
-          <div class="lx-maptools">
-            <p class="lx-small">Click a state to see its numbers, or the button to go back to the whole country.</p>
-            <button type="button" class="lx-usbtn" id="lx-us" aria-pressed="true">United States</button>
-          </div>
-          <p class="lx-callout" id="lx-callout" hidden></p>
-          <svg id="lx-map" class="lx-map" role="group" aria-label="Map of U.S. states"></svg>
-          <div class="lx-legend" id="lx-legend"></div>
-          <p class="lx-small">Color ranges stay the same for every year, so you can compare across years.</p>
-          <div class="lx-tip" id="lx-tip" hidden></div>
-        </div>
-        <aside class="lx-card lx-panel" id="lx-panel" aria-live="polite"></aside>
-      </div>
-
-      <div class="lx-card lx-tablecard">
-        <div class="lx-tablehead">
-          <div>
-            <h2 class="lx-cardtitle" id="lx-tabletitle">All published states</h2>
-            <p class="lx-small" id="lx-tablenote"></p>
-          </div>
-          <input id="lx-filter" type="search" placeholder="Filter states" aria-label="Filter states" autocomplete="off">
-        </div>
-        <div class="table-scroll lx-tablescroll">
-          <table class="lx-table" id="lx-table"></table>
-        </div>
-        <div class="lx-export">
-          <span class="lx-lab">Download</span>
-          <button type="button" class="btn" id="lx-dl-view">This table (CSV)</button>
-          <a class="btn" href="data/nass-honey-production.csv" download>All states, all years (CSV)</a>
-        </div>
-      </div>
-
-      <p class="lx-small">Want the definitions, how prices are adjusted for inflation, and why some states are grouped? <button type="button" class="lx-link" data-open-about>Read about this map</button></p>
-    </div>
-  </section>
 
   <section id="about" class="lx-aboutpanel" role="tabpanel" aria-labelledby="tab-about" hidden>
     <div class="wrap" style="padding-block:40px 24px">
@@ -135,15 +54,14 @@
         <aside class="toc" aria-label="On this tab">
           <p>On this tab</p>
           <ul>
-            <li><a href="#ab-what">What the map shows</a></li>
-            <li><a href="#ab-use">How to use it</a></li>
-            <li><a href="#ab-measures">The measures</a></li>
-            <li><a href="#ab-inflation">Adjusting for inflation</a></li>
-            <li><a href="#ab-avg">Multi-year averages</a></li>
+            <li><a href="#ab-what">What This Page Shows</a></li>
+            <li><a href="#ab-use">How to Use It</a></li>
+            <li><a href="#ab-measures">The Measures</a></li>
+            <li><a href="#ab-inflation">Adjusting for Inflation</a></li>
+            <li><a href="#ab-avg">How the Averages Work</a></li>
             <li><a href="#ab-other">Other States</a></li>
-            <li><a href="#ab-migratory">Migratory beekeeping</a></li>
-            <li><a href="#ab-totals">U.S. totals</a></li>
-            <li><a href="#ab-colors">Colors and ranks</a></li>
+            <li><a href="#ab-migratory">Migratory Beekeeping</a></li>
+            <li><a href="#ab-totals">U.S. Totals</a></li>
             <li><a href="#ab-download">Downloads</a></li>
             <li><a href="#ab-limits">Limits</a></li>
             <li><a href="#ab-sources">Sources</a></li>
@@ -151,26 +69,25 @@
         </aside>
         <div>
           <section class="doc-section prose" id="ab-what">
-            <h2>What the map shows</h2>
+            <h2>What This Page Shows</h2>
             <p>How much honey U.S. beekeepers produced each year, state by state, how much each colony made, what beekeepers were paid for it, and how much honey they still held at the end of the year. The numbers come from the annual Honey report of the USDA National Agricultural Statistics Service (NASS), which covers every year since 1987.</p>
             <p>NASS surveys a sample of operations with five or more colonies that qualify as farms, meaning they sold, or would normally sell, at least $1,000 of agricultural products a year. Each year&rsquo;s report comes out in March and covers the previous year&rsquo;s honey crop.</p>
           </section>
 
           <section class="doc-section prose" id="ab-use">
-            <h2>How to use it</h2>
+            <h2>How to Use It</h2>
             <ul>
-              <li><strong>Map style</strong> switches between hexagons, where every state is the same size and easy to click, and real state shapes. The data is identical in both.</li>
-              <li><strong>Color the map by</strong> picks the measure. Honey per colony comes first because it compares fairly across states of any size and is the number most beekeepers can hold up against their own hives.</li>
-              <li><strong>Time period</strong> shows a single year or an average over several years. Use the arrows to step through years one at a time.</li>
-              <li><strong>Prices and values</strong> shows dollar amounts either adjusted for inflation to 2025 dollars (the default) or as NASS reported them. See <a href="#ab-inflation">Adjusting for inflation</a>.</li>
-              <li><strong>Click a state</strong> to see its numbers, its rank, how it compares with the U.S., and its trend since 1987. Click a bar in the trend chart to jump the map to that year.</li>
-              <li><strong>The table</strong> lists every published state for the period. Click a heading to sort, or a row to open that state.</li>
-              <li><strong>Download</strong> the table you are looking at, a state&rsquo;s full history from its panel, or the complete dataset. See <a href="#ab-download">Downloads</a>.</li>
+              <li><strong>Each row is one state.</strong> The bar ends at the state&rsquo;s average over the years you pick, and the number at the end of the row is that average.</li>
+              <li><strong>Whiskers</strong> run from the state&rsquo;s lowest to its highest year. Switch to <strong>&plusmn; 1 SD</strong> to show one standard deviation either side of the average instead. A short whisker means steady crops; a long one means big swings from year to year.</li>
+              <li><strong>The dashed line</strong> is the U.S. average for the same years. It is shown for honey per colony and price only, because the other measures are national totals.</li>
+              <li><strong>Measure</strong> picks what to chart. Honey per colony comes first because it compares fairly across states of any size and is the number most beekeepers can hold up against their own hives.</li>
+              <li><strong>Years</strong> sets the period. <strong>Prices and values</strong> shows dollar amounts either adjusted for inflation to 2025 dollars (the default) or as NASS reported them. See <a href="#ab-inflation">Adjusting for inflation</a>.</li>
+              <li><strong>Click a state</strong> to see every year for that state next to the U.S. <strong>Table</strong> lists the same numbers, and <strong>Highest first</strong> or <strong>A to Z</strong> sets the order.</li>
             </ul>
           </section>
 
           <section class="doc-section" id="ab-measures">
-            <h2>The measures</h2>
+            <h2>The Measures</h2>
             <p class="section-intro" style="margin-bottom:20px">These follow NASS&rsquo;s own definitions.</p>
             <div class="table-scroll">
               <table class="defs">
@@ -188,63 +105,52 @@
           </section>
 
           <section class="doc-section prose" id="ab-inflation">
-            <h2>Adjusting for inflation</h2>
-            <p>A dollar in 1987 bought about 2.8 times what it buys today, so prices as reported make honey look far more valuable now than it was. By default, the map shows prices and values in <strong>2025 dollars</strong>, so every year can be compared fairly.</p>
+            <h2>Adjusting for Inflation</h2>
+            <p>A dollar in 1987 bought about 2.8 times what it buys today, so prices as reported make honey look far more valuable now than it was. By default, the chart shows prices and values in <strong>2025 dollars</strong>, so every year can be compared fairly.</p>
             <p><strong>How it&rsquo;s calculated.</strong> Each year&rsquo;s dollars are multiplied by the 2025 Consumer Price Index divided by that year&rsquo;s index, using the yearly average of the CPI for All Urban Consumers (CPI-U) from the Bureau of Labor Statistics. For example, the U.S. price in 1987 was <strong>$0.50</strong> a pound as reported, which is <strong>$1.43</strong> in 2025 dollars (0.503 &times; 321.9 &divide; 113.6).</p>
             <p>The CPI measures what households pay for everything they buy, not what it costs to keep bees, so the adjusted price shows honey&rsquo;s buying power, not beekeepers&rsquo; profit. Switch to <strong>As reported</strong> to see NASS&rsquo;s figures unchanged. The downloads include both.</p>
           </section>
 
           <section class="doc-section prose" id="ab-avg">
-            <h2>Multi-year averages</h2>
-            <p>Honey crops swing with weather, forage, and colony health, so a single year can be misleading, especially for smaller states. The multi-year view averages several years to show how each state typically does.</p>
-            <ul>
-              <li><strong>Each value is the average of the yearly values</strong> in the window. For honey per colony, that is the typical yield of a year in that state.</li>
-              <li><strong>The windows end in <span class="ab-common">2023</span></strong>, the last year most states were published separately, so every state is compared over the same years. One more option, each state&rsquo;s full record, uses every year a state was published, including 2024 and later for the 20 states still published.</li>
-              <li><strong>A state needs at least 80% of the years</strong> in a window to get a value.</li>
-            </ul>
+            <h2>How the Averages Work</h2>
+            <p>Honey crops swing with weather, forage, and colony health, so a single year can be misleading, especially for smaller states. A state&rsquo;s bar is the plain average of its published yearly values in the years you pick, and the whiskers show its range.</p>
+            <p>States were not all published for the same years. States with data for fewer than half of the selected years are drawn in a lighter color and marked with an asterisk. To compare states fairly, end the period in 2023, the last year most states were published separately.</p>
           </section>
 
           <section class="doc-section prose" id="ab-other">
-            <h2>Why some states are in Other States</h2>
+            <h2>Why Some States Are in Other States</h2>
             <p>NASS combines states it doesn&rsquo;t publish separately into a single <strong>Other States</strong> group. From 1987 to 1990 it published 49 states individually. Through 2023 it published 40 to 45, and starting with the 2024 crop it publishes 20. NASS&rsquo;s report says only that Other States includes the states not shown in its table.</p>
             <p>The 20 states still published are California, Florida, Georgia, Idaho, Iowa, Louisiana, Michigan, Minnesota, Mississippi, Montana, New York, North Carolina, North Dakota, Ohio, Oregon, Pennsylvania, South Dakota, Texas, Washington, and Wisconsin. They produce most of the country&rsquo;s honey.</p>
-            <p>On the map, a state in Other States is gray. Clicking it shows the Other States numbers, which describe the group as a whole and not that state alone.</p>
+            <p>The chart leaves Other States out, because its numbers describe the group as a whole and not any one state. A state counted in Other States has no value for those years.</p>
           </section>
 
           <section class="doc-section prose" id="ab-migratory">
-            <h2>Migratory beekeeping</h2>
+            <h2>Migratory Beekeeping</h2>
             <p>Many commercial colonies travel during the year, so the same colony can make honey in more than one state. NASS counts such a colony in every state where it produced honey. Each state&rsquo;s honey per colony is therefore the honey made in that state divided by the colonies that made honey there.</p>
             <p>This matters most in the Northern Plains. North Dakota, South Dakota, and Montana host large numbers of commercial colonies during their summer honey flow, which is why North Dakota alone produces about a quarter of U.S. honey, and many of those colonies spend winter and almond season in other states. A state&rsquo;s numbers describe its honey crop, not necessarily how its own beekeepers fared.</p>
           </section>
 
           <section class="doc-section prose" id="ab-totals">
-            <h2>U.S. totals</h2>
+            <h2>U.S. Totals</h2>
             <ul>
               <li><strong>Honey per colony.</strong> Because a colony that made honey in two states is counted in both, the U.S. colony total counts some colonies twice. NASS notes this makes the U.S. honey per colony read somewhat low. U.S. honey produced is not affected.</li>
               <li><strong>Values.</strong> NASS calculates the U.S. value from U.S. production and the U.S. average price, so it won&rsquo;t exactly equal the sum of the states. Across all years the gap is under 2.5%.</li>
-              <li><strong>Comparing with the U.S.</strong> For honey per colony and price, a state is compared with the U.S. average. For totals, a state is shown as a share of the U.S.</li>
+              <li><strong>Comparing with the U.S.</strong> For honey per colony and price, the chart draws the U.S. average as a dashed line. For totals, there is no U.S. line, because the U.S. figure is the sum of all states.</li>
             </ul>
-          </section>
-
-          <section class="doc-section prose" id="ab-colors">
-            <h2>Colors and ranks</h2>
-            <p>Each measure has five color ranges, set from every state&rsquo;s values across all years. The ranges stay the same as you change years, so a color means the same thing in 1990 and in 2025. Inflation-adjusted and as-reported dollars each have their own ranges.</p>
-            <p>Ranks compare a state with the other states published for the same period, and 1 is the highest value. Since only 20 states are published from 2024 on, ranks from those years are out of 20 instead of about 40.</p>
-            <p>Gray means the state is counted in Other States. Striped means NASS did not publish that number, or, for a multi-year average, that the state was published for too few of the years.</p>
           </section>
 
           <section class="doc-section prose" id="ab-download">
             <h2>Downloads</h2>
             <ul>
-              <li><strong>This table (CSV)</strong> saves the table under the map for the period you&rsquo;re viewing, with prices and values in the dollars you&rsquo;ve chosen.</li>
-              <li><strong>State history (CSV)</strong>, in each state panel, saves every year for that state.</li>
+              <li><strong>This table (CSV)</strong> saves the chart&rsquo;s numbers for the measure and years you&rsquo;ve chosen: each state&rsquo;s average, lowest and highest year, standard deviation, and how many years had data, with prices and values in the dollars you&rsquo;ve chosen.</li>
+              <li><strong>State history (CSV)</strong>, under each state&rsquo;s chart, saves every year for that state, with dollars both as reported and in 2025 dollars.</li>
               <li><strong>All states, all years (CSV)</strong> is the complete cleaned dataset: one row per state per year, with dollars both as reported and in 2025 dollars, and the CPI values used.</li>
             </ul>
             <p>Values are as NASS published them, except that prices before 2018, which NASS reported in cents per pound, are converted to dollars. Please cite USDA NASS as the source and The Hive Atlas as the compiler.</p>
           </section>
 
           <section class="doc-section prose" id="ab-limits">
-            <h2>Limits to keep in mind</h2>
+            <h2>Limits to Keep in Mind</h2>
             <ul>
               <li><strong>Commercial and sideline operations only.</strong> The survey covers operations with five or more colonies that qualify as farms. Backyard beekeepers are not included.</li>
               <li><strong>Survey estimates.</strong> These are statistical estimates from a sample of operations. NASS revises the previous year&rsquo;s prices, values, and stocks when it publishes a new report, so the latest year may change.</li>
@@ -260,7 +166,6 @@
               <li>USDA National Agricultural Statistics Service, <a href="https://esmis.nal.usda.gov/publication/honey" target="_blank" rel="noopener">Honey reports</a>, 1988 to present, via <a href="https://quickstats.nass.usda.gov" target="_blank" rel="noopener">NASS Quick Stats</a>.</li>
               <li>U.S. Bureau of Labor Statistics, Consumer Price Index for All Urban Consumers (CPI-U), U.S. city average, all items, annual averages, via the <a href="https://www.minneapolisfed.org/about-us/monetary-policy/inflation-calculator/consumer-price-index-1913-" target="_blank" rel="noopener">Federal Reserve Bank of Minneapolis</a>.</li>
               <li>USDA NASS, <a href="https://www.nass.usda.gov/surveys/Guide_to_NASS_Surveys/Bee_and_Honey/index.php" target="_blank" rel="noopener">Guide to Bee and Honey Surveys</a>.</li>
-              <li>State outlines: U.S. Census Bureau cartographic boundary files, via the us-atlas project.</li>
             </ul>
             <p id="lx-built"></p>
           </section>
@@ -286,10 +191,8 @@
 <script>window.I18N && I18N.apply();</script>
 <script src="js/visitors.js?v=20261103a" defer></script>
 <script src="js/site.js?v=20261105a"></script>
-<script src="data/state-shapes.js?v=20261102c"></script>
 <script src="data/honey-production.js?v=20261109a"></script>
-<script src="js/production.js?v=20261111a"></script>
-<script src="js/nass-charts.js?v=20261111a"></script>
+<script src="js/nass-charts.js?v=20261111b"></script>
 <script data-goatcounter="https://mohamedalburaki.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </body>

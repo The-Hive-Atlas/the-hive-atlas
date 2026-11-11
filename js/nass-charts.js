@@ -14,6 +14,11 @@
   /* Text this tab adds; the rest comes from the site dictionaries in js/lang/. */
   var NX = {
     fr: {
+      'Quarter': 'Trimestre',
+      '{s} history (CSV)': 'Historique : {s} (CSV)',
+      'Click any state in the chart below to see its history.': 'Cliquez sur un État dans le graphique ci-dessous pour voir son historique.',
+      'Data from the USDA National Agricultural Statistics Service (NASS), {a} through {b}. Latest report released {d}.': 'Données du Service national des statistiques agricoles de l’USDA (NASS), de {a} à {b}. Dernier rapport publié le {d}.',
+      'Data from the USDA National Agricultural Statistics Service (NASS), {a} through {b}.': 'Données du Service national des statistiques agricoles de l’USDA (NASS), de {a} à {b}.',
       'State chart': 'Graphique par État', 'Measure': 'Mesure', 'Whiskers': 'Moustaches', 'Lowest to highest': 'Du plus bas au plus haut', '± 1 SD': '± 1 écart-type',
       'Order': 'Ordre', 'Highest first': 'Plus élevé d’abord', 'A to Z': 'De A à Z', 'All': 'Tous', 'Chart': 'Graphique', 'Table': 'Tableau',
       'Jan–Mar': 'janv.–mars', 'Apr–Jun': 'avr.–juin', 'Jul–Sep': 'juil.–sept.', 'Oct–Dec': 'oct.–déc.',
@@ -39,6 +44,11 @@
       'From 2024, NASS publishes fewer states separately; the others are in Other States, which is not shown.': 'Depuis 2024, le NASS publie moins d’États séparément ; les autres sont dans « Autres États », non affiché.'
     },
     es: {
+      'Quarter': 'Trimestre',
+      '{s} history (CSV)': 'Historial de {s} (CSV)',
+      'Click any state in the chart below to see its history.': 'Haga clic en un estado del gráfico para ver su historial.',
+      'Data from the USDA National Agricultural Statistics Service (NASS), {a} through {b}. Latest report released {d}.': 'Datos del Servicio Nacional de Estadísticas Agrícolas del USDA (NASS), de {a} a {b}. Último informe publicado el {d}.',
+      'Data from the USDA National Agricultural Statistics Service (NASS), {a} through {b}.': 'Datos del Servicio Nacional de Estadísticas Agrícolas del USDA (NASS), de {a} a {b}.',
       'State chart': 'Gráfico por estado', 'Measure': 'Medida', 'Whiskers': 'Bigotes', 'Lowest to highest': 'Del más bajo al más alto', '± 1 SD': '± 1 desv. estándar',
       'Order': 'Orden', 'Highest first': 'Mayor primero', 'A to Z': 'De la A a la Z', 'All': 'Todos', 'Chart': 'Gráfico', 'Table': 'Tabla',
       'Jan–Mar': 'ene–mar', 'Apr–Jun': 'abr–jun', 'Jul–Sep': 'jul–sep', 'Oct–Dec': 'oct–dic',
@@ -64,6 +74,11 @@
       'From 2024, NASS publishes fewer states separately; the others are in Other States, which is not shown.': 'Desde 2024, NASS publica menos estados por separado; los demás están en Otros estados, que no se muestra.'
     },
     ar: {
+      'Quarter': 'الربع',
+      '{s} history (CSV)': 'سجل {s} (CSV)',
+      'Click any state in the chart below to see its history.': 'انقر على أي ولاية في الرسم أدناه لترى سجلّها.',
+      'Data from the USDA National Agricultural Statistics Service (NASS), {a} through {b}. Latest report released {d}.': 'بيانات من الدائرة الوطنية للإحصاءات الزراعية التابعة لوزارة الزراعة الأمريكية (NASS)، من {a} إلى {b}. صدر أحدث تقرير في {d}.',
+      'Data from the USDA National Agricultural Statistics Service (NASS), {a} through {b}.': 'بيانات من الدائرة الوطنية للإحصاءات الزراعية التابعة لوزارة الزراعة الأمريكية (NASS)، من {a} إلى {b}.',
       'State chart': 'رسم حسب الولاية', 'Measure': 'المقياس', 'Whiskers': 'الخطوط الجانبية', 'Lowest to highest': 'من الأدنى إلى الأعلى', '± 1 SD': '± انحراف معياري',
       'Order': 'الترتيب', 'Highest first': 'الأعلى أولًا', 'A to Z': 'أبجديًا', 'All': 'الكل', 'Chart': 'رسم بياني', 'Table': 'جدول',
       'Jan–Mar': 'يناير–مارس', 'Apr–Jun': 'أبريل–يونيو', 'Jul–Sep': 'يوليو–سبتمبر', 'Oct–Dec': 'أكتوبر–ديسمبر',
@@ -233,6 +248,9 @@
         '<p class="nx-sub" id="nx-subtitle"></p><div class="nx-legend" id="nx-legend"></div>' +
         '<div class="nx-chart" id="nx-chart"></div><div class="nx-tablewrap" id="nx-table" hidden></div>' +
         '<p class="nx-note" id="nx-note"></p>' +
+        '<div class="lx-export" id="nx-export"><span class="lx-lab">' + esc(T('Download')) + '</span><button type="button" class="btn" id="nx-dl-table">' + esc(T('This table (CSV)')) + '</button>' +
+          (SRC === 'honey' ? '<a class="btn" href="data/nass-honey-production.csv" download>' + esc(T('All states, all years (CSV)')) + '</a>'
+            : '<a class="btn" href="data/nass-colony-losses.csv" download>' + esc(T('All states, all quarters (CSV)')) + '</a><a class="btn" href="data/nass-quality.csv" download>' + esc(T('Sample sizes (CSV)')) + '</a>') + '</div>' +
       '</div>' +
       '<aside class="nx-side"><div class="lx-card nx-detail" id="nx-detail" aria-live="polite"></div></aside>' +
     '</div></div>';
@@ -259,7 +277,7 @@
     var rows = cur.rows, us = cur.us;
     var yrs = st.from === st.to ? String(st.from) : st.from + '–' + st.to;
     if (LANG === 'ar' && I.ISO) yrs = I.ISO(yrs);
-    $('nx-title').textContent = labelOf(m);
+    $('nx-title').textContent = titleCase(labelOf(m));
     $('nx-subtitle').textContent = T(hasQ ? 'Average per quarter' : 'Average per year') + ', ' + yrs + (hasQ ? ', ' + (st.q ? T('{q} quarters only', { q: T(QNAME[st.q]) }) : T('all quarters')) : '') + ' · ' + unitOf(m);
 
     var byVal = rows.slice().sort(function (a, b) { return b.mean - a.mean; });
@@ -390,7 +408,9 @@
       '<div><p class="k">' + esc(T('Lowest') + ' · ' + periodLabel(r.minP)) + '</p><p class="v">' + fmt(m, r.min) + '</p></div>' +
       '<div><p class="k">' + esc(T('Highest') + ' · ' + periodLabel(r.maxP)) + '</p><p class="v">' + fmt(m, r.max) + '</p></div></div>' +
       '<div class="nx-dwrap">' + svg + '<div class="nx-tip" hidden></div></div>' +
-      '<div class="nx-dlegend"><span><i></i>' + esc(NM(code)) + '</span>' + (c.ref ? '<span><i class="us"></i>' + esc(T('United States')) + '</span>' : '') + '</div>';
+      '<div class="nx-dlegend"><span><i></i>' + esc(NM(code)) + '</span>' + (c.ref ? '<span><i class="us"></i>' + esc(T('United States')) + '</span>' : '') + '</div>' +
+      '<div class="lx-export"><button type="button" class="btn" id="nx-dl-state">' + esc(T('{s} history (CSV)', { s: NM(code) })) + '</button></div>';
+    $('nx-dl-state').addEventListener('click', function () { saveHistory(code); });
     var wrap = elDetail.querySelector('.nx-dwrap'), svgEl = wrap.querySelector('svg'), dt = wrap.querySelector('.nx-tip'), cross = svgEl.querySelector('.cross');
     var move = function (clientX) {
       var b = svgEl.getBoundingClientRect(), sx = (clientX - b.left) / b.width * W;
@@ -421,6 +441,126 @@
   }
   onSeg('nx-q', 'data-q', 'q', true); onSeg('nx-dollars', 'data-d', 'dollars'); onSeg('nx-wh', 'data-w', 'whisk'); onSeg('nx-sort', 'data-s', 'sort'); onSeg('nx-mode', 'data-m', 'mode');
 
-  var tab = $('tab-chart'); if (tab) tab.textContent = T('State chart');
+  /* ---------- Downloads ---------- */
+  function cell(v) { var s = v == null ? '' : String(v); return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
+  function saveCSV(name, header, rows, notes) {
+    var lines = notes.map(function (n) { return '# ' + n; });
+    lines.push(header.map(cell).join(','));
+    rows.forEach(function (r) { lines.push(r.map(cell).join(',')); });
+    var blob = new Blob(['﻿' + lines.join('\r\n') + '\r\n'], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+  var CITE = 'Source: USDA National Agricultural Statistics Service (NASS), ' + (DATA.source && DATA.source.name ? DATA.source.name.replace(/^USDA National Agricultural Statistics Service,\s*/, '') : '') + '. Compiled by The Hive Atlas, https://thehiveatlas.com';
+  function raw(v, d) { return v == null ? '' : Math.round(v * Math.pow(10, d)) / Math.pow(10, d); }
+  function dollarsNote() { return SRC === 'honey' ? (st.dollars === 'real' ? 'Prices and values in ' + BASE + ' dollars (CPI-U adjusted)' : 'Prices and values as reported, not adjusted for inflation') : null; }
+  $('nx-dl-table').addEventListener('click', function () {
+    var m = st.m, d = M[m].kind === 'count' ? 0 : 2, yrs = st.from + '-' + st.to;
+    var rows = (cur.us ? [['United States', 'US', cur.us]] : []).concat(cur.rows.map(function (r) { return [DATA.names[r.code], r.code, r]; }))
+      .map(function (x) { var r = x[2]; return [x[0], x[1], raw(r.mean, d), raw(r.min, d), periodLabelEn(r.minP), raw(r.max, d), periodLabelEn(r.maxP), raw(r.sd, d), r.n, cur.expected]; });
+    var notes = [CITE, 'Measure: ' + M[m].label + ' (' + M[m].unit.replace('thousand colonies', 'colonies').replace('million lb', 'lb').replace('million $', '$') + ')',
+      'Years ' + st.from + ' to ' + st.to + (hasQ ? ', ' + (st.q ? QNAME[st.q] + ' quarters only' : 'all quarters') : '') + '; average, lowest, highest and standard deviation over the ' + (quarterly() ? 'quarters' : 'years') + ' with data',
+      'Other States is not included'];
+    if (dollarsNote() && M[m].dollars) notes.push(dollarsNote());
+    if (hasQ && M[m].kind === 'pct') notes.push('Values NASS published as less than 0.5% are counted as 0.25%; corrected values are used where NASS percents contradict its own counts');
+    saveCSV('hive-atlas-' + (SRC === 'honey' ? 'honey' : 'losses') + '-' + m + '-' + yrs + (hasQ && st.q ? '-q' + st.q : '') + (M[m].dollars ? '-' + st.dollars : '') + '.csv',
+      ['state', 'state_abbr', 'average', 'lowest', 'lowest_period', 'highest', 'highest_period', 'std_dev', (quarterly() ? 'quarters' : 'years') + '_with_data', 'periods_selected'], rows, notes);
+  });
+  function periodLabelEn(p) { return p ? (SRC === 'honey' ? String(p.year) : p.year + '-Q' + p.q) : ''; }
+  function saveHistory(code) {
+    var flds = F.slice(), rows = [];
+    PER.forEach(function (p) {
+      var row = DATA.values[code] && DATA.values[code][p.id]; if (!row) return;
+      var cor = SRC !== 'honey' && DATA.corrections && DATA.corrections[p.id] && DATA.corrections[p.id][code];
+      rows.push([DATA.names[code], code, periodLabelEn(p)].concat(row.map(function (v, i) {
+        if (cor && cor[flds[i]] && cor[flds[i]].value != null) return cor[flds[i]].value;
+        return v === -1 ? '<0.5' : v;
+      })).concat(SRC !== 'honey' ? [cor ? Object.keys(cor).join(' ') : ''] : []));
+    });
+    saveCSV('hive-atlas-' + (SRC === 'honey' ? 'honey' : 'losses') + '-' + code + '-history.csv', ['state', 'state_abbr', SRC === 'honey' ? 'year' : 'quarter'].concat(flds).concat(SRC !== 'honey' ? ['corrected_fields'] : []), rows,
+      [CITE, SRC === 'honey' ? 'Dollar columns ending in _real are in ' + BASE + ' dollars (CPI-U adjusted); the others are as reported' : '<0.5 means NASS published less than half of one percent; corrected_fields lists values recalculated from NASS’s own counts (see About This Data)']);
+  }
+
+  /* ---------- Page summary for the latest period ---------- */
+  function titleCase(s) {
+    if (LANG !== 'en') return s;
+    var small = { a: 1, an: 1, and: 1, as: 1, at: 1, by: 1, for: 1, in: 1, of: 1, on: 1, or: 1, the: 1, to: 1 };
+    return s.split(' ').map(function (w, i) { return i && small[w] ? w : w.charAt(0).toUpperCase() + w.slice(1); }).join(' ');
+  }
+  function dropLastSentence(s) {
+    var t = s.replace(/\s+$/, ''), i = Math.max(t.lastIndexOf('. ', t.length - 2), t.lastIndexOf('。'));
+    return i > 0 ? t.slice(0, i + 1) : t;
+  }
+  var LOCALE = { en: 'en-US', fr: 'fr-FR', es: 'es-ES', ar: 'ar-u-nu-latn' }[LANG] || 'en-US';
+  // "January–March 2026" in the page language
+  function quarterLong(p) {
+    if (LANG === 'en') return p.label;
+    var mo = function (i) { try { return new Date(2000, i, 15).toLocaleDateString(LOCALE, { month: 'long' }); } catch (e) { return ''; } };
+    return mo((p.q - 1) * 3) + '–' + mo((p.q - 1) * 3 + 2) + ' ' + p.year;
+  }
+  var rel = DATA.source && DATA.source.release ? new Date(DATA.source.release + 'T12:00:00').toLocaleDateString(LOCALE, { year: 'numeric', month: 'long', day: 'numeric' }) : '';
+  (function summary() {
+    var sum = document.getElementById('lx-summary'), note = document.getElementById('lx-note');
+    var pub = function (m, p) { return STATES.filter(function (c) { var r = DATA.values[c] && DATA.values[c][p.id]; return r && r[F.indexOf(m)] != null && r[F.indexOf(m)] >= -1; }); };
+    var keepD = st.dollars; st.dollars = 'nominal';
+    var html = '';
+    if (SRC === 'honey') {
+      var p = PER[PER.length - 1], v = function (c, m) { return value(c, p, m); };
+      var ps = pub('yield_lb', p).sort(function (a, b) { return v(b, 'yield_lb') - v(a, 'yield_lb'); });
+      var top = pub('production_lb', p).sort(function (a, b) { return v(b, 'production_lb') - v(a, 'production_lb'); })[0];
+      var lb = function (x) { return I.T('{n} lb', { n: N(x, Math.round(x) === x ? 0 : 1) }); };
+      var usd = function (x) { return LANG === 'fr' || LANG === 'es' ? N(x, 2) + ' $' : '$' + N(x, 2); };
+      html = dropLastSentence(I.T('In {y}, U.S. beekeeping operations with five or more colonies produced <strong>{p}</strong> of honey from {c} colonies, about <strong>{yl}</strong> per colony, and were paid an average of <strong>{pr}</strong> a pound. {top} produced the most honey. Among the {k} states NASS published separately, honey per colony was highest in <strong>{hi}</strong> ({hv}) and lowest in <strong>{lo}</strong> ({lv}). Click any state on the map, or pick one from the table, to see its numbers.',
+        { y: p.year, p: I.T('{n} million lb', { n: N(v('US', 'production_lb') / 1e6, 1) }), c: N(Math.round(v('US', 'colonies') / 100) * 100), yl: lb(v('US', 'yield_lb')), pr: usd(v('US', 'price_usd_lb')), top: NM(top), k: ps.length,
+          hi: NM(ps[0]), hv: lb(v(ps[0], 'yield_lb')), lo: NM(ps[ps.length - 1]), lv: lb(v(ps[ps.length - 1], 'yield_lb')) }));
+      if (note) note.textContent = T(rel ? 'Data from the USDA National Agricultural Statistics Service (NASS), {a} through {b}. Latest report released {d}.' : 'Data from the USDA National Agricultural Statistics Service (NASS), {a} through {b}.', { a: PER[0].year, b: p.year, d: rel });
+    } else {
+      var q = PER[PER.length - 1], g = function (c, m) { return value(c, q, m); };
+      var pl = pub('pct_lost', q).sort(function (a, b) { return g(b, 'pct_lost') - g(a, 'pct_lost'); });
+      var STR = ['varroa', 'other_pests', 'diseases', 'pesticides', 'other', 'unknown'], SHORT = { varroa: 'Varroa', other_pests: 'Other pests', diseases: 'Diseases', pesticides: 'Pesticides', other: 'Other causes', unknown: 'Unknown' };
+      var topS = STR.slice().sort(function (a, b) { return g('US', b) - g('US', a); })[0];
+      var pc = function (x, d) { return x < 0.5 ? '<' + I.PCT(0.5, 1) : I.PCT(x, d); };
+      html = dropLastSentence(I.T('In {q}, U.S. beekeeping operations with five or more colonies lost <strong>{p}</strong> of their colonies, about <strong>{n}</strong>. Among the {k} states NASS published separately, losses were highest in <strong>{hi}</strong> ({hv}) and lowest in <strong>{lo}</strong> ({lv}). {s} was the most common stressor, affecting <strong>{sv}</strong> of colonies. Click any state on the map, or pick one from the table, to see its numbers.',
+        { q: quarterLong(q), p: pc(g('US', 'pct_lost'), 0), n: N(g('US', 'colonies_lost')), k: pl.length, hi: NM(pl[0]), hv: pc(g(pl[0], 'pct_lost'), 0), lo: NM(pl[pl.length - 1]), lv: pc(g(pl[pl.length - 1], 'pct_lost'), 0),
+          s: I.T(SHORT[topS]), sv: pc(g('US', topS), 1) }));
+      if (note) note.textContent = T(rel ? 'Data from the USDA National Agricultural Statistics Service (NASS), {a} through {b}. Latest report released {d}.' : 'Data from the USDA National Agricultural Statistics Service (NASS), {a} through {b}.', { a: quarterLong(PER[0]), b: quarterLong(q), d: rel });
+    }
+    st.dollars = keepD;
+    if (sum) sum.innerHTML = html + ' ' + esc(T('Click any state in the chart below to see its history.'));
+    var built = document.getElementById('lx-built');
+    if (built && DATA.source && DATA.source.built) built.textContent = I.T('Data last updated on this site {d}.', { d: new Date(DATA.source.built + 'T12:00:00').toLocaleDateString(LOCALE, { year: 'numeric', month: 'long', day: 'numeric' }) });
+  })();
+
+  /* ---------- Tabs: State Chart / About This Data ---------- */
+  var tabs = [$('tab-chart'), $('tab-about')].filter(Boolean);
+  function isAbout(h) { return h === 'about' || h.indexOf('ab-') === 0; }
+  function showTab(name, scroll) {
+    host.hidden = name !== 'chart';
+    var ab = $('about'); if (ab) ab.hidden = name !== 'about';
+    tabs.forEach(function (t) { var on = t.getAttribute('data-tab') === name; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
+    if (scroll) {
+      var top = document.querySelector('.lx-tabs').getBoundingClientRect().top + window.scrollY - 90;
+      if (window.scrollY > top) window.scrollTo({ top: top, behavior: 'auto' });
+    }
+  }
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () {
+      var name = t.getAttribute('data-tab'); showTab(name, false);
+      try { history.replaceState(null, '', name === 'about' ? '#about' : location.pathname + location.search); } catch (e) {}
+    });
+    t.addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      var o = tabs[(i + 1) % tabs.length]; o.focus(); o.click();
+    });
+  });
+  document.querySelectorAll('[data-open-about]').forEach(function (b) {
+    b.addEventListener('click', function () { showTab('about', true); try { history.replaceState(null, '', '#about'); } catch (e) {} });
+  });
+  window.addEventListener('hashchange', function () { showTab(isAbout(location.hash.slice(1)) ? 'about' : 'chart', false); });
+
   syncControls(); render();
+  showTab(isAbout(location.hash.slice(1)) ? 'about' : 'chart', false);
+  if (location.hash.slice(1).indexOf('ab-') === 0) { var target = document.getElementById(location.hash.slice(1)); if (target) target.scrollIntoView(); }
 })();
