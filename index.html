@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&amp;family=Public+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600&amp;display=swap">
-<link rel="stylesheet" href="css/style.css?v=20261109a">
+<link rel="stylesheet" href="css/style.css?v=20261111a">
 <script src="js/i18n.js?v=20261110a"></script>
 </head>
 <body>
@@ -38,7 +38,7 @@
       <div>
         <p class="eyebrow">Open data · United States and the world</p>
         <h1>Honey bee health data, mapped for everyone.</h1>
-        <p class="lede">The Hive Atlas brings published disease surveillance, genetic diversity data, hive metrics for USA and worldwide honey bees into one place. Explore it by continent, country, state/province or climate region, by pathogen, and by year, then download what you need.</p>
+        <p class="lede">The Hive Atlas brings published disease surveillance, genetic diversity, colony loss, and honey production data for honey bees in the United States and around the world into one place. Explore it by continent, country, state/province or climate region, by pathogen, and by year, then download what you need.</p>
         <div class="actions">
           <a class="btn primary" href="losses.html">Explore colony losses</a>
           <a class="btn" href="disease.html">Explore disease data</a>
@@ -76,7 +76,7 @@
 
   <section class="block" id="explore">
     <div class="wrap">
-      <h2>Four ways to explore</h2>
+      <h2>Five ways to explore</h2>
       <p class="section-intro">Each portal is built on the same kind of interactive map. Pick a place, choose what to look at, and the map redraws.</p>
       <div class="portals">
         <a class="portal" href="losses.html">
@@ -85,19 +85,19 @@
             Colony Losses
           </h3>
           <span class="badge live">Live now</span>
-          <p>How many colonies U.S. beekeepers lost each quarter, state by state, and which stressors they reported, from USDA surveys since 2015.</p>
+          <p>How many colonies U.S. beekeepers lost each quarter, state by state, and which stressors they reported, from USDA surveys since 2015. A U.S. Trends tab adds national figures on sudden colony loss and on small operations (2015–2017).</p>
           <ul class="taglist"><li>Percent lost</li><li>Renovations</li><li>Varroa mites</li><li>Pesticides</li></ul>
           <span class="go">Open the loss map →</span>
         </a>
-        <a class="portal" href="monitoring.html">
+        <a class="portal" href="honey-production.html">
           <h3>
-            <svg width="22" height="25" viewBox="0 0 34 38" aria-hidden="true"><polygon points="17,1 33,10 33,28 17,37 1,28 1,10" fill="none" stroke="var(--honey)" stroke-width="4"/><polygon points="17,12 24,16 24,22 17,26 10,22 10,16" fill="var(--honey)"/></svg>
-            Colony Monitoring
+            <svg width="22" height="25" viewBox="0 0 34 38" aria-hidden="true"><polygon points="17,1 33,10 33,28 17,37 1,28 1,10" fill="none" stroke="var(--honey)" stroke-width="4"/><circle cx="17" cy="19" r="6" fill="var(--honey)"/></svg>
+            Honey Production
           </h3>
-          <span class="badge">Demo data</span>
-          <p>How colony strength, queens, Varroa, and disease signs change through the season in each climate region, plus a personal report comparing your colonies with similar operations.</p>
-          <ul class="taglist"><li>Varroa washes</li><li>Frames of bees</li><li>Brood pattern</li><li>Queen status</li></ul>
-          <span class="go">Open colony monitoring →</span>
+          <span class="badge live">Live now</span>
+          <p>How much honey U.S. beekeepers produced each year, state by state, with yield per colony, prices, and year-end stocks from USDA surveys since 1987. A U.S. Trends tab adds income from pollination and other hive products, and honey prices by color.</p>
+          <ul class="taglist"><li>Yield per colony</li><li>Prices</li><li>Stocks</li><li>Income</li></ul>
+          <span class="go">Open honey production →</span>
         </a>
         <a class="portal" href="disease.html">
           <h3>
@@ -118,6 +118,16 @@
           <p>The maternal ancestry of honey bee colonies, from mitochondrial DNA results for 10,979 colonies in 47 countries, including 1,554 in the United States: lineage makeup, common haplotypes, subspecies, and diversity by country, state, or area.</p>
           <ul class="taglist"><li>mtDNA haplotypes</li><li>Lineages (A, M, C)</li><li>Diversity index</li></ul>
           <span class="go">Open the genetics map →</span>
+        </a>
+        <a class="portal" href="monitoring.html">
+          <h3>
+            <svg width="22" height="25" viewBox="0 0 34 38" aria-hidden="true"><polygon points="17,1 33,10 33,28 17,37 1,28 1,10" fill="none" stroke="var(--honey)" stroke-width="4"/><polygon points="17,12 24,16 24,22 17,26 10,22 10,16" fill="var(--honey)"/></svg>
+            Colony Monitoring
+          </h3>
+          <span class="badge">Demo data</span>
+          <p>How colony strength, queens, Varroa, and disease signs change through the season in each climate region, plus a personal report comparing your colonies with similar operations.</p>
+          <ul class="taglist"><li>Varroa washes</li><li>Frames of bees</li><li>Brood pattern</li><li>Queen status</li></ul>
+          <span class="go">Open colony monitoring →</span>
         </a>
       </div>
     </div>
