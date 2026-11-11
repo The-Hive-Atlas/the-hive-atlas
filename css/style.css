@@ -186,6 +186,7 @@ h2 { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.6rem
 .section-intro { color: var(--muted); max-width: 40em; margin: 0 0 32px; }
 
 .portals { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.portals:not(.three) > .portal:last-child:nth-child(odd) { grid-column: 1 / -1; }
 .portal {
   display: flex; flex-direction: column; gap: 14px; text-decoration: none;
   background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 28px;
