@@ -983,7 +983,7 @@
   document.querySelectorAll('[data-open-about]').forEach(function (b) { b.addEventListener('click', function () { showTab('about', true); try { history.replaceState(null, '', '#about'); } catch (e) {} }); });
   window.addEventListener('hashchange', function () { if (isAboutHash(location.hash.slice(1))) showTab('about', false); });
   var built = $('dx-built');
-  if (built && D.source.built) built.textContent = T('Data last updated on this site {d}.', { d: new Date(D.source.built + 'T12:00:00').toLocaleDateString(({ fr: 'fr-FR', es: 'es-ES', ar: 'ar' })[I.lang] || 'en-US', { year: 'numeric', month: 'long', day: 'numeric' }) });
+  if (built && D.source.built) built.textContent = T('Data last updated on this site {d}.', { d: new Date(D.source.built + 'T12:00:00').toLocaleDateString(({ fr: 'fr-FR', es: 'es-ES', ar: 'ar', zh: 'zh-CN' })[I.lang] || 'en-US', { year: 'numeric', month: 'long', day: 'numeric' }) });
   showTab(isAboutHash(location.hash.slice(1)) ? 'about' : 'map', false);
   if (location.hash.slice(1).indexOf('ab-') === 0) { var target = document.getElementById(location.hash.slice(1)); if (target) target.scrollIntoView(); }
 })();

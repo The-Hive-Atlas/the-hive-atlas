@@ -1,4 +1,4 @@
-/* The Hive Atlas: page languages (English, Français, Español, العربية).
+/* The Hive Atlas: page languages (English, Français, Español, العربية, 中文).
    Load in <head> on every page, before the stylesheet-dependent layout paints:
      <script src="js/i18n.js?v=..."></script>
    and call  I18N.apply();  right after </footer>, before the page's own scripts.
@@ -6,7 +6,7 @@
    (window.HIVE_LANG = { static, js, names, units }) and replaces matching English text.
    Text not in the dictionary simply stays in English, so pages never break. */
 (function () {
-  var LANGS = [['en', 'English'], ['fr', 'Français'], ['es', 'Español'], ['ar', 'العربية']];
+  var LANGS = [['en', 'English'], ['fr', 'Français'], ['es', 'Español'], ['ar', 'العربية'], ['zh', '中文']];
   var CODES = LANGS.map(function (x) { return x[0]; });
   var VERSION = '20261110a';
   var L = 'en';
@@ -29,9 +29,11 @@
     var me = document.currentScript, base = me && me.src ? me.src.replace(/i18n\.js(\?.*)?$/, '') : 'js/';
     document.write('<script src="' + base + 'lang/' + L + '.js?v=' + VERSION + '"><\/script>');
   }
+  // Chinese needs its own font; Google Fonts sends only the characters each page uses
+  if (L === 'zh') document.write('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@600&display=swap">');
 
   function D() { return window.HIVE_LANG || {}; }
-  var LOC = { en: 'en-US', fr: 'fr-FR', es: 'es-ES', ar: 'en-US' }[L];
+  var LOC = { en: 'en-US', fr: 'fr-FR', es: 'es-ES', ar: 'en-US', zh: 'zh-CN' }[L];
   var PR = null; try { PR = new Intl.PluralRules(L); } catch (e) {}
   var EN_UNITS = { colony: ['colony', 'colonies'], area: ['area', 'areas'], state: ['state', 'states'], country: ['country', 'countries'],
     region: ['region', 'regions'], study: ['study', 'studies'], stateTerr: ['state or territory', 'states and territories'], sample: ['sample', 'samples'] };
@@ -100,7 +102,7 @@
   }
 
   window.I18N = {
-    lang: L, langs: LANGS, T: T, N: N, PCT: PCT, P: P, NM: NM, ISO: ISO, lower: lower, sep: L === 'ar' ? '، ' : ', ',
+    lang: L, langs: LANGS, T: T, N: N, PCT: PCT, P: P, NM: NM, ISO: ISO, lower: lower, sep: L === 'ar' ? '، ' : L === 'zh' ? '、' : ', ',
     apply: function () { if (L !== 'en') translateStatic(); addMenu(); }
   };
 })();

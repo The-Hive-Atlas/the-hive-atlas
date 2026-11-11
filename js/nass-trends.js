@@ -55,6 +55,61 @@
       'All U.S. series (CSV)': 'Todas las series de EE. UU. (CSV)', 'Download': 'Descargar', 'Chart': 'Gráfico', 'Table': 'Tabla', 'Year': 'Año', 'Quarter': 'Trimestre', 'Month': 'Mes',
       'Jan–Mar': 'ene–mar', 'Apr–Jun': 'abr–jun', 'Jul–Sep': 'jul–sep', 'Oct–Dec': 'oct–dic'
     },
+    zh: {
+      'In {y} dollars': '按 {y} 年美元计',
+      'As reported': '按公布值',
+      'Prices and values': '价格和产值',
+      'Sales': '销售',
+      'All sales': '所有销售',
+      'Retail': '零售',
+      'Wholesale': '批发',
+      'Show': '显示',
+      'Colonies': '蜂群',
+      'Share of all colonies lost': '占全部损失蜂群的比例',
+      'Income from Honey, Pollination, and Other Hive Products': '来自蜂蜜、授粉和其他蜂产品的收入',
+      'Honey': '蜂蜜',
+      'Pollination': '授粉',
+      'Other hive products': '其他蜂产品',
+      'million $': '百万美元',
+      'In {y}, beekeepers earned {p} from pollination, {r} of the {h} their honey was worth.': '{y} 年，养蜂人从授粉中获得 {p}，相当于其蜂蜜产值 {h} 的 {r}。',
+      'Operations with five or more colonies. NASS has reported pollination and other income only since 2015, for the United States as a whole. Other hive products are everything but honey and pollination, such as beeswax, queens, and package bees.': '拥有五群及以上的经营户。NASS 自 2015 年起才公布授粉和其他收入，且只有全美数据。其他蜂产品指蜂蜜和授粉以外的一切，例如蜂蜡、蜂王和笼蜂。',
+      'Honey Prices by Color': '按颜色分的蜂蜜价格',
+      'Water white to white': '水白至白色',
+      'Extra light amber': '特浅琥珀色',
+      'Light amber to dark amber': '浅琥珀色至深琥珀色',
+      'Specialty and other honeys': '特色蜜及其他',
+      '$ per lb': '美元/磅',
+      'In {y}, {c} honey sold for {v} a pound and {c2} honey for {v2}.': '{y} 年，{c}蜂蜜每磅售价 {v}，{c2}蜂蜜为 {v2}。',
+      'Price received by beekeepers. Retail is honey they sold to consumers and stores; wholesale is honey sold in bulk to packers and processors. NASS reported color classes from 2003, in cents per pound until 2017.': '养蜂人收到的价格。零售是卖给消费者和商店的蜂蜜；批发是散装卖给包装商和加工商的蜂蜜。NASS 自 2003 年起公布颜色等级，2017 年以前以美分/磅计。',
+      'Honey Price as a Share of Parity': '蜂蜜价格占平价的比例',
+      'Percent of parity': '平价百分比',
+      '% of parity': '平价百分比',
+      'In {m}, honey sold at {v} of parity, so a pound of honey bought about {f} of what it did in 1910–1914, measured against what farmers pay.': '{m}，蜂蜜售价为平价的 {v}，即按农民支付的成本衡量，一磅蜂蜜的购买力约为 1910–1914 年的 {f}。',
+      'Parity is the price honey would need today to buy as much, relative to what farmers pay for goods, services, interest, taxes and wages, as it did in 1910–1914. NASS publishes it monthly for the United States.': '平价是指相对于农民为商品、服务、利息、税收和工资支付的费用，蜂蜜如今要达到 1910–1914 年同等购买力所需的价格。NASS 每月公布全美数据。',
+      'Sudden Colony Loss': '突发性蜂群损失',
+      'Colonies lost': '损失蜂群',
+      'In {q}, {n} colonies were lost suddenly, {s} of all colonies lost that quarter.': '{q}，有 {n} 群蜂突然损失，占当季度全部损失蜂群的 {s}。',
+      'Colonies beekeepers reported lost with all of these signs: few or no dead bees in or near the hive; a quick loss of adult bees although the queen, capped brood and food were still there; robbing of the food absent or delayed; and a loss not explained by Varroa or Nosema. Reported by beekeepers, not confirmed in a lab. U.S. only; no data for April–June 2019.': '养蜂人报告的同时具有以下所有迹象的损失蜂群：蜂箱内或附近很少或没有死蜂；尽管蜂王、封盖子脾和食物仍在，成年蜂却迅速减少；食物没有被盗或被盗延迟；损失不能用瓦螨或微孢子虫解释。由养蜂人报告，未经实验室确认。仅限美国；2019 年 4–6 月无数据。',
+      'Small Beekeeping Operations, 2015–2017': '小型养蜂经营户，2015–2017',
+      'Fewer than 5 colonies': '少于 5 群',
+      '5 or more colonies': '5 群及以上',
+      'Percent of colonies lost': '蜂群损失百分比',
+      '% of colonies': '蜂群百分比',
+      'Operations with fewer than five colonies lost {a} of their colonies per quarter on average, against {b} for operations with five or more.': '少于五群的经营户平均每季度损失 {a} 的蜂群，而五群及以上的经营户为 {b}。',
+      'NASS surveyed operations with fewer than five colonies only from 2015 to 2017, for the United States as a whole. They held about 40,000 to 52,000 colonies.': 'NASS 仅在 2015 至 2017 年调查过少于五群的经营户，且只有全美数据。这些经营户约有 40,000 至 52,000 群蜂。',
+      'These NASS series exist only for the United States as a whole, so they are shown over time rather than by state.': '这些 NASS 系列只有全美数据，因此按时间而非按州显示。',
+      'All U.S. series (CSV)': '所有美国系列（CSV）',
+      'Download': '下载',
+      'Chart': '图表',
+      'Table': '表格',
+      'Year': '年份',
+      'Quarter': '季度',
+      'Month': '月份',
+      'Jan–Mar': '1–3月',
+      'Apr–Jun': '4–6月',
+      'Jul–Sep': '7–9月',
+      'Oct–Dec': '10–12月'
+    },
     ar: {
       'In {y} dollars': 'بدولارات {y}', 'As reported': 'كما نُشرت', 'Prices and values': 'الأسعار والقيم', 'Sales': 'المبيعات', 'All sales': 'كل المبيعات', 'Retail': 'التجزئة', 'Wholesale': 'الجملة',
       'Show': 'العرض', 'Colonies': 'الطوائف', 'Share of all colonies lost': 'النسبة من كل الطوائف المفقودة',
@@ -81,16 +136,17 @@
   };
   function T(s, v) {
     var o = TX[LANG] && TX[LANG][s];
-    if (o == null) return I.T(s, v);
+    // then the site's chart labels, then its page texts (download buttons live there)
+    if (o == null) { var st = (window.HIVE_LANG || {}).static; o = I.T(s); if (o === s && st && st[s] != null) o = st[s]; }
     return v ? o.replace(/\{(\w+)\}/g, function (m, k) { return v[k] != null ? v[k] : m; }) : o;
   }
   var N = function (x, d) { return I.N(x, d); };
   var PCT = function (x, d) { return I.PCT ? I.PCT(x, d) : N(x, d) + '%'; };
   var USD = function (s) { return LANG === 'fr' || LANG === 'es' ? s + ' $' : '$' + s; };
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  var LOCALE = { en: 'en-US', fr: 'fr-FR', es: 'es-ES', ar: 'ar-u-nu-latn' }[LANG] || 'en-US';
+  var LOCALE = { en: 'en-US', fr: 'fr-FR', es: 'es-ES', ar: 'ar-u-nu-latn', zh: 'zh-CN' }[LANG] || 'en-US';
   var QN = { 1: 'Jan–Mar', 2: 'Apr–Jun', 3: 'Jul–Sep', 4: 'Oct–Dec' };
-  function qLabel(k) { var p = k.split('-Q'); return T(QN[+p[1]]) + ' ' + p[0]; }
+  function qLabel(k) { var p = k.split('-Q'); return LANG === 'zh' ? p[0] + '年' + T(QN[+p[1]]) : T(QN[+p[1]]) + ' ' + p[0]; }
   function mLabel(k) { var p = k.split('-'); try { return new Date(+p[0], +p[1] - 1, 15).toLocaleDateString(LOCALE, { month: 'short', year: 'numeric' }); } catch (e) { return k; } }
   function niceMax(v) {
     if (!(v > 0)) return { max: 1, step: 0.2 };

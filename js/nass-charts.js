@@ -73,6 +73,71 @@
       'Values below 0.5% are counted as 0.25%, and two Wyoming 2023 percents use the corrected values (see About This Data).': 'Los valores menores de 0,5 % cuentan como 0,25 %, y dos porcentajes de Wyoming en 2023 usan los valores corregidos (vea Acerca de estos datos).',
       'From 2024, NASS publishes fewer states separately; the others are in Other States, which is not shown.': 'Desde 2024, NASS publica menos estados por separado; los demás están en Otros estados, que no se muestra.'
     },
+    zh: {
+      'Quarter': '季度',
+      '{s} history (CSV)': '{s}历史数据（CSV）',
+      'Click any state in the chart below to see its history.': '点击下方图表中的任一州即可查看其历史数据。',
+      'Data from the USDA National Agricultural Statistics Service (NASS), {a} through {b}. Latest report released {d}.': '数据来自美国农业部国家农业统计局（NASS），{a}至{b}。最新报告发布于{d}。',
+      'Data from the USDA National Agricultural Statistics Service (NASS), {a} through {b}.': '数据来自美国农业部国家农业统计局（NASS），{a}至{b}。',
+      'State chart': '州图表',
+      'Measure': '指标',
+      'Whiskers': '须线',
+      'Lowest to highest': '最低至最高',
+      '± 1 SD': '± 1 标准差',
+      'Order': '排序',
+      'Highest first': '由高到低',
+      'A to Z': '按字母顺序',
+      'All': '全部',
+      'Chart': '图表',
+      'Table': '表格',
+      'Jan–Mar': '1–3月',
+      'Apr–Jun': '4–6月',
+      'Jul–Sep': '7–9月',
+      'Oct–Dec': '10–12月',
+      'Most colonies during the quarter': '季度内最多蜂群数',
+      'Colonies added or replaced': '新增或补充的蜂群',
+      'Colonies renovated': '更新的蜂群',
+      'thousand colonies': '千群',
+      'million lb': '百万磅',
+      'million $': '百万美元',
+      'lb per colony': '每群磅数',
+      '% of colonies': '蜂群百分比',
+      '$ per lb': '美元/磅',
+      '{q} quarters only': '仅{q}季度',
+      'all quarters': '所有季度',
+      'Average per quarter': '每季度平均',
+      'Average per year': '每年平均',
+      'U.S.': '美国',
+      'Average over the selected years': '所选年份的平均值',
+      'U.S. total, average over the selected years': '美国总计，所选年份的平均值',
+      'Highest state': '最高的州',
+      'Lowest state': '最低的州',
+      'Widest swing': '波动最大',
+      'State average': '州平均值',
+      'Average ± 1 standard deviation': '平均值 ± 1 个标准差',
+      'Lowest to highest quarter': '最低至最高季度',
+      'Lowest to highest year': '最低至最高年份',
+      'U.S. average': '美国平均',
+      'Data for fewer than half the period': '数据不足该时期的一半',
+      'No state data for this selection. Try a wider range of years.': '此选择没有州数据。请尝试更宽的年份范围。',
+      'Quarters with data': '有数据的季度',
+      'Years with data': '有数据的年份',
+      'Lowest': '最低',
+      'Highest': '最高',
+      'Std. dev.': '标准差',
+      'Data': '数据',
+      '{n} quarters': '{n} 个季度',
+      '{n} years': '{n} 年',
+      'Each bar is a state’s average over the years you choose. Whiskers show how far it moved from year to year, and the dashed line marks the U.S. Click a state to see its history.': '每个条形是一个州在所选年份的平均值。须线显示其逐年波动的幅度，虚线表示美国。点击某州查看其历史数据。',
+      '* Data for fewer than half of the selected period, so the average rests on fewer years.': '* 数据不足所选时期的一半，因此平均值依据的年份较少。',
+      'No U.S. line here: the U.S. figure is a national total, so it does not compare with a single state.': '此处没有美国线：美国数字是全国总计，不能与单个州比较。',
+      'No data was published for April–June 2019.': '2019 年 4–6 月未公布数据。',
+      'From July–September 2024, NASS publishes 20 states separately; the others are in Other States, which is not shown.': '从 2024 年 7–9 月起，NASS 单独公布 20 个州；其余各州归入其他州，此处不显示。',
+      'State percents use each state’s peak colonies and the U.S. uses colonies at the start of the quarter, so states tend to read a little below the U.S. line.': '州百分比使用各州的蜂群峰值，美国使用季度初的蜂群数，因此各州数值往往略低于美国线。',
+      'Stressors overlap: one colony can be counted under several, so they do not add up to 100%.': '压力因素有重叠：一个蜂群可计入多个，因此合计不等于 100%。',
+      'Values below 0.5% are counted as 0.25%, and two Wyoming 2023 percents use the corrected values (see About This Data).': '低于 0.5% 的数值按 0.25% 计算，怀俄明州 2023 年的两个百分比使用更正值（见“关于这些数据”）。',
+      'From 2024, NASS publishes fewer states separately; the others are in Other States, which is not shown.': '从 2024 年起，NASS 单独公布的州减少；其余各州归入其他州，此处不显示。'
+    },
     ar: {
       'Quarter': 'الربع',
       '{s} history (CSV)': 'سجل {s} (CSV)',
@@ -106,7 +171,8 @@
   };
   function T(s, v) {
     var o = NX[LANG] && NX[LANG][s];
-    if (o == null) return I.T(s, v);
+    // then the site's chart labels, then its page texts (download buttons live there)
+    if (o == null) { var st = (window.HIVE_LANG || {}).static; o = I.T(s); if (o === s && st && st[s] != null) o = st[s]; }
     return v ? o.replace(/\{(\w+)\}/g, function (m, k) { return v[k] != null ? v[k] : m; }) : o;
   }
   function N(x, d) { return I.N(x, d); }
@@ -189,7 +255,7 @@
     return u;
   }
   function labelOf(m) { return T(M[m].label); }
-  function periodLabel(p) { return SRC === 'honey' ? String(p.year) : T(QNAME[p.q]) + ' ' + p.year; }
+  function periodLabel(p) { return SRC === 'honey' ? String(p.year) : LANG === 'zh' ? p.year + '年' + T(QNAME[p.q]) : T(QNAME[p.q]) + ' ' + p.year; }
   function niceMax(v) {
     if (!(v > 0)) return { max: 1, step: 0.2 };
     var raw = v / 5, pw = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / pw;
@@ -490,13 +556,14 @@
     return s.split(' ').map(function (w, i) { return i && small[w] ? w : w.charAt(0).toUpperCase() + w.slice(1); }).join(' ');
   }
   function dropLastSentence(s) {
-    var t = s.replace(/\s+$/, ''), i = Math.max(t.lastIndexOf('. ', t.length - 2), t.lastIndexOf('。'));
+    var t = s.replace(/\s+$/, ''), i = Math.max(t.lastIndexOf('. ', t.length - 2), t.lastIndexOf('。', t.length - 2));
     return i > 0 ? t.slice(0, i + 1) : t;
   }
-  var LOCALE = { en: 'en-US', fr: 'fr-FR', es: 'es-ES', ar: 'ar-u-nu-latn' }[LANG] || 'en-US';
+  var LOCALE = { en: 'en-US', fr: 'fr-FR', es: 'es-ES', ar: 'ar-u-nu-latn', zh: 'zh-CN' }[LANG] || 'en-US';
   // "January–March 2026" in the page language
   function quarterLong(p) {
     if (LANG === 'en') return p.label;
+    if (LANG === 'zh') return p.year + '年' + ((p.q - 1) * 3 + 1) + '–' + ((p.q - 1) * 3 + 3) + '月';
     var mo = function (i) { try { return new Date(2000, i, 15).toLocaleDateString(LOCALE, { month: 'long' }); } catch (e) { return ''; } };
     return mo((p.q - 1) * 3) + '–' + mo((p.q - 1) * 3 + 2) + ' ' + p.year;
   }

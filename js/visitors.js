@@ -10,7 +10,7 @@
   var I = window.I18N || {};
   var lang = I.lang || 'en';
   var T = I.T || function (s, v) { return v ? s.replace(/\{(\w+)\}/g, function (m, k) { return v[k] != null ? v[k] : m; }) : s; };
-  var LOC = { en: 'en-US', fr: 'fr-FR', es: 'es-ES', ar: 'ar' }[lang] || 'en-US';
+  var LOC = { en: 'en-US', fr: 'fr-FR', es: 'es-ES', ar: 'ar', zh: 'zh-CN' }[lang] || 'en-US';
   var NUMLOC = lang === 'ar' ? 'en-US' : LOC;   // the rest of the site uses Western digits in Arabic
   var MAX = 32;   // countries shown
 
