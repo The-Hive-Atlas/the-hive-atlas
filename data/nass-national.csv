@@ -1,0 +1,767 @@
+"# Source: USDA National Agricultural Statistics Service (NASS), via Quick Stats. Compiled by The Hive Atlas, https://thehiveatlas.com"
+"# United States only. Dollars as reported. ""sudden colony loss"" is NASS data item ""Colony collapse disorder"" (see About This Data)."
+series,detail,period,value,unit
+income,honey,1987,118424000,dollars
+income,honey,1988,111379000,dollars
+income,honey,1989,89956000,dollars
+income,honey,1990,106688000,dollars
+income,honey,1991,122830000,dollars
+income,honey,1992,121922000,dollars
+income,honey,1993,124280000,dollars
+income,honey,1994,115203000,dollars
+income,honey,1995,144585000,dollars
+income,honey,1996,177166000,dollars
+income,honey,1997,147795000,dollars
+income,honey,1998,147468000,dollars
+income,honey,1999,125004000,dollars
+income,honey,2000,132865000,dollars
+income,honey,2001,132989000,dollars
+income,honey,2002,228338000,dollars
+income,honey,2003,252051000,dollars
+income,honey,2004,199641000,dollars
+income,honey,2005,160994000,dollars
+income,honey,2006,155685000,dollars
+income,honey,2007,159763000,dollars
+income,honey,2008,232744000,dollars
+income,honey,2009,215671000,dollars
+income,honey,2010,285692000,dollars
+income,honey,2011,261850000,dollars
+income,honey,2012,283454000,dollars
+income,honey,2013,320037000,dollars
+income,honey,2014,386933000,dollars
+income,honey,2015,325946000,dollars
+income,honey,2016,343962000,dollars
+income,honey,2017,327855000,dollars
+income,honey,2018,340358000,dollars
+income,honey,2019,312275000,dollars
+income,honey,2020,309947000,dollars
+income,honey,2021,335872000,dollars
+income,honey,2022,377246000,dollars
+income,honey,2023,355651000,dollars
+income,honey,2024,323887000,dollars
+income,honey,2025,352934000,dollars
+income,other_products,2015,165732000,dollars
+income,other_products,2016,83767000,dollars
+income,other_products,2017,80566000,dollars
+income,other_products,2018,94644000,dollars
+income,other_products,2019,77677000,dollars
+income,other_products,2020,55773000,dollars
+income,other_products,2021,80174000,dollars
+income,other_products,2022,55188000,dollars
+income,other_products,2023,57720000,dollars
+income,other_products,2024,51778000,dollars
+income,other_products,2025,47964000,dollars
+income,pollination,2015,340275000,dollars
+income,pollination,2016,252108000,dollars
+income,pollination,2017,280779000,dollars
+income,pollination,2018,301854000,dollars
+income,pollination,2019,309630000,dollars
+income,pollination,2020,254282000,dollars
+income,pollination,2021,270690000,dollars
+income,pollination,2022,241042000,dollars
+income,pollination,2023,254945000,dollars
+income,pollination,2024,225935000,dollars
+income,pollination,2025,224726000,dollars
+price_received,all_colors all,1987,0.503,dollars per lb
+price_received,all_colors all,1988,0.5,dollars per lb
+price_received,all_colors all,1989,0.498,dollars per lb
+price_received,all_colors all,1990,0.537,dollars per lb
+price_received,all_colors all,1991,0.556,dollars per lb
+price_received,all_colors all,1992,0.55,dollars per lb
+price_received,all_colors all,1993,0.539,dollars per lb
+price_received,all_colors all,1994,0.528,dollars per lb
+price_received,all_colors all,1995,0.685,dollars per lb
+price_received,all_colors all,1996,0.888,dollars per lb
+price_received,all_colors all,1997,0.752,dollars per lb
+price_received,all_colors all,1998,0.655,dollars per lb
+price_received,all_colors all,1999,0.601,dollars per lb
+price_received,all_colors all,2000,0.597,dollars per lb
+price_received,all_colors all,2001,0.704,dollars per lb
+price_received,all_colors all,2002,1.327,dollars per lb
+price_received,all_colors all,2003,1.387,dollars per lb
+price_received,all_colors all,2004,1.088,dollars per lb
+price_received,all_colors all,2005,0.922,dollars per lb
+price_received,all_colors all,2006,1.005,dollars per lb
+price_received,all_colors all,2007,1.077,dollars per lb
+price_received,all_colors all,2008,1.421,dollars per lb
+price_received,all_colors all,2009,1.473,dollars per lb
+price_received,all_colors all,2010,1.619,dollars per lb
+price_received,all_colors all,2011,1.765,dollars per lb
+price_received,all_colors all,2012,1.992,dollars per lb
+price_received,all_colors all,2013,2.14,dollars per lb
+price_received,all_colors all,2014,2.17,dollars per lb
+price_received,all_colors all,2015,2.08,dollars per lb
+price_received,all_colors all,2016,2.12,dollars per lb
+price_received,all_colors all,2017,2.2,dollars per lb
+price_received,all_colors all,2018,2.21,dollars per lb
+price_received,all_colors all,2019,1.99,dollars per lb
+price_received,all_colors all,2020,2.1,dollars per lb
+price_received,all_colors all,2021,2.65,dollars per lb
+price_received,all_colors all,2022,3.01,dollars per lb
+price_received,all_colors all,2023,2.55,dollars per lb
+price_received,all_colors all,2024,2.41,dollars per lb
+price_received,all_colors all,2025,3.05,dollars per lb
+price_received,all_colors retail,2003,1.885,dollars per lb
+price_received,all_colors retail,2004,1.809,dollars per lb
+price_received,all_colors retail,2005,1.814,dollars per lb
+price_received,all_colors retail,2006,1.92,dollars per lb
+price_received,all_colors retail,2007,2.046,dollars per lb
+price_received,all_colors retail,2008,2.247,dollars per lb
+price_received,all_colors retail,2009,2.837,dollars per lb
+price_received,all_colors retail,2010,3.116,dollars per lb
+price_received,all_colors retail,2011,3.147,dollars per lb
+price_received,all_colors retail,2012,3.48,dollars per lb
+price_received,all_colors retail,2013,3.82,dollars per lb
+price_received,all_colors retail,2014,4.05,dollars per lb
+price_received,all_colors retail,2015,4.1,dollars per lb
+price_received,all_colors retail,2016,4.75,dollars per lb
+price_received,all_colors retail,2017,4.77,dollars per lb
+price_received,all_colors retail,2018,4.38,dollars per lb
+price_received,all_colors retail,2019,4.82,dollars per lb
+price_received,all_colors retail,2020,5.23,dollars per lb
+price_received,all_colors retail,2021,5.27,dollars per lb
+price_received,all_colors retail,2022,6.02,dollars per lb
+price_received,all_colors retail,2023,6.24,dollars per lb
+price_received,all_colors retail,2024,5.9,dollars per lb
+price_received,all_colors retail,2025,7.15,dollars per lb
+price_received,all_colors wholesale,2003,1.347,dollars per lb
+price_received,all_colors wholesale,2004,1.018,dollars per lb
+price_received,all_colors wholesale,2005,0.836,dollars per lb
+price_received,all_colors wholesale,2006,0.93,dollars per lb
+price_received,all_colors wholesale,2007,0.999,dollars per lb
+price_received,all_colors wholesale,2008,1.354,dollars per lb
+price_received,all_colors wholesale,2009,1.415,dollars per lb
+price_received,all_colors wholesale,2010,1.541,dollars per lb
+price_received,all_colors wholesale,2011,1.677,dollars per lb
+price_received,all_colors wholesale,2012,1.913,dollars per lb
+price_received,all_colors wholesale,2013,2.06,dollars per lb
+price_received,all_colors wholesale,2014,2.07,dollars per lb
+price_received,all_colors wholesale,2015,1.95,dollars per lb
+price_received,all_colors wholesale,2016,1.92,dollars per lb
+price_received,all_colors wholesale,2017,2.05,dollars per lb
+price_received,all_colors wholesale,2018,2.03,dollars per lb
+price_received,all_colors wholesale,2019,1.73,dollars per lb
+price_received,all_colors wholesale,2020,1.84,dollars per lb
+price_received,all_colors wholesale,2021,2.4,dollars per lb
+price_received,all_colors wholesale,2022,2.77,dollars per lb
+price_received,all_colors wholesale,2023,2.24,dollars per lb
+price_received,all_colors wholesale,2024,2.11,dollars per lb
+price_received,all_colors wholesale,2025,2.45,dollars per lb
+price_received,amber all,2003,1.318,dollars per lb
+price_received,amber all,2004,1.057,dollars per lb
+price_received,amber all,2005,0.961,dollars per lb
+price_received,amber all,2006,1.022,dollars per lb
+price_received,amber all,2007,1.125,dollars per lb
+price_received,amber all,2008,1.42,dollars per lb
+price_received,amber all,2009,1.482,dollars per lb
+price_received,amber all,2010,1.67,dollars per lb
+price_received,amber all,2011,1.834,dollars per lb
+price_received,amber all,2012,2.058,dollars per lb
+price_received,amber all,2013,2.19,dollars per lb
+price_received,amber all,2014,2.34,dollars per lb
+price_received,amber all,2015,2.35,dollars per lb
+price_received,amber all,2016,2.33,dollars per lb
+price_received,amber all,2017,2.41,dollars per lb
+price_received,amber all,2018,2.51,dollars per lb
+price_received,amber all,2019,2.57,dollars per lb
+price_received,amber all,2020,2.53,dollars per lb
+price_received,amber all,2021,2.98,dollars per lb
+price_received,amber all,2022,3.23,dollars per lb
+price_received,amber all,2023,3.28,dollars per lb
+price_received,amber all,2024,3.25,dollars per lb
+price_received,amber all,2025,3.54,dollars per lb
+price_received,amber retail,2003,1.926,dollars per lb
+price_received,amber retail,2004,1.962,dollars per lb
+price_received,amber retail,2005,1.808,dollars per lb
+price_received,amber retail,2006,2.017,dollars per lb
+price_received,amber retail,2007,2.183,dollars per lb
+price_received,amber retail,2008,2.405,dollars per lb
+price_received,amber retail,2009,2.914,dollars per lb
+price_received,amber retail,2010,3.305,dollars per lb
+price_received,amber retail,2011,3.154,dollars per lb
+price_received,amber retail,2012,3.524,dollars per lb
+price_received,amber retail,2013,4.05,dollars per lb
+price_received,amber retail,2014,4.17,dollars per lb
+price_received,amber retail,2015,4.12,dollars per lb
+price_received,amber retail,2016,4.53,dollars per lb
+price_received,amber retail,2017,4.97,dollars per lb
+price_received,amber retail,2018,4.89,dollars per lb
+price_received,amber retail,2019,5.3,dollars per lb
+price_received,amber retail,2020,5.51,dollars per lb
+price_received,amber retail,2021,5.55,dollars per lb
+price_received,amber retail,2022,6.09,dollars per lb
+price_received,amber retail,2023,6.56,dollars per lb
+price_received,amber retail,2024,6.33,dollars per lb
+price_received,amber retail,2025,7.25,dollars per lb
+price_received,amber wholesale,2003,1.249,dollars per lb
+price_received,amber wholesale,2004,0.882,dollars per lb
+price_received,amber wholesale,2005,0.783,dollars per lb
+price_received,amber wholesale,2006,0.859,dollars per lb
+price_received,amber wholesale,2007,0.938,dollars per lb
+price_received,amber wholesale,2008,1.274,dollars per lb
+price_received,amber wholesale,2009,1.351,dollars per lb
+price_received,amber wholesale,2010,1.489,dollars per lb
+price_received,amber wholesale,2011,1.657,dollars per lb
+price_received,amber wholesale,2012,1.83,dollars per lb
+price_received,amber wholesale,2013,1.97,dollars per lb
+price_received,amber wholesale,2014,2.09,dollars per lb
+price_received,amber wholesale,2015,2.0,dollars per lb
+price_received,amber wholesale,2016,1.95,dollars per lb
+price_received,amber wholesale,2017,2.03,dollars per lb
+price_received,amber wholesale,2018,2.1,dollars per lb
+price_received,amber wholesale,2019,1.95,dollars per lb
+price_received,amber wholesale,2020,2.0,dollars per lb
+price_received,amber wholesale,2021,2.52,dollars per lb
+price_received,amber wholesale,2022,2.87,dollars per lb
+price_received,amber wholesale,2023,2.62,dollars per lb
+price_received,amber wholesale,2024,2.5,dollars per lb
+price_received,amber wholesale,2025,2.63,dollars per lb
+price_received,extra_light all,2003,1.365,dollars per lb
+price_received,extra_light all,2004,1.056,dollars per lb
+price_received,extra_light all,2005,0.926,dollars per lb
+price_received,extra_light all,2006,1.005,dollars per lb
+price_received,extra_light all,2007,1.064,dollars per lb
+price_received,extra_light all,2008,1.407,dollars per lb
+price_received,extra_light all,2009,1.504,dollars per lb
+price_received,extra_light all,2010,1.576,dollars per lb
+price_received,extra_light all,2011,1.711,dollars per lb
+price_received,extra_light all,2012,2.002,dollars per lb
+price_received,extra_light all,2013,2.09,dollars per lb
+price_received,extra_light all,2014,2.18,dollars per lb
+price_received,extra_light all,2015,2.13,dollars per lb
+price_received,extra_light all,2016,2.01,dollars per lb
+price_received,extra_light all,2017,2.17,dollars per lb
+price_received,extra_light all,2018,2.12,dollars per lb
+price_received,extra_light all,2019,1.9,dollars per lb
+price_received,extra_light all,2020,1.93,dollars per lb
+price_received,extra_light all,2021,2.47,dollars per lb
+price_received,extra_light all,2022,2.78,dollars per lb
+price_received,extra_light all,2023,2.4,dollars per lb
+price_received,extra_light all,2024,2.44,dollars per lb
+price_received,extra_light all,2025,2.92,dollars per lb
+price_received,extra_light retail,2003,1.808,dollars per lb
+price_received,extra_light retail,2004,1.458,dollars per lb
+price_received,extra_light retail,2005,1.76,dollars per lb
+price_received,extra_light retail,2006,1.76,dollars per lb
+price_received,extra_light retail,2007,1.88,dollars per lb
+price_received,extra_light retail,2008,2.097,dollars per lb
+price_received,extra_light retail,2009,2.525,dollars per lb
+price_received,extra_light retail,2010,2.663,dollars per lb
+price_received,extra_light retail,2011,3.071,dollars per lb
+price_received,extra_light retail,2012,3.035,dollars per lb
+price_received,extra_light retail,2013,3.31,dollars per lb
+price_received,extra_light retail,2014,3.92,dollars per lb
+price_received,extra_light retail,2015,4.12,dollars per lb
+price_received,extra_light retail,2016,4.34,dollars per lb
+price_received,extra_light retail,2017,4.87,dollars per lb
+price_received,extra_light retail,2018,3.44,dollars per lb
+price_received,extra_light retail,2019,3.63,dollars per lb
+price_received,extra_light retail,2020,4.67,dollars per lb
+price_received,extra_light retail,2021,4.15,dollars per lb
+price_received,extra_light retail,2022,5.62,dollars per lb
+price_received,extra_light retail,2023,5.36,dollars per lb
+price_received,extra_light retail,2024,4.72,dollars per lb
+price_received,extra_light retail,2025,7.08,dollars per lb
+price_received,extra_light wholesale,2003,1.326,dollars per lb
+price_received,extra_light wholesale,2004,1.006,dollars per lb
+price_received,extra_light wholesale,2005,0.819,dollars per lb
+price_received,extra_light wholesale,2006,0.925,dollars per lb
+price_received,extra_light wholesale,2007,0.975,dollars per lb
+price_received,extra_light wholesale,2008,1.352,dollars per lb
+price_received,extra_light wholesale,2009,1.445,dollars per lb
+price_received,extra_light wholesale,2010,1.511,dollars per lb
+price_received,extra_light wholesale,2011,1.644,dollars per lb
+price_received,extra_light wholesale,2012,1.954,dollars per lb
+price_received,extra_light wholesale,2013,2.04,dollars per lb
+price_received,extra_light wholesale,2014,2.1,dollars per lb
+price_received,extra_light wholesale,2015,2.03,dollars per lb
+price_received,extra_light wholesale,2016,1.91,dollars per lb
+price_received,extra_light wholesale,2017,2.06,dollars per lb
+price_received,extra_light wholesale,2018,2.01,dollars per lb
+price_received,extra_light wholesale,2019,1.7,dollars per lb
+price_received,extra_light wholesale,2020,1.81,dollars per lb
+price_received,extra_light wholesale,2021,2.34,dollars per lb
+price_received,extra_light wholesale,2022,2.66,dollars per lb
+price_received,extra_light wholesale,2023,2.23,dollars per lb
+price_received,extra_light wholesale,2024,2.19,dollars per lb
+price_received,extra_light wholesale,2025,2.55,dollars per lb
+price_received,other all,2003,1.335,dollars per lb
+price_received,other all,2004,1.617,dollars per lb
+price_received,other all,2005,1.093,dollars per lb
+price_received,other all,2006,1.581,dollars per lb
+price_received,other all,2007,1.756,dollars per lb
+price_received,other all,2008,2.059,dollars per lb
+price_received,other all,2009,2.479,dollars per lb
+price_received,other all,2010,2.081,dollars per lb
+price_received,other all,2011,2.252,dollars per lb
+price_received,other all,2012,2.816,dollars per lb
+price_received,other all,2013,2.49,dollars per lb
+price_received,other all,2014,3.17,dollars per lb
+price_received,other all,2015,3.52,dollars per lb
+price_received,other all,2016,3.85,dollars per lb
+price_received,other all,2017,3.83,dollars per lb
+price_received,other all,2018,3.62,dollars per lb
+price_received,other all,2019,3.99,dollars per lb
+price_received,other all,2020,3.0,dollars per lb
+price_received,other all,2021,3.76,dollars per lb
+price_received,other all,2022,4.16,dollars per lb
+price_received,other all,2023,4.58,dollars per lb
+price_received,other all,2024,5.31,dollars per lb
+price_received,other all,2025,5.91,dollars per lb
+price_received,other retail,2003,2.466,dollars per lb
+price_received,other retail,2004,2.29,dollars per lb
+price_received,other retail,2005,2.69,dollars per lb
+price_received,other retail,2006,2.319,dollars per lb
+price_received,other retail,2007,2.911,dollars per lb
+price_received,other retail,2008,3.268,dollars per lb
+price_received,other retail,2009,4.143,dollars per lb
+price_received,other retail,2010,4.714,dollars per lb
+price_received,other retail,2011,4.61,dollars per lb
+price_received,other retail,2012,5.195,dollars per lb
+price_received,other retail,2013,4.93,dollars per lb
+price_received,other retail,2014,5.35,dollars per lb
+price_received,other retail,2015,6.57,dollars per lb
+price_received,other retail,2016,7.82,dollars per lb
+price_received,other retail,2017,6.28,dollars per lb
+price_received,other retail,2018,7.17,dollars per lb
+price_received,other retail,2019,6.62,dollars per lb
+price_received,other retail,2020,7.23,dollars per lb
+price_received,other retail,2021,6.48,dollars per lb
+price_received,other retail,2022,7.91,dollars per lb
+price_received,other retail,2023,8.72,dollars per lb
+price_received,other retail,2024,8.53,dollars per lb
+price_received,other retail,2025,8.94,dollars per lb
+price_received,other wholesale,2003,1.112,dollars per lb
+price_received,other wholesale,2004,1.133,dollars per lb
+price_received,other wholesale,2005,0.942,dollars per lb
+price_received,other wholesale,2006,1.103,dollars per lb
+price_received,other wholesale,2007,1.327,dollars per lb
+price_received,other wholesale,2008,1.433,dollars per lb
+price_received,other wholesale,2009,1.798,dollars per lb
+price_received,other wholesale,2010,1.721,dollars per lb
+price_received,other wholesale,2011,1.826,dollars per lb
+price_received,other wholesale,2012,2.134,dollars per lb
+price_received,other wholesale,2013,2.22,dollars per lb
+price_received,other wholesale,2014,2.55,dollars per lb
+price_received,other wholesale,2015,2.85,dollars per lb
+price_received,other wholesale,2016,2.46,dollars per lb
+price_received,other wholesale,2017,2.87,dollars per lb
+price_received,other wholesale,2018,2.64,dollars per lb
+price_received,other wholesale,2019,3.16,dollars per lb
+price_received,other wholesale,2020,2.39,dollars per lb
+price_received,other wholesale,2021,2.64,dollars per lb
+price_received,other wholesale,2022,3.41,dollars per lb
+price_received,other wholesale,2023,3.1,dollars per lb
+price_received,other wholesale,2024,3.95,dollars per lb
+price_received,other wholesale,2025,4.42,dollars per lb
+price_received,white all,2003,1.435,dollars per lb
+price_received,white all,2004,1.096,dollars per lb
+price_received,white all,2005,0.895,dollars per lb
+price_received,white all,2006,0.982,dollars per lb
+price_received,white all,2007,1.046,dollars per lb
+price_received,white all,2008,1.412,dollars per lb
+price_received,white all,2009,1.44,dollars per lb
+price_received,white all,2010,1.598,dollars per lb
+price_received,white all,2011,1.729,dollars per lb
+price_received,white all,2012,1.942,dollars per lb
+price_received,white all,2013,2.13,dollars per lb
+price_received,white all,2014,2.06,dollars per lb
+price_received,white all,2015,1.91,dollars per lb
+price_received,white all,2016,1.96,dollars per lb
+price_received,white all,2017,2.06,dollars per lb
+price_received,white all,2018,2.01,dollars per lb
+price_received,white all,2019,1.7,dollars per lb
+price_received,white all,2020,1.81,dollars per lb
+price_received,white all,2021,2.43,dollars per lb
+price_received,white all,2022,2.81,dollars per lb
+price_received,white all,2023,2.12,dollars per lb
+price_received,white all,2024,1.98,dollars per lb
+price_received,white all,2025,2.29,dollars per lb
+price_received,white retail,2003,1.858,dollars per lb
+price_received,white retail,2004,1.777,dollars per lb
+price_received,white retail,2005,1.813,dollars per lb
+price_received,white retail,2006,1.756,dollars per lb
+price_received,white retail,2007,1.728,dollars per lb
+price_received,white retail,2008,1.95,dollars per lb
+price_received,white retail,2009,2.526,dollars per lb
+price_received,white retail,2010,2.971,dollars per lb
+price_received,white retail,2011,2.741,dollars per lb
+price_received,white retail,2012,3.239,dollars per lb
+price_received,white retail,2013,3.41,dollars per lb
+price_received,white retail,2014,3.29,dollars per lb
+price_received,white retail,2015,3.05,dollars per lb
+price_received,white retail,2016,4.64,dollars per lb
+price_received,white retail,2017,3.14,dollars per lb
+price_received,white retail,2018,3.63,dollars per lb
+price_received,white retail,2019,4.7,dollars per lb
+price_received,white retail,2020,4.18,dollars per lb
+price_received,white retail,2021,5.36,dollars per lb
+price_received,white retail,2022,5.57,dollars per lb
+price_received,white retail,2023,5.24,dollars per lb
+price_received,white retail,2024,5.34,dollars per lb
+price_received,white retail,2025,5.96,dollars per lb
+price_received,white wholesale,2003,1.411,dollars per lb
+price_received,white wholesale,2004,1.066,dollars per lb
+price_received,white wholesale,2005,0.859,dollars per lb
+price_received,white wholesale,2006,0.959,dollars per lb
+price_received,white wholesale,2007,1.03,dollars per lb
+price_received,white wholesale,2008,1.389,dollars per lb
+price_received,white wholesale,2009,1.426,dollars per lb
+price_received,white wholesale,2010,1.575,dollars per lb
+price_received,white wholesale,2011,1.701,dollars per lb
+price_received,white wholesale,2012,1.923,dollars per lb
+price_received,white wholesale,2013,2.11,dollars per lb
+price_received,white wholesale,2014,2.05,dollars per lb
+price_received,white wholesale,2015,1.89,dollars per lb
+price_received,white wholesale,2016,1.89,dollars per lb
+price_received,white wholesale,2017,2.05,dollars per lb
+price_received,white wholesale,2018,1.98,dollars per lb
+price_received,white wholesale,2019,1.63,dollars per lb
+price_received,white wholesale,2020,1.73,dollars per lb
+price_received,white wholesale,2021,2.33,dollars per lb
+price_received,white wholesale,2022,2.7,dollars per lb
+price_received,white wholesale,2023,2.04,dollars per lb
+price_received,white wholesale,2024,1.92,dollars per lb
+price_received,white wholesale,2025,2.12,dollars per lb
+price_pct_of_parity,,2007-01,42.0,percent
+price_pct_of_parity,,2007-02,41.0,percent
+price_pct_of_parity,,2007-03,41.0,percent
+price_pct_of_parity,,2007-04,40.0,percent
+price_pct_of_parity,,2007-05,40.0,percent
+price_pct_of_parity,,2007-06,41.0,percent
+price_pct_of_parity,,2007-07,40.0,percent
+price_pct_of_parity,,2007-08,40.0,percent
+price_pct_of_parity,,2007-09,40.0,percent
+price_pct_of_parity,,2007-10,40.0,percent
+price_pct_of_parity,,2007-11,39.0,percent
+price_pct_of_parity,,2007-12,39.0,percent
+price_pct_of_parity,,2008-01,38.0,percent
+price_pct_of_parity,,2008-02,37.0,percent
+price_pct_of_parity,,2008-03,36.0,percent
+price_pct_of_parity,,2008-04,35.0,percent
+price_pct_of_parity,,2008-05,35.0,percent
+price_pct_of_parity,,2008-06,34.0,percent
+price_pct_of_parity,,2008-07,33.0,percent
+price_pct_of_parity,,2008-08,34.0,percent
+price_pct_of_parity,,2008-09,34.0,percent
+price_pct_of_parity,,2008-10,35.0,percent
+price_pct_of_parity,,2008-11,36.0,percent
+price_pct_of_parity,,2008-12,49.0,percent
+price_pct_of_parity,,2009-01,50.0,percent
+price_pct_of_parity,,2009-02,51.0,percent
+price_pct_of_parity,,2009-03,50.0,percent
+price_pct_of_parity,,2009-04,49.0,percent
+price_pct_of_parity,,2009-05,50.0,percent
+price_pct_of_parity,,2009-06,49.0,percent
+price_pct_of_parity,,2009-07,50.0,percent
+price_pct_of_parity,,2009-08,49.0,percent
+price_pct_of_parity,,2009-09,50.0,percent
+price_pct_of_parity,,2009-10,50.0,percent
+price_pct_of_parity,,2009-11,50.0,percent
+price_pct_of_parity,,2009-12,51.0,percent
+price_pct_of_parity,,2010-01,47.0,percent
+price_pct_of_parity,,2010-02,46.0,percent
+price_pct_of_parity,,2010-03,46.0,percent
+price_pct_of_parity,,2010-04,47.0,percent
+price_pct_of_parity,,2010-05,47.0,percent
+price_pct_of_parity,,2010-06,47.0,percent
+price_pct_of_parity,,2010-07,47.0,percent
+price_pct_of_parity,,2010-08,47.0,percent
+price_pct_of_parity,,2010-09,47.0,percent
+price_pct_of_parity,,2010-10,46.0,percent
+price_pct_of_parity,,2010-11,45.0,percent
+price_pct_of_parity,,2010-12,45.0,percent
+price_pct_of_parity,,2011-01,42.0,percent
+price_pct_of_parity,,2011-02,46.0,percent
+price_pct_of_parity,,2011-03,45.0,percent
+price_pct_of_parity,,2011-04,44.0,percent
+price_pct_of_parity,,2011-05,44.0,percent
+price_pct_of_parity,,2011-06,44.0,percent
+price_pct_of_parity,,2011-07,44.0,percent
+price_pct_of_parity,,2011-08,44.0,percent
+price_pct_of_parity,,2011-09,44.0,percent
+price_pct_of_parity,,2011-10,44.0,percent
+price_pct_of_parity,,2011-11,39.0,percent
+price_pct_of_parity,,2011-12,47.0,percent
+price_pct_of_parity,,2012-01,45.0,percent
+price_pct_of_parity,,2012-02,45.0,percent
+price_pct_of_parity,,2012-03,45.0,percent
+price_pct_of_parity,,2012-04,44.0,percent
+price_pct_of_parity,,2012-05,44.0,percent
+price_pct_of_parity,,2012-06,43.0,percent
+price_pct_of_parity,,2012-07,43.0,percent
+price_pct_of_parity,,2012-08,43.0,percent
+price_pct_of_parity,,2012-09,43.0,percent
+price_pct_of_parity,,2012-10,42.0,percent
+price_pct_of_parity,,2012-11,43.0,percent
+price_pct_of_parity,,2012-12,43.0,percent
+price_pct_of_parity,,2013-01,47.0,percent
+price_pct_of_parity,,2013-02,47.0,percent
+price_pct_of_parity,,2013-03,47.0,percent
+price_pct_of_parity,,2013-04,47.0,percent
+price_pct_of_parity,,2013-05,48.0,percent
+price_pct_of_parity,,2013-06,48.0,percent
+price_pct_of_parity,,2013-07,48.0,percent
+price_pct_of_parity,,2013-08,48.0,percent
+price_pct_of_parity,,2013-09,50.0,percent
+price_pct_of_parity,,2013-10,49.0,percent
+price_pct_of_parity,,2013-11,50.0,percent
+price_pct_of_parity,,2013-12,53.0,percent
+price_pct_of_parity,,2014-01,50.0,percent
+price_pct_of_parity,,2014-02,50.0,percent
+price_pct_of_parity,,2014-03,50.0,percent
+price_pct_of_parity,,2014-04,48.0,percent
+price_pct_of_parity,,2014-05,48.0,percent
+price_pct_of_parity,,2014-06,47.0,percent
+price_pct_of_parity,,2014-07,47.0,percent
+price_pct_of_parity,,2014-08,48.0,percent
+price_pct_of_parity,,2014-09,48.0,percent
+price_pct_of_parity,,2014-10,47.0,percent
+price_pct_of_parity,,2014-11,48.0,percent
+price_pct_of_parity,,2014-12,48.0,percent
+price_pct_of_parity,,2015-01,48.0,percent
+price_pct_of_parity,,2015-02,48.0,percent
+price_pct_of_parity,,2015-03,48.0,percent
+price_pct_of_parity,,2015-04,48.0,percent
+price_pct_of_parity,,2015-05,48.0,percent
+price_pct_of_parity,,2015-06,49.0,percent
+price_pct_of_parity,,2015-07,49.0,percent
+price_pct_of_parity,,2015-08,49.0,percent
+price_pct_of_parity,,2015-09,50.0,percent
+price_pct_of_parity,,2015-10,50.0,percent
+price_pct_of_parity,,2015-11,51.0,percent
+price_pct_of_parity,,2015-12,49.0,percent
+price_pct_of_parity,,2016-01,46.0,percent
+price_pct_of_parity,,2016-02,46.0,percent
+price_pct_of_parity,,2016-03,46.0,percent
+price_pct_of_parity,,2016-04,46.0,percent
+price_pct_of_parity,,2016-05,46.0,percent
+price_pct_of_parity,,2016-06,46.0,percent
+price_pct_of_parity,,2016-07,46.0,percent
+price_pct_of_parity,,2016-08,46.0,percent
+price_pct_of_parity,,2016-09,47.0,percent
+price_pct_of_parity,,2016-10,47.0,percent
+price_pct_of_parity,,2016-11,47.0,percent
+price_pct_of_parity,,2016-12,47.0,percent
+price_pct_of_parity,,2017-01,44.0,percent
+price_pct_of_parity,,2017-02,44.0,percent
+price_pct_of_parity,,2017-03,44.0,percent
+price_pct_of_parity,,2017-04,44.0,percent
+price_pct_of_parity,,2017-05,44.0,percent
+price_pct_of_parity,,2017-06,44.0,percent
+price_pct_of_parity,,2017-07,44.0,percent
+price_pct_of_parity,,2017-08,44.0,percent
+price_pct_of_parity,,2017-09,44.0,percent
+price_pct_of_parity,,2017-10,44.0,percent
+price_pct_of_parity,,2017-11,43.0,percent
+price_pct_of_parity,,2017-12,43.0,percent
+price_pct_of_parity,,2018-01,42.0,percent
+price_pct_of_parity,,2018-02,42.0,percent
+price_pct_of_parity,,2018-03,42.0,percent
+price_pct_of_parity,,2018-04,42.0,percent
+price_pct_of_parity,,2018-05,42.0,percent
+price_pct_of_parity,,2018-06,42.0,percent
+price_pct_of_parity,,2018-07,42.0,percent
+price_pct_of_parity,,2018-08,42.0,percent
+price_pct_of_parity,,2018-09,42.0,percent
+price_pct_of_parity,,2018-10,42.0,percent
+price_pct_of_parity,,2018-11,42.0,percent
+price_pct_of_parity,,2018-12,42.0,percent
+price_pct_of_parity,,2019-01,40.0,percent
+price_pct_of_parity,,2019-02,40.0,percent
+price_pct_of_parity,,2019-03,40.0,percent
+price_pct_of_parity,,2019-04,40.0,percent
+price_pct_of_parity,,2019-05,40.0,percent
+price_pct_of_parity,,2019-06,40.0,percent
+price_pct_of_parity,,2019-07,40.0,percent
+price_pct_of_parity,,2019-08,40.0,percent
+price_pct_of_parity,,2019-09,40.0,percent
+price_pct_of_parity,,2019-10,40.0,percent
+price_pct_of_parity,,2019-11,40.0,percent
+price_pct_of_parity,,2019-12,36.0,percent
+price_pct_of_parity,,2020-01,35.0,percent
+price_pct_of_parity,,2020-02,35.0,percent
+price_pct_of_parity,,2020-03,35.0,percent
+price_pct_of_parity,,2020-04,35.0,percent
+price_pct_of_parity,,2020-05,35.0,percent
+price_pct_of_parity,,2020-06,35.0,percent
+price_pct_of_parity,,2020-07,35.0,percent
+price_pct_of_parity,,2020-08,35.0,percent
+price_pct_of_parity,,2020-09,35.0,percent
+price_pct_of_parity,,2020-10,35.0,percent
+price_pct_of_parity,,2020-11,34.0,percent
+price_pct_of_parity,,2020-12,36.0,percent
+price_pct_of_parity,,2021-01,36.0,percent
+price_pct_of_parity,,2021-02,35.0,percent
+price_pct_of_parity,,2021-03,36.0,percent
+price_pct_of_parity,,2021-04,36.0,percent
+price_pct_of_parity,,2021-05,35.0,percent
+price_pct_of_parity,,2021-06,35.0,percent
+price_pct_of_parity,,2021-07,34.0,percent
+price_pct_of_parity,,2021-08,34.0,percent
+price_pct_of_parity,,2021-09,34.0,percent
+price_pct_of_parity,,2021-10,33.0,percent
+price_pct_of_parity,,2021-11,33.0,percent
+price_pct_of_parity,,2021-12,41.0,percent
+price_pct_of_parity,,2022-01,40.0,percent
+price_pct_of_parity,,2022-02,39.0,percent
+price_pct_of_parity,,2022-03,38.0,percent
+price_pct_of_parity,,2022-04,37.0,percent
+price_pct_of_parity,,2022-05,37.0,percent
+price_pct_of_parity,,2022-06,36.0,percent
+price_pct_of_parity,,2022-07,36.0,percent
+price_pct_of_parity,,2022-08,36.0,percent
+price_pct_of_parity,,2022-09,36.0,percent
+price_pct_of_parity,,2022-10,36.0,percent
+price_pct_of_parity,,2022-11,36.0,percent
+price_pct_of_parity,,2022-12,40.0,percent
+price_pct_of_parity,,2023-01,40.0,percent
+price_pct_of_parity,,2023-02,40.0,percent
+price_pct_of_parity,,2023-03,40.0,percent
+price_pct_of_parity,,2023-04,40.0,percent
+price_pct_of_parity,,2023-05,40.0,percent
+price_pct_of_parity,,2023-06,38.0,percent
+price_pct_of_parity,,2023-07,38.0,percent
+price_pct_of_parity,,2023-08,38.0,percent
+price_pct_of_parity,,2023-09,38.0,percent
+price_pct_of_parity,,2023-10,38.0,percent
+price_pct_of_parity,,2023-11,38.0,percent
+price_pct_of_parity,,2023-12,33.0,percent
+price_pct_of_parity,,2024-01,34.0,percent
+price_pct_of_parity,,2024-02,34.0,percent
+price_pct_of_parity,,2024-03,34.0,percent
+price_pct_of_parity,,2024-04,34.0,percent
+price_pct_of_parity,,2024-05,34.0,percent
+price_pct_of_parity,,2024-06,32.0,percent
+price_pct_of_parity,,2024-07,32.0,percent
+price_pct_of_parity,,2024-08,32.0,percent
+price_pct_of_parity,,2024-09,33.0,percent
+price_pct_of_parity,,2024-10,32.0,percent
+price_pct_of_parity,,2024-11,32.0,percent
+price_pct_of_parity,,2024-12,30.0,percent
+price_pct_of_parity,,2025-01,29.0,percent
+price_pct_of_parity,,2025-02,29.0,percent
+price_pct_of_parity,,2025-03,29.0,percent
+price_pct_of_parity,,2025-04,29.0,percent
+price_pct_of_parity,,2025-05,29.0,percent
+price_pct_of_parity,,2025-06,28.0,percent
+price_pct_of_parity,,2025-07,28.0,percent
+price_pct_of_parity,,2025-08,28.0,percent
+price_pct_of_parity,,2025-09,28.0,percent
+price_pct_of_parity,,2025-10,27.0,percent
+price_pct_of_parity,,2025-11,28.0,percent
+price_pct_of_parity,,2025-12,35.0,percent
+price_pct_of_parity,,2026-01,35.0,percent
+price_pct_of_parity,,2026-02,35.0,percent
+price_pct_of_parity,,2026-03,35.0,percent
+price_pct_of_parity,,2026-04,34.0,percent
+price_pct_of_parity,,2026-05,34.0,percent
+price_pct_of_parity,,2026-06,33.0,percent
+price_pct_of_parity,,2026-07,33.0,percent
+price_pct_of_parity,,2026-08,34.0,percent
+price_pct_of_parity,,2026-09,33.0,percent
+sudden_colony_loss,,2015-Q1,92250,colonies
+sudden_colony_loss,,2015-Q2,56760,colonies
+sudden_colony_loss,,2015-Q3,88390,colonies
+sudden_colony_loss,,2015-Q4,87610,colonies
+sudden_colony_loss,,2016-Q1,115950,colonies
+sudden_colony_loss,,2016-Q2,47780,colonies
+sudden_colony_loss,,2016-Q3,92610,colonies
+sudden_colony_loss,,2016-Q4,129290,colonies
+sudden_colony_loss,,2017-Q1,67830,colonies
+sudden_colony_loss,,2017-Q2,33010,colonies
+sudden_colony_loss,,2017-Q3,49540,colonies
+sudden_colony_loss,,2017-Q4,94750,colonies
+sudden_colony_loss,,2018-Q1,81140,colonies
+sudden_colony_loss,,2018-Q2,49030,colonies
+sudden_colony_loss,,2018-Q3,78270,colonies
+sudden_colony_loss,,2018-Q4,122240,colonies
+sudden_colony_loss,,2019-Q1,59940,colonies
+sudden_colony_loss,,2019-Q3,67240,colonies
+sudden_colony_loss,,2019-Q4,83710,colonies
+sudden_colony_loss,,2020-Q1,105240,colonies
+sudden_colony_loss,,2020-Q2,48270,colonies
+sudden_colony_loss,,2020-Q3,78190,colonies
+sudden_colony_loss,,2020-Q4,116910,colonies
+sudden_colony_loss,,2021-Q1,77150,colonies
+sudden_colony_loss,,2021-Q2,49420,colonies
+sudden_colony_loss,,2021-Q3,74910,colonies
+sudden_colony_loss,,2021-Q4,82340,colonies
+sudden_colony_loss,,2022-Q1,86070,colonies
+sudden_colony_loss,,2022-Q2,51390,colonies
+sudden_colony_loss,,2022-Q3,68620,colonies
+sudden_colony_loss,,2022-Q4,93550,colonies
+sudden_colony_loss,,2023-Q1,107630,colonies
+sudden_colony_loss,,2023-Q2,54530,colonies
+sudden_colony_loss,,2023-Q3,74570,colonies
+sudden_colony_loss,,2023-Q4,95840,colonies
+sudden_colony_loss,,2024-Q1,70650,colonies
+sudden_colony_loss,,2024-Q2,66650,colonies
+sudden_colony_loss,,2024-Q3,114830,colonies
+sudden_colony_loss,,2024-Q4,133770,colonies
+sudden_colony_loss,,2025-Q1,114680,colonies
+sudden_colony_loss,,2025-Q2,53710,colonies
+sudden_colony_loss,,2025-Q3,72290,colonies
+sudden_colony_loss,,2025-Q4,103070,colonies
+sudden_colony_loss,,2026-Q1,93770,colonies
+sudden_colony_loss,,2026-Q2,58350,colonies
+operations_under_5_colonies,colonies_added,2015-Q1,8000.0,colonies
+operations_under_5_colonies,colonies_added,2015-Q2,15000.0,colonies
+operations_under_5_colonies,colonies_added,2015-Q3,2800.0,colonies
+operations_under_5_colonies,colonies_added,2015-Q4,860.0,colonies
+operations_under_5_colonies,colonies_added,2016-Q1,7500.0,colonies
+operations_under_5_colonies,colonies_added,2016-Q2,13000.0,colonies
+operations_under_5_colonies,colonies_added,2016-Q3,2000.0,colonies
+operations_under_5_colonies,colonies_added,2016-Q4,800.0,colonies
+operations_under_5_colonies,colonies_added,2017-Q1,8500.0,colonies
+operations_under_5_colonies,colonies_added,2017-Q2,12500.0,colonies
+operations_under_5_colonies,colonies_added,2017-Q3,2100.0,colonies
+operations_under_5_colonies,colonies_added,2017-Q4,960.0,colonies
+operations_under_5_colonies,colonies_lost,2015-Q1,15500.0,colonies
+operations_under_5_colonies,colonies_lost,2015-Q2,5500.0,colonies
+operations_under_5_colonies,colonies_lost,2015-Q3,6500.0,colonies
+operations_under_5_colonies,colonies_lost,2015-Q4,7000.0,colonies
+operations_under_5_colonies,colonies_lost,2016-Q1,11500.0,colonies
+operations_under_5_colonies,colonies_lost,2016-Q2,4900.0,colonies
+operations_under_5_colonies,colonies_lost,2016-Q3,6500.0,colonies
+operations_under_5_colonies,colonies_lost,2016-Q4,6500.0,colonies
+operations_under_5_colonies,colonies_lost,2017-Q1,13500.0,colonies
+operations_under_5_colonies,colonies_lost,2017-Q2,4200.0,colonies
+operations_under_5_colonies,colonies_lost,2017-Q3,6000.0,colonies
+operations_under_5_colonies,colonies_lost,2017-Q4,7000.0,colonies
+operations_under_5_colonies,colonies_start,2015-Q1,50000.0,colonies
+operations_under_5_colonies,colonies_start,2015-Q2,43000.0,colonies
+operations_under_5_colonies,colonies_start,2015-Q3,52000.0,colonies
+operations_under_5_colonies,colonies_start,2015-Q4,49000.0,colonies
+operations_under_5_colonies,colonies_start,2016-Q1,44000.0,colonies
+operations_under_5_colonies,colonies_start,2016-Q2,41000.0,colonies
+operations_under_5_colonies,colonies_start,2016-Q3,49000.0,colonies
+operations_under_5_colonies,colonies_start,2016-Q4,45000.0,colonies
+operations_under_5_colonies,colonies_start,2017-Q1,40000.0,colonies
+operations_under_5_colonies,colonies_start,2017-Q2,35000.0,colonies
+operations_under_5_colonies,colonies_start,2017-Q3,43000.0,colonies
+operations_under_5_colonies,colonies_start,2017-Q4,39000.0,colonies
+operations_under_5_colonies,pct_lost,2015-Q1,31.0,percent
+operations_under_5_colonies,pct_lost,2015-Q2,13.0,percent
+operations_under_5_colonies,pct_lost,2015-Q3,13.0,percent
+operations_under_5_colonies,pct_lost,2015-Q4,14.0,percent
+operations_under_5_colonies,pct_lost,2016-Q1,26.0,percent
+operations_under_5_colonies,pct_lost,2016-Q2,12.0,percent
+operations_under_5_colonies,pct_lost,2016-Q3,13.0,percent
+operations_under_5_colonies,pct_lost,2016-Q4,14.0,percent
+operations_under_5_colonies,pct_lost,2017-Q1,34.0,percent
+operations_under_5_colonies,pct_lost,2017-Q2,12.0,percent
+operations_under_5_colonies,pct_lost,2017-Q3,14.0,percent
+operations_under_5_colonies,pct_lost,2017-Q4,18.0,percent
+operations_under_5_colonies,pct_renovated,2015-Q1,6.0,percent
+operations_under_5_colonies,pct_renovated,2015-Q2,9.0,percent
+operations_under_5_colonies,pct_renovated,2015-Q3,3.0,percent
+operations_under_5_colonies,pct_renovated,2015-Q4,1.0,percent
+operations_under_5_colonies,pct_renovated,2016-Q1,7.0,percent
+operations_under_5_colonies,pct_renovated,2016-Q2,10.0,percent
+operations_under_5_colonies,pct_renovated,2016-Q3,2.0,percent
+operations_under_5_colonies,pct_renovated,2016-Q4,1.0,percent
+operations_under_5_colonies,pct_renovated,2017-Q1,11.0,percent
+operations_under_5_colonies,pct_renovated,2017-Q2,13.0,percent
+operations_under_5_colonies,pct_renovated,2017-Q3,5.0,percent
+operations_under_5_colonies,pct_renovated,2017-Q4,3.0,percent

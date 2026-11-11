@@ -53,6 +53,12 @@ python3 pipeline/import_nass_release.py UNZIPPED_RELEASE_FOLDER data/nass-colony
 python3 pipeline/build_losses.py data/nass-colony-losses.csv data/colony-losses.js
 ```
 
+The U.S. Trends tabs on the two NASS pages use series NASS publishes only for the whole country (pollination and other hive-product income, honey prices by color, price as a share of parity, sudden colony loss, and operations with fewer than five colonies). Rebuild them from a Quick Stats export for Commodity = HONEY, after the files above are current:
+
+```
+python3 pipeline/build_nass_national.py QUICKSTATS_HONEY_EXPORT.csv data/honey-production.js data/nass-national.js data/nass-national.csv
+```
+
 To update the genetic diversity data from a new version of the genetic database spreadsheet (keep the spreadsheet itself out of this repository, since it has one row per colony):
 
 ```

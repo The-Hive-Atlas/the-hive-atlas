@@ -111,3 +111,39 @@
   .nx-controls .seg { width: 100%; overflow-x: auto; }
   .nx-controls .seg button { flex: 1 0 auto; padding: 8px 10px; }
 }
+
+/* ---------- U.S. Trends tab (js/nass-trends.js) ----------
+   Series colors checked with a color-vision validator (honey, blue, aqua; stepped for dark).
+   Honey color classes use the honey ramp, light to dark, with direct labels. */
+:root { --tx-s1: #b87a0b; --tx-s2: #2a78d6; --tx-s3: #1baf7a; --tx-cw: #ddb04f; --tx-cx: #c1861a; --tx-ca: #8a5a07; --tx-co: #5a6470; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --tx-s1: #b8821f; --tx-s2: #3987e5; --tx-s3: #199e70; --tx-cw: #f2c766; --tx-cx: #cf9a31; --tx-ca: #9b7425; --tx-co: #9ca5af; } }
+:root[data-theme="dark"] { --tx-s1: #b8821f; --tx-s2: #3987e5; --tx-s3: #199e70; --tx-cw: #f2c766; --tx-cx: #cf9a31; --tx-ca: #9b7425; --tx-co: #9ca5af; }
+.tx-card { display: grid; gap: 8px; }
+.tx-card .nx-cardhead { margin-bottom: 0; }
+.tx-ctl { margin-top: 2px; }
+.tx-take { margin: 2px 0 0; font-size: 0.95rem; max-width: 46em; }
+.tx-plot { position: relative; }
+.tx-plot svg { display: block; width: 100%; height: auto; overflow: visible; }
+.tx-ax text { font-family: var(--font-mono); font-size: 11px; fill: var(--muted); }
+.tx-ax line { stroke: var(--nx-grid); stroke-width: 1; }
+.tx-ax .base { stroke: var(--line); }
+.tx-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.tx-line.dash { stroke-dasharray: 5 4; }
+.tx-pt { stroke: var(--surface); stroke-width: 2; }
+.tx-dl { font-family: var(--font-body); font-size: 12px; fill: var(--ink); }
+.tx-cross { stroke: var(--muted); stroke-width: 1; }
+.tx-hit { fill: transparent; }
+.tx-line.s1, .tx-key.s1 { stroke: var(--tx-s1); } .tx-pt.s1, .tx-bar.s1 { fill: var(--tx-s1); }
+.tx-line.s2, .tx-key.s2 { stroke: var(--tx-s2); } .tx-pt.s2, .tx-bar.s2 { fill: var(--tx-s2); }
+.tx-line.s3, .tx-key.s3 { stroke: var(--tx-s3); } .tx-pt.s3, .tx-bar.s3 { fill: var(--tx-s3); }
+.tx-line.c-w { stroke: var(--tx-cw); } .tx-pt.c-w { fill: var(--tx-cw); }
+.tx-line.c-x { stroke: var(--tx-cx); } .tx-pt.c-x { fill: var(--tx-cx); }
+.tx-line.c-a { stroke: var(--tx-ca); } .tx-pt.c-a { fill: var(--tx-ca); }
+.tx-line.c-o { stroke: var(--tx-co); } .tx-pt.c-o { fill: var(--tx-co); }
+.tx-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.8rem; color: var(--muted); }
+.tx-legend span, .nx-tip span { display: inline-flex; align-items: center; gap: 7px; }
+i.tx-key { display: inline-block; width: 18px; height: 0; border-top: 3px solid; flex: none; }
+i.tx-key.dash { border-top-style: dashed; }
+i.tx-key.s1 { border-color: var(--tx-s1); } i.tx-key.s2 { border-color: var(--tx-s2); } i.tx-key.s3 { border-color: var(--tx-s3); }
+i.tx-key.c-w { border-color: var(--tx-cw); } i.tx-key.c-x { border-color: var(--tx-cx); } i.tx-key.c-a { border-color: var(--tx-ca); } i.tx-key.c-o { border-color: var(--tx-co); }
+#tx-view .lx-wrap { gap: 20px; }

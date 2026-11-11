@@ -534,10 +534,12 @@
   })();
 
   /* ---------- Tabs: State Chart / About This Data ---------- */
-  var tabs = [$('tab-chart'), $('tab-about')].filter(Boolean);
+  var tabs = [$('tab-chart'), $('tab-trends'), $('tab-about')].filter(Boolean);
   function isAbout(h) { return h === 'about' || h.indexOf('ab-') === 0; }
+  function tabOf(h) { return isAbout(h) ? 'about' : h === 'trends' && $('tab-trends') ? 'trends' : 'chart'; }
   function showTab(name, scroll) {
     host.hidden = name !== 'chart';
+    var tv = $('tx-view'); if (tv) tv.hidden = name !== 'trends';
     var ab = $('about'); if (ab) ab.hidden = name !== 'about';
     tabs.forEach(function (t) { var on = t.getAttribute('data-tab') === name; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
     if (scroll) {
@@ -548,19 +550,21 @@
   tabs.forEach(function (t, i) {
     t.addEventListener('click', function () {
       var name = t.getAttribute('data-tab'); showTab(name, false);
-      try { history.replaceState(null, '', name === 'about' ? '#about' : location.pathname + location.search); } catch (e) {}
+      try { history.replaceState(null, '', name === 'about' ? '#about' : name === 'trends' ? '#trends' : location.pathname + location.search); } catch (e) {}
     });
     t.addEventListener('keydown', function (e) {
-      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-      var o = tabs[(i + 1) % tabs.length]; o.focus(); o.click();
+      var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (!d) return;
+      if (document.documentElement.dir === 'rtl') d = -d;
+      var o = tabs[(i + d + tabs.length) % tabs.length]; o.focus(); o.click();
     });
   });
   document.querySelectorAll('[data-open-about]').forEach(function (b) {
     b.addEventListener('click', function () { showTab('about', true); try { history.replaceState(null, '', '#about'); } catch (e) {} });
   });
-  window.addEventListener('hashchange', function () { showTab(isAbout(location.hash.slice(1)) ? 'about' : 'chart', false); });
+  window.addEventListener('hashchange', function () { showTab(tabOf(location.hash.slice(1)), false); });
 
   syncControls(); render();
-  showTab(isAbout(location.hash.slice(1)) ? 'about' : 'chart', false);
+  showTab(tabOf(location.hash.slice(1)), false);
   if (location.hash.slice(1).indexOf('ab-') === 0) { var target = document.getElementById(location.hash.slice(1)); if (target) target.scrollIntoView(); }
 })();
