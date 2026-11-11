@@ -40,7 +40,7 @@
       'From July–September 2024, NASS publishes 20 states separately; the others are in Other States, which is not shown.': 'Depuis juillet–septembre 2024, le NASS publie 20 États séparément ; les autres sont dans « Autres États », non affiché.',
       'State percents use each state’s peak colonies and the U.S. uses colonies at the start of the quarter, so states tend to read a little below the U.S. line.': 'Les pourcentages des États utilisent le maximum de colonies de l’État et ceux des É.-U. les colonies en début de trimestre : les États se situent donc un peu sous la ligne des É.-U.',
       'Stressors overlap: one colony can be counted under several, so they do not add up to 100%.': 'Les facteurs de stress se recoupent : une colonie peut compter pour plusieurs, leur somme ne fait donc pas 100 %.',
-      'Values below 0.5% are counted as 0.25%, and two Wyoming 2023 percents use the corrected values (see About this map).': 'Les valeurs inférieures à 0,5 % comptent pour 0,25 %, et deux pourcentages du Wyoming en 2023 utilisent les valeurs corrigées (voir À propos de cette carte).',
+      'Values below 0.5% are counted as 0.25%, and two Wyoming 2023 percents use the corrected values (see About This Data).': 'Les valeurs inférieures à 0,5 % comptent pour 0,25 %, et deux pourcentages du Wyoming en 2023 utilisent les valeurs corrigées (voir À propos de ces données).',
       'From 2024, NASS publishes fewer states separately; the others are in Other States, which is not shown.': 'Depuis 2024, le NASS publie moins d’États séparément ; les autres sont dans « Autres États », non affiché.'
     },
     es: {
@@ -70,7 +70,7 @@
       'From July–September 2024, NASS publishes 20 states separately; the others are in Other States, which is not shown.': 'Desde julio–septiembre de 2024, NASS publica 20 estados por separado; los demás están en Otros estados, que no se muestra.',
       'State percents use each state’s peak colonies and the U.S. uses colonies at the start of the quarter, so states tend to read a little below the U.S. line.': 'Los porcentajes estatales usan el máximo de colonias del estado y EE. UU. usa las colonias al inicio del trimestre, por eso los estados suelen quedar un poco por debajo de la línea de EE. UU.',
       'Stressors overlap: one colony can be counted under several, so they do not add up to 100%.': 'Los factores de estrés se superponen: una colonia puede contar en varios, así que no suman 100 %.',
-      'Values below 0.5% are counted as 0.25%, and two Wyoming 2023 percents use the corrected values (see About this map).': 'Los valores menores de 0,5 % cuentan como 0,25 %, y dos porcentajes de Wyoming en 2023 usan los valores corregidos (vea Acerca de este mapa).',
+      'Values below 0.5% are counted as 0.25%, and two Wyoming 2023 percents use the corrected values (see About This Data).': 'Los valores menores de 0,5 % cuentan como 0,25 %, y dos porcentajes de Wyoming en 2023 usan los valores corregidos (vea Acerca de estos datos).',
       'From 2024, NASS publishes fewer states separately; the others are in Other States, which is not shown.': 'Desde 2024, NASS publica menos estados por separado; los demás están en Otros estados, que no se muestra.'
     },
     ar: {
@@ -100,7 +100,7 @@
       'From July–September 2024, NASS publishes 20 states separately; the others are in Other States, which is not shown.': 'منذ يوليو–سبتمبر 2024 تنشر NASS بيانات 20 ولاية منفردة، والبقية ضمن «ولايات أخرى» غير المعروضة هنا.',
       'State percents use each state’s peak colonies and the U.S. uses colonies at the start of the quarter, so states tend to read a little below the U.S. line.': 'تُحسب نسب الولايات من أكبر عدد لطوائفها، ونسبة الولايات المتحدة من الطوائف في بداية الربع، لذا تميل الولايات إلى الظهور أدنى قليلًا من خط الولايات المتحدة.',
       'Stressors overlap: one colony can be counted under several, so they do not add up to 100%.': 'تتداخل عوامل الإجهاد: قد تُحسب الطائفة الواحدة تحت أكثر من عامل، لذا لا يبلغ مجموعها 100%.',
-      'Values below 0.5% are counted as 0.25%, and two Wyoming 2023 percents use the corrected values (see About this map).': 'تُحسب القيم الأقل من 0.5% على أنها 0.25%، وتُستخدم القيم المصحّحة لنسبتين في وايومنغ لعام 2023 (انظر «عن هذه الخريطة»).',
+      'Values below 0.5% are counted as 0.25%, and two Wyoming 2023 percents use the corrected values (see About This Data).': 'تُحسب القيم الأقل من 0.5% على أنها 0.25%، وتُستخدم القيم المصحّحة لنسبتين في وايومنغ لعام 2023 (انظر «عن هذه البيانات»).',
       'From 2024, NASS publishes fewer states separately; the others are in Other States, which is not shown.': 'منذ 2024 تنشر NASS عددًا أقل من الولايات منفردة، والبقية ضمن «ولايات أخرى» غير المعروضة هنا.'
     }
   };
@@ -343,7 +343,7 @@
       if (c.stress) notes.push(T('Stressors overlap: one colony can be counted under several, so they do not add up to 100%.'));
       if (st.from <= 2019 && st.to >= 2019 && (!st.q || st.q === 2)) notes.push(T('No data was published for April–June 2019.'));
       if (st.to >= 2024) notes.push(T('From July–September 2024, NASS publishes 20 states separately; the others are in Other States, which is not shown.'));
-      if (c.kind === 'pct') notes.push(T('Values below 0.5% are counted as 0.25%, and two Wyoming 2023 percents use the corrected values (see About this map).'));
+      if (c.kind === 'pct') notes.push(T('Values below 0.5% are counted as 0.25%, and two Wyoming 2023 percents use the corrected values (see About This Data).'));
     } else if (st.to >= 2024) notes.push(T('From 2024, NASS publishes fewer states separately; the others are in Other States, which is not shown.'));
     $('nx-note').textContent = notes.join(' ');
 

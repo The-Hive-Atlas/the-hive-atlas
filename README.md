@@ -10,7 +10,7 @@ The Hive Atlas brings public data on honey bee colony losses, disease, and colon
 |---|---|---|
 | **Colony Losses** | Quarterly colony losses, renovations, and self-reported stressors by state, 2015 to now | USDA National Agricultural Statistics Service (NASS), *Honey Bee Colonies* reports |
 | **Disease Surveillance** | Varroa, Nosema, tracheal mite, American and European foulbrood, and AFB resistance to tetracycline and tylosin from about 85,000 adult bee and brood samples from 38 countries, by continent, country, state or province, climate region, year, and month, 1984 to 2026 (mite and spore counts 2015 on; antibiotic resistance tests 1996 on). In the menu: Disease, USDA-ARS Bee Disease Diagnostic Database | USDA ARS Bee Disease Diagnostic Laboratory, Beltsville, Maryland |
-| **National Honey bee Survey** | Empty for now (`disease-survey.html`) | To be added |
+| **USDA-APHIS National Honey bee Survey** | Empty for now (`disease-survey.html`) | To be added |
 | **Colony Monitoring** | Repeated colony inspections by climate region, plus a personal report for your own records | Currently **simulated demonstration data** |
 | **Genetic Diversity** | Mitochondrial lineages (A, M, C), haplotypes, and haplotype diversity of honey bee colonies by country and area, from 8,642 colonies in 25 countries (1,111 in the United States) | Genetic_Database2026 (mitochondrial DNA genotyping, worldwide) |
 
