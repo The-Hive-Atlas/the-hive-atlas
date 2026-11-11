@@ -13,6 +13,7 @@ The Hive Atlas brings public data on honey bee colony losses, disease, and colon
 | **USDA-APHIS National Honey bee Survey** | Empty for now (`disease-survey.html`) | To be added |
 | **Colony Monitoring** | Repeated colony inspections by climate region, plus a personal report for your own records | Currently **simulated demonstration data** |
 | **Genetic Diversity** | Mitochondrial lineages (A, M, C), haplotypes, and haplotype diversity of honey bee colonies by country and area, from 8,642 colonies in 25 countries (1,111 in the United States) | Genetic_Database2026 (mitochondrial DNA genotyping, worldwide) |
+| **Genomic Data** | Empty for now (`genetics-genomic.html`), under the Genetics menu next to mtDNA Data | To be added |
 
 Each map page has an **About this map** tab with definitions, methods, and limits. Methods for the whole site are on the [Data & Methods](https://thehiveatlas.com/methods.html) page.
 
